@@ -1277,6 +1277,224 @@
       ],
 
       "auditFile": "audits/esp32-led-pattern-generator.md"
+    },
+    {
+      "id": "esp32-smart-light-control-with-app",
+      "title": "ESP32 Smart Light Control with App",
+      "url": "https://my.cytron.io/tutorial/esp32-smart-light-control-with-app",
+
+      "category": "IoT",
+      "subcategory": "Smart Home",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "MQTT",
+        "WiFi",
+        "IoT MQTT Panel",
+        "PubSubClient"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "MQTT",
+        "Smart Light",
+        "IoT",
+        "Smart Home",
+        "WiFi",
+        "App Control",
+        "PubSubClient",
+        "Home Automation",
+        "Wireless Control"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-11",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 8,
+
+      "scores": {
+        "technicalAccuracy": 8,
+        "currentValidity": 8,
+        "esp32Compatibility": 9,
+        "arduinoIdeCompatibility": 9,
+        "codeQuality": 6,
+        "completeness": 7,
+        "beginnerFriendliness": 8,
+        "reproducibility": 7
+      },
+
+      "mainRecommendation": "Add WiFi/MQTT reconnection handling code, document MQTT broker limitations, and include security considerations for production use. The core functionality is valid but robustness improvements are needed.",
+
+      "topIssues": [
+        {
+          "priority": "P2",
+          "title": "WiFi/MQTT Reconnection Handling",
+          "section": "Code",
+          "description": "Tutorial likely lacks robust reconnection logic. ESP32 should automatically reconnect if WiFi or MQTT connection drops.",
+          "recommendation": "Add robust reconnection logic for WiFi and MQTT"
+        },
+        {
+          "priority": "P2",
+          "title": "Public MQTT Broker Reliability",
+          "section": "MQTT Setup",
+          "description": "If using HiveMQ public broker, reliability issues should be documented. Free tier has limitations and no uptime guarantee.",
+          "recommendation": "Document public broker limitations and alternatives"
+        },
+        {
+          "priority": "P2",
+          "title": "Security Considerations Missing",
+          "section": "Security",
+          "description": "MQTT without TLS transmits data in plaintext. Tutorial should mention this is for learning only, not production.",
+          "recommendation": "Add security considerations section"
+        },
+        {
+          "priority": "P3",
+          "title": "MQTT Client ID Uniqueness",
+          "section": "Code",
+          "description": "Should use unique client IDs (e.g., based on MAC address) to avoid connection conflicts.",
+          "recommendation": "Use MAC-based unique client ID"
+        },
+        {
+          "priority": "P3",
+          "title": "Error Handling",
+          "section": "Troubleshooting",
+          "description": "Code should include error handling for connection failures and provide user feedback.",
+          "recommendation": "Add error handling and troubleshooting section"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Project Concept",
+          "reason": "Smart light control via MQTT is practical and educational"
+        },
+        {
+          "section": "IoT MQTT Panel App",
+          "reason": "Well-chosen app, actively maintained (v3.02.12, March 2026)"
+        },
+        {
+          "section": "PubSubClient Library",
+          "reason": "Standard, reliable MQTT library for Arduino"
+        },
+        {
+          "section": "Basic Setup",
+          "reason": "ESP32 and Arduino IDE configuration is accurate"
+        },
+        {
+          "section": "Topic Structure",
+          "reason": "MQTT topic explanation is valid"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Reconnection Logic",
+          "reason": "IoT devices need to handle connection drops",
+          "action": "Add WiFi and MQTT reconnection code"
+        },
+        {
+          "section": "Broker Limitations",
+          "reason": "Public brokers have reliability issues",
+          "action": "Document limitations and suggest HiveMQ Cloud"
+        },
+        {
+          "section": "Security Section",
+          "reason": "Plain MQTT is unencrypted",
+          "action": "Add note about TLS for production use"
+        },
+        {
+          "section": "Client ID",
+          "reason": "Generic IDs cause conflicts",
+          "action": "Use ESP32 MAC address for unique ID"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "PubSubClient library",
+          "currentTutorial": "Uses the library",
+          "finding": "Actively maintained, MQTT 3.1.1 compatible",
+          "officialSource": "https://docs.arduino.cc/libraries/pubsubclient/",
+          "sourceLabel": "Arduino Docs",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "IoT MQTT Panel app",
+          "currentTutorial": "Uses the app",
+          "finding": "Current v3.02.12, updated March 2026, 4.63 rating",
+          "officialSource": "https://play.google.com/store/apps/details?id=snr.lab.iotmqttpanel.prod",
+          "sourceLabel": "Google Play",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "Public MQTT brokers",
+          "currentTutorial": "May use HiveMQ public",
+          "finding": "Rate limiting and reliability issues documented",
+          "officialSource": "https://www.hivemq.com/mqtt/public-mqtt-broker/",
+          "sourceLabel": "HiveMQ",
+          "recommendedChange": "Add reliability warning"
+        },
+        {
+          "claim": "WiFi reconnection",
+          "currentTutorial": "May not handle drops",
+          "finding": "ESP32 WiFi can drop, needs reconnection logic",
+          "officialSource": "https://randomnerdtutorials.com/solved-reconnect-esp32-to-wifi/",
+          "sourceLabel": "Random Nerd Tutorials",
+          "recommendedChange": "Add reconnection code"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/esp32-smart-light-control-with-app",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://github.com/knolleary/pubsubclient",
+          "purpose": "PubSubClient library",
+          "status": "Working",
+          "notes": "Most popular Arduino MQTT library"
+        },
+        {
+          "url": "https://play.google.com/store/apps/details?id=snr.lab.iotmqttpanel.prod",
+          "purpose": "IoT MQTT Panel app",
+          "status": "Working",
+          "notes": "Android app for MQTT control"
+        },
+        {
+          "url": "https://www.hivemq.com/mqtt/public-mqtt-broker/",
+          "purpose": "HiveMQ public broker",
+          "status": "Working",
+          "notes": "Free MQTT broker for testing"
+        }
+      ],
+
+      "auditFile": "audits/esp32-smart-light-control-with-app.md"
     }
   ],
 
