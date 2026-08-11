@@ -439,6 +439,206 @@
       ],
 
       "auditFile": "audits/getting-started-thingspeak.md"
+    },
+    {
+      "id": "getting-started-with-esp32-ota",
+      "title": "Getting Started with ESP32 and Over-The-Air Programming (OTA)",
+      "url": "https://my.cytron.io/tutorial/getting-started-with-esp32-ota",
+
+      "category": "ESP32",
+      "subcategory": "OTA Programming",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "OTA",
+        "WiFi",
+        "WebServer"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "OTA",
+        "Over-The-Air",
+        "Wireless Upload",
+        "Firmware Update",
+        "OTAWebUpdater",
+        "Arduino IDE",
+        "Remote Programming"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-11",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 8,
+
+      "scores": {
+        "technicalAccuracy": 8,
+        "currentValidity": 8,
+        "esp32Compatibility": 9,
+        "arduinoIdeCompatibility": 9,
+        "codeQuality": 7,
+        "completeness": 6,
+        "beginnerFriendliness": 8,
+        "reproducibility": 8
+      },
+
+      "mainRecommendation": "Add security best practices section covering password protection, network isolation, and the risks of default credentials. The core OTA functionality is valid but security guidance is essential for beginners.",
+
+      "topIssues": [
+        {
+          "priority": "P1",
+          "title": "Security Best Practices Missing",
+          "section": "Security",
+          "description": "OTA updates are a security-sensitive feature. The tutorial should emphasize changing default credentials (admin/admin), using strong passwords, and never exposing OTA to public internet.",
+          "recommendation": "Add dedicated security section with password, network, and HTTPS guidance"
+        },
+        {
+          "priority": "P2",
+          "title": "Default Credentials Warning",
+          "section": "Code Example",
+          "description": "The OTAWebUpdater example uses admin/admin as default username and password. This must be changed for any real-world use.",
+          "recommendation": "Add prominent warning to change credentials immediately"
+        },
+        {
+          "priority": "P2",
+          "title": "Network Security Guidance",
+          "section": "Introduction",
+          "description": "Tutorial should advise keeping OTA devices on private networks only, and never exposing OTA ports to the internet.",
+          "recommendation": "Add note about private network use only"
+        },
+        {
+          "priority": "P3",
+          "title": "Alternative Libraries Not Mentioned",
+          "section": "Advanced Topics",
+          "description": "AsyncElegantOTA and other modern alternatives offer better features and security options.",
+          "recommendation": "Briefly mention AsyncElegantOTA for advanced users"
+        },
+        {
+          "priority": "P3",
+          "title": "HTTPS Recommendation",
+          "section": "Production Use",
+          "description": "For production use, HTTPS should be recommended instead of HTTP for OTA updates.",
+          "recommendation": "Add note about HTTPS for production deployments"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "OTA Concept Explanation",
+          "reason": "Clear explanation of how OTA works and its benefits"
+        },
+        {
+          "section": "Step-by-Step Setup",
+          "reason": "Walkthrough of loading OTAWebUpdater example is accurate"
+        },
+        {
+          "section": "WiFi Configuration",
+          "reason": "Instructions for setting SSID and password are correct"
+        },
+        {
+          "section": "Binary Generation",
+          "reason": "Accurate instructions for exporting .bin files"
+        },
+        {
+          "section": "Web Interface Usage",
+          "reason": "How to access and use the OTA web page is valid"
+        },
+        {
+          "section": "OTA Code Warning",
+          "reason": "Important note about keeping OTA code in future uploads"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Security Section",
+          "reason": "OTA security is critical but not covered",
+          "action": "Add new section on changing default credentials, network isolation, and security risks"
+        },
+        {
+          "section": "Default Credentials",
+          "reason": "admin/admin is insecure",
+          "action": "Add prominent warning and instructions to change credentials"
+        },
+        {
+          "section": "Network Access",
+          "reason": "mDNS may not work everywhere",
+          "action": "Note that esp32.local may not work on all networks, provide IP fallback"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "OTA security",
+          "currentTutorial": "May not cover security",
+          "finding": "Security is critical for OTA - 2026 standards require password/encryption",
+          "officialSource": "https://esphome.io/guides/security_best_practices/",
+          "sourceLabel": "ESPHome Security",
+          "recommendedChange": "Add security best practices section"
+        },
+        {
+          "claim": "Default credentials",
+          "currentTutorial": "Uses admin/admin",
+          "finding": "Publicly known, insecure default credentials",
+          "officialSource": "https://github.com/espressif/arduino-esp32/blob/master/libraries/Update/examples/OTAWebUpdater/OTAWebUpdater.ino",
+          "sourceLabel": "Espressif OTAWebUpdater",
+          "recommendedChange": "Warn users to change immediately"
+        },
+        {
+          "claim": "ArduinoOTA libraries",
+          "currentTutorial": "Uses built-in libraries",
+          "finding": "Libraries actively maintained by Espressif",
+          "officialSource": "https://docs.espressif.com/projects/arduino-esp32/en/latest/ota_web_update.html",
+          "sourceLabel": "Arduino-ESP32 Docs",
+          "recommendedChange": "No change needed"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/getting-started-with-esp32-ota",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://docs.espressif.com/projects/arduino-esp32/en/latest/ota_web_update.html",
+          "purpose": "Official Espressif OTA documentation",
+          "status": "Working",
+          "notes": "Arduino-ESP32 official docs"
+        },
+        {
+          "url": "https://github.com/espressif/arduino-esp32/blob/master/libraries/Update/examples/OTAWebUpdater/OTAWebUpdater.ino",
+          "purpose": "OTAWebUpdater example source",
+          "status": "Working",
+          "notes": "Official example code"
+        }
+      ],
+
+      "auditFile": "audits/getting-started-with-esp32-ota.md"
     }
   ],
 
