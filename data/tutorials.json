@@ -639,6 +639,220 @@
       ],
 
       "auditFile": "audits/getting-started-with-esp32-ota.md"
+    },
+    {
+      "id": "getting-started-freertos-esp32",
+      "title": "Getting Started with FreeRTOS on ESP32",
+      "url": "https://my.cytron.io/tutorial/getting-started-freertos-esp32",
+
+      "category": "ESP32",
+      "subcategory": "FreeRTOS",
+
+      "targetLevel": "Intermediate",
+
+      "products": [
+        "Robo ESP32"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "FreeRTOS"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "FreeRTOS",
+        "RTOS",
+        "Real-Time",
+        "Multitasking",
+        "Tasks",
+        "xTaskCreate",
+        "Dual Core",
+        "Scheduling",
+        "Robo ESP32"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-11",
+
+      "validity": {
+        "grade": "A",
+        "label": "Valid"
+      },
+
+      "decision": "Keep",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P3",
+
+      "technicalScore": 9,
+
+      "scores": {
+        "technicalAccuracy": 9,
+        "currentValidity": 9,
+        "esp32Compatibility": 8,
+        "arduinoIdeCompatibility": 9,
+        "codeQuality": 8,
+        "completeness": 8,
+        "beginnerFriendliness": 7,
+        "reproducibility": 9
+      },
+
+      "mainRecommendation": "Tutorial is technically sound. Consider adding notes about single-core ESP32 variants (ESP32-C3) compatibility and stack size best practices for beginners transitioning from the basic level.",
+
+      "topIssues": [
+        {
+          "priority": "P3",
+          "title": "Single-Core Variant Compatibility",
+          "section": "Task Creation",
+          "description": "Tutorial uses xTaskCreatePinnedToCore which will fail on ESP32-C3 (single-core). Should mention using tskNO_AFFINITY for cross-compatibility.",
+          "recommendation": "Add note about single-core variants and tskNO_AFFINITY"
+        },
+        {
+          "priority": "P3",
+          "title": "Stack Size Guidance",
+          "section": "Task Creation",
+          "description": "Tutorial should explain how to determine appropriate stack sizes and warn about stack overflow issues common with FreeRTOS beginners.",
+          "recommendation": "Add section on choosing stack sizes"
+        },
+        {
+          "priority": "P3",
+          "title": "Watchdog Timer Awareness",
+          "section": "Troubleshooting",
+          "description": "No mention of Task Watchdog Timer (TWDT) which can trigger resets if tasks don't yield properly.",
+          "recommendation": "Add brief watchdog awareness section"
+        },
+        {
+          "priority": "P3",
+          "title": "vTaskDelayUntil Not Mentioned",
+          "section": "Task Delays",
+          "description": "For periodic tasks, vTaskDelayUntil() is more accurate than vTaskDelay() but isn't covered.",
+          "recommendation": "Mention vTaskDelayUntil for periodic task accuracy"
+        },
+        {
+          "priority": "P3",
+          "title": "pdMS_TO_TICKS Macro",
+          "section": "Task Delays",
+          "description": "Should recommend pdMS_TO_TICKS() over manual division for millisecond delays.",
+          "recommendation": "Recommend pdMS_TO_TICKS() macro for clarity"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "FreeRTOS Concept Explanation",
+          "reason": "Clear explanation of RTOS benefits and task scheduling"
+        },
+        {
+          "section": "xTaskCreate Usage",
+          "reason": "Correct API usage for task creation"
+        },
+        {
+          "section": "Task Function Structure",
+          "reason": "Proper infinite loop with delay pattern"
+        },
+        {
+          "section": "Hardware Setup",
+          "reason": "Robo ESP32 with LED examples is appropriate"
+        },
+        {
+          "section": "Priority Explanation",
+          "reason": "Task priority concepts are well explained"
+        },
+        {
+          "section": "Dual-Core Introduction",
+          "reason": "Coverage of ESP32's dual-core capabilities"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Single-Core Compatibility",
+          "reason": "ESP32-C3 users may encounter errors",
+          "action": "Add note about tskNO_AFFINITY for portable code"
+        },
+        {
+          "section": "Stack Size",
+          "reason": "Beginners often encounter stack overflow",
+          "action": "Add section on choosing appropriate stack sizes"
+        },
+        {
+          "section": "Delay Best Practices",
+          "reason": "pdMS_TO_TICKS is preferred",
+          "action": "Recommend pdMS_TO_TICKS() and mention vTaskDelayUntil()"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "FreeRTOS is built-in",
+          "currentTutorial": "May mention library install",
+          "finding": "FreeRTOS included in ESP32 Arduino Core by default",
+          "officialSource": "https://docs.espressif.com/projects/arduino-esp32/en/latest/",
+          "sourceLabel": "Espressif Arduino-ESP32",
+          "recommendedChange": "Clarify no separate install needed"
+        },
+        {
+          "claim": "xTaskCreatePinnedToCore works",
+          "currentTutorial": "Uses the function",
+          "finding": "Works on dual-core, fails on ESP32-C3 with Invalid core ID",
+          "officialSource": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/freertos_idf.html",
+          "sourceLabel": "ESP-IDF FreeRTOS Docs",
+          "recommendedChange": "Add tskNO_AFFINITY alternative for compatibility"
+        },
+        {
+          "claim": "Task delays",
+          "currentTutorial": "Uses vTaskDelay",
+          "finding": "pdMS_TO_TICKS() is preferred for clarity and accuracy",
+          "officialSource": "https://esp32.com/viewtopic.php?t=11371",
+          "sourceLabel": "ESP32 Forum",
+          "recommendedChange": "Recommend pdMS_TO_TICKS"
+        },
+        {
+          "claim": "Watchdog timers",
+          "currentTutorial": "May not mention",
+          "finding": "TWDT monitors task execution, can cause resets",
+          "officialSource": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/wdts.html",
+          "sourceLabel": "ESP-IDF Watchdogs",
+          "recommendedChange": "Add awareness section"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/getting-started-freertos-esp32",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/freertos.html",
+          "purpose": "Official ESP-IDF FreeRTOS documentation",
+          "status": "Working",
+          "notes": "Espressif official docs"
+        },
+        {
+          "url": "https://www.cytron.io/tutorial/getting-started-freertos-esp32-task-control",
+          "purpose": "Related tutorial - Task Control",
+          "status": "Working",
+          "notes": "Part of FreeRTOS tutorial series"
+        },
+        {
+          "url": "https://my.cytron.io/tutorial/getting-started-freertos-esp32-dual-core",
+          "purpose": "Related tutorial - Dual Core",
+          "status": "Working",
+          "notes": "Part of FreeRTOS tutorial series"
+        }
+      ],
+
+      "auditFile": "audits/getting-started-freertos-esp32.md"
     }
   ],
 
