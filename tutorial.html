@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial Audit - Cytron Tutorial Validation Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">C</span>
+                    <span class="logo-text">Cytron Tutorials</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                </button>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="tutorials.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <span>All Tutorials</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="revamp.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                        <span>Revamp Queue</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="methodology.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span>Methodology</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <p>Tutorial Validation v1.0</p>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href="index.html">Dashboard</a>
+                <span class="separator">/</span>
+                <a href="tutorials.html">All Tutorials</a>
+                <span class="separator">/</span>
+                <span class="current" id="breadcrumbTitle">Tutorial</span>
+            </nav>
+
+            <!-- Tutorial Header -->
+            <header class="tutorial-header" id="tutorialHeader">
+                <div class="tutorial-title-section">
+                    <h1 id="tutorialTitle">Loading...</h1>
+                    <div class="tutorial-meta" id="tutorialMeta">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                <div class="tutorial-actions">
+                    <a href="#" id="originalLink" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                        Open Original Tutorial
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                    </a>
+                    <a href="tutorials.html" class="btn btn-secondary">Back to Tutorials</a>
+                </div>
+            </header>
+
+            <!-- Not Found State -->
+            <div class="not-found-state" id="notFoundState" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <h2>Tutorial Not Found</h2>
+                <p>The requested tutorial could not be found. It may have been removed or the ID is incorrect.</p>
+                <a href="tutorials.html" class="btn btn-primary">View All Tutorials</a>
+            </div>
+
+            <!-- Tutorial Content (hidden when not found) -->
+            <div id="tutorialContent">
+                <!-- Overall Validation Panel -->
+                <section class="validation-panel">
+                    <div class="validation-grid">
+                        <div class="validation-card primary">
+                            <h3>Overall Validity</h3>
+                            <div class="validity-display" id="validityDisplay">
+                                <span class="grade">-</span>
+                                <span class="label">Not Reviewed</span>
+                            </div>
+                        </div>
+                        <div class="validation-card">
+                            <h3>Recommended Decision</h3>
+                            <div class="decision-display" id="decisionDisplay">
+                                <span class="badge">Not Decided</span>
+                            </div>
+                        </div>
+                        <div class="validation-card">
+                            <h3>Revamp Scope</h3>
+                            <div class="scope-display" id="scopeDisplay">
+                                <span>-</span>
+                            </div>
+                        </div>
+                        <div class="validation-card">
+                            <h3>Current Status</h3>
+                            <div class="status-display" id="statusDisplay">
+                                <span class="badge">Not Reviewed</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="main-recommendation" id="mainRecommendation">
+                        <h3>Main Recommendation</h3>
+                        <p>Awaiting technical audit.</p>
+                    </div>
+                </section>
+
+                <!-- Score Cards -->
+                <section class="dashboard-section">
+                    <h2 class="section-title">Technical Scores</h2>
+                    <div class="scores-grid" id="scoresGrid">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+
+                <!-- Top Issues -->
+                <section class="dashboard-section">
+                    <h2 class="section-title">Top Issues</h2>
+                    <div class="issues-list" id="issuesList">
+                        <div class="empty-state">
+                            <p>No issues documented yet.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Keep / Update / Remove -->
+                <section class="dashboard-section">
+                    <h2 class="section-title">Content Assessment</h2>
+                    <div class="assessment-grid">
+                        <div class="assessment-card keep">
+                            <h3>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Keep
+                            </h3>
+                            <div class="assessment-content" id="keepContent">
+                                <p class="empty">No items documented.</p>
+                            </div>
+                        </div>
+                        <div class="assessment-card update">
+                            <h3>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                Update
+                            </h3>
+                            <div class="assessment-content" id="updateContent">
+                                <p class="empty">No items documented.</p>
+                            </div>
+                        </div>
+                        <div class="assessment-card remove">
+                            <h3>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                                Remove / Replace
+                            </h3>
+                            <div class="assessment-content" id="removeContent">
+                                <p class="empty">No items documented.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Evidence Section -->
+                <section class="dashboard-section">
+                    <h2 class="section-title">Evidence &amp; Official References</h2>
+                    <div class="table-container">
+                        <table class="data-table" id="evidenceTable">
+                            <thead>
+                                <tr>
+                                    <th>Claim</th>
+                                    <th>Current Tutorial</th>
+                                    <th>Finding</th>
+                                    <th>Official Source</th>
+                                    <th>Recommended Change</th>
+                                </tr>
+                            </thead>
+                            <tbody id="evidenceBody">
+                                <tr>
+                                    <td colspan="5" class="empty-cell">No evidence documented yet.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- External Links -->
+                <section class="dashboard-section">
+                    <h2 class="section-title">External Link Validation</h2>
+                    <div class="table-container">
+                        <table class="data-table" id="linksTable">
+                            <thead>
+                                <tr>
+                                    <th>URL</th>
+                                    <th>Purpose</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="linksBody">
+                                <tr>
+                                    <td colspan="4" class="empty-cell">No external links documented yet.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Full Audit Report -->
+                <section class="dashboard-section">
+                    <h2 class="section-title">Full Technical Audit</h2>
+                    <div class="audit-report" id="auditReport">
+                        <div class="empty-state">
+                            <p>Full technical audit report not yet available.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/tutorial.js"></script>
+</body>
+</html>

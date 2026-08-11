@@ -1,0 +1,237 @@
+{
+  "tutorials": [
+    {
+      "id": "getting-started-esp32-and-nodered",
+      "title": "Getting Started ESP32 and Node-RED",
+      "url": "https://my.cytron.io/tutorial/getting-started-esp32-and-nodered",
+
+      "category": "IoT",
+      "subcategory": "ESP32 + Node-RED",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "Node-RED",
+        "MQTT",
+        "HiveMQ"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Node-RED",
+        "MQTT",
+        "IoT",
+        "Dashboard",
+        "Getting Started",
+        "Temperature",
+        "Humidity",
+        "Sensor"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-10",
+
+      "validity": {
+        "grade": "C",
+        "label": "Partially Outdated"
+      },
+
+      "decision": "Major Revamp",
+
+      "revampScope": "Medium",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P1",
+
+      "technicalScore": 6,
+
+      "scores": {
+        "technicalAccuracy": 6,
+        "currentValidity": 4,
+        "esp32Compatibility": 8,
+        "nodeRedCompatibility": 4,
+        "codeQuality": 7,
+        "completeness": 7,
+        "beginnerFriendliness": 8,
+        "reproducibility": 5
+      },
+
+      "mainRecommendation": "Replace the deprecated node-red-dashboard with FlowFuse Dashboard 2.0, and update MQTT broker recommendations due to HiveMQ public broker reliability issues.",
+
+      "topIssues": [
+        {
+          "priority": "P1",
+          "title": "node-red-dashboard Deprecated",
+          "section": "Dashboard Setup",
+          "description": "The tutorial instructs users to install node-red-dashboard which has been formally deprecated with no further development planned.",
+          "recommendation": "Replace with FlowFuse Dashboard 2.0 (@flowfuse/node-red-dashboard)"
+        },
+        {
+          "priority": "P1",
+          "title": "HiveMQ Public Broker Reliability",
+          "section": "MQTT Configuration",
+          "description": "The tutorial uses broker.hivemq.com which has documented reliability issues including rate limiting, random disconnections, and overload problems.",
+          "recommendation": "Recommend HiveMQ Cloud free tier or self-hosted Mosquitto as alternatives"
+        },
+        {
+          "priority": "P2",
+          "title": "Node-RED Version Requirements Changed",
+          "section": "Installation",
+          "description": "Current Node-RED 5.0 requires Node.js 22.9.0 minimum (24.x recommended), which may conflict with older installation instructions.",
+          "recommendation": "Update version requirements to Node.js 22.9.0+ and Node-RED 5.x"
+        },
+        {
+          "priority": "P2",
+          "title": "Unnecessary MQTT Broker Package",
+          "section": "Node-RED Setup",
+          "description": "The tutorial may instruct installing node-red-contrib-mqtt-broker which is unnecessary as MQTT nodes are built into Node-RED.",
+          "recommendation": "Remove or clarify that built-in MQTT nodes are sufficient"
+        },
+        {
+          "priority": "P3",
+          "title": "EspMQTTClient Library Alternatives",
+          "section": "Arduino Libraries",
+          "description": "While EspMQTTClient still works, newer alternatives like ESP32MQTTClient offer better thread-safety and ESP32 Arduino Core 3.x compatibility.",
+          "recommendation": "Optionally mention ESP32MQTTClient as a modern alternative"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "ESP32 Hardware Setup",
+          "reason": "The ESP32 board setup and pin connections remain valid"
+        },
+        {
+          "section": "Arduino IDE Configuration",
+          "reason": "ESP32 board package installation process is still current"
+        },
+        {
+          "section": "MQTT Concept Explanation",
+          "reason": "The explanation of MQTT publish/subscribe patterns remains accurate"
+        },
+        {
+          "section": "Basic Project Flow",
+          "reason": "The overall project architecture (ESP32 → MQTT → Node-RED → Dashboard) is still valid"
+        },
+        {
+          "section": "EspMQTTClient Usage",
+          "reason": "The library still functions correctly for basic MQTT operations"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Node-RED Dashboard",
+          "reason": "node-red-dashboard has been formally deprecated",
+          "action": "Replace with @flowfuse/node-red-dashboard (FlowFuse Dashboard 2.0)"
+        },
+        {
+          "section": "MQTT Broker Configuration",
+          "reason": "HiveMQ public broker has reliability issues",
+          "action": "Recommend HiveMQ Cloud free tier as primary option"
+        },
+        {
+          "section": "Node.js/Node-RED Versions",
+          "reason": "Version requirements have changed significantly",
+          "action": "Update to Node.js 22.9.0+ and Node-RED 5.x"
+        },
+        {
+          "section": "Screenshots",
+          "reason": "Dashboard 2.0 has different interface",
+          "action": "Replace all UI screenshots with current versions"
+        }
+      ],
+
+      "remove": [
+        {
+          "section": "node-red-contrib-mqtt-broker Installation",
+          "reason": "Node-RED has built-in MQTT nodes",
+          "action": "Remove or clarify that this package is unnecessary"
+        },
+        {
+          "section": "Outdated Version Numbers",
+          "reason": "Version numbers are now outdated",
+          "action": "Replace with current versions or use general recommendations"
+        }
+      ],
+
+      "evidence": [
+        {
+          "claim": "node-red-dashboard is current",
+          "currentTutorial": "Instructs to install node-red-dashboard",
+          "finding": "Formally deprecated June 2024",
+          "officialSource": "https://flowfuse.com/blog/2024/06/dashboard-1-deprecated/",
+          "sourceLabel": "FlowFuse Blog",
+          "recommendedChange": "Use @flowfuse/node-red-dashboard"
+        },
+        {
+          "claim": "HiveMQ public broker is reliable",
+          "currentTutorial": "Uses broker.hivemq.com",
+          "finding": "Documented reliability issues, rate limiting, random disconnections",
+          "officialSource": "https://community.hivemq.com/t/public-broker-recently-overloaded/3668",
+          "sourceLabel": "HiveMQ Forum",
+          "recommendedChange": "Recommend HiveMQ Cloud free tier"
+        },
+        {
+          "claim": "Node-RED version requirements",
+          "currentTutorial": "May have older version requirements",
+          "finding": "Node-RED 5.0 requires Node.js 22.9.0+",
+          "officialSource": "https://nodered.org/docs/faq/node-versions",
+          "sourceLabel": "Node-RED Docs",
+          "recommendedChange": "Update version requirements"
+        },
+        {
+          "claim": "FlowFuse Dashboard 2.0 is replacement",
+          "currentTutorial": "Uses deprecated node-red-dashboard",
+          "finding": "Official successor with new ui-base, ui-page, ui-group structure",
+          "officialSource": "https://dashboard.flowfuse.com/getting-started.html",
+          "sourceLabel": "Dashboard 2.0 Docs",
+          "recommendedChange": "Update tutorial to use Dashboard 2.0"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/getting-started-esp32-and-nodered",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://broker.hivemq.com",
+          "purpose": "Public MQTT broker",
+          "status": "Working",
+          "notes": "Has reliability issues - rate limiting and random disconnections reported"
+        },
+        {
+          "url": "https://github.com/plapointe6/EspMQTTClient",
+          "purpose": "EspMQTTClient library",
+          "status": "Working",
+          "notes": "Library is maintained and functional"
+        },
+        {
+          "url": "https://flowfuse.com/blog/2024/06/dashboard-1-deprecated/",
+          "purpose": "Deprecation announcement",
+          "status": "Working",
+          "notes": "Official deprecation notice for node-red-dashboard"
+        }
+      ],
+
+      "auditFile": "audits/getting-started-esp32-and-nodered.md"
+    }
+  ],
+
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-08-10",
+    "description": "Cytron Tutorial Validation Dashboard data file"
+  }
+}

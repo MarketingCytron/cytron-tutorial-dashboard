@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cytron Tutorial Validation Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">C</span>
+                    <span class="logo-text">Cytron Tutorials</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                </button>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active">
+                    <a href="index.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="tutorials.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <span>All Tutorials</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="revamp.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                        <span>Revamp Queue</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="methodology.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span>Methodology</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <p>Tutorial Validation v1.0</p>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="header-content">
+                    <h1>Cytron Tutorial Validation Dashboard</h1>
+                    <p class="subtitle">Technical validity, revamp priority and tutorial lifecycle tracking</p>
+                </div>
+                <div class="header-actions">
+                    <span class="last-updated" id="lastUpdated"></span>
+                </div>
+            </header>
+
+            <!-- KPI Cards -->
+            <section class="kpi-section">
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon total">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-value" id="totalTutorials">0</span>
+                            <span class="kpi-label">Total Tutorials</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon reviewed">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-value" id="reviewedCount">0</span>
+                            <span class="kpi-label">Reviewed</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon not-reviewed">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-value" id="notReviewedCount">0</span>
+                            <span class="kpi-label">Not Reviewed</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card clickable" data-filter="decision" data-value="Keep">
+                        <div class="kpi-icon keep">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-value" id="keepCount">0</span>
+                            <span class="kpi-label">Keep</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card clickable" data-filter="decision" data-value="Minor Update">
+                        <div class="kpi-icon minor-update">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-value" id="minorUpdateCount">0</span>
+                            <span class="kpi-label">Minor Update</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card clickable" data-filter="decision" data-value="Major Revamp">
+                        <div class="kpi-icon major-revamp">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                            </svg>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-value" id="majorRevampCount">0</span>
+                            <span class="kpi-label">Major Revamp</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card clickable" data-filter="decision" data-value="Replace">
+                        <div class="kpi-icon replace">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-value" id="replaceCount">0</span>
+                            <span class="kpi-label">Replace</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card highlight clickable" data-filter="beginnerAction" data-value="true">
+                        <div class="kpi-icon beginner">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                <path d="M2 17l10 5 10-5"></path>
+                                <path d="M2 12l10 5 10-5"></path>
+                            </svg>
+                        </div>
+                        <div class="kpi-content">
+                            <span class="kpi-value" id="beginnerActionCount">0</span>
+                            <span class="kpi-label">Beginner Tutorials Requiring Action</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Validity Distribution -->
+            <section class="dashboard-section">
+                <h2 class="section-title">Validation Distribution</h2>
+                <div class="distribution-grid">
+                    <div class="distribution-card">
+                        <h3>Validity Grades</h3>
+                        <div class="validity-bars" id="validityBars">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    <div class="distribution-card">
+                        <h3>Revamp Decisions</h3>
+                        <div class="decision-bars" id="decisionBars">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    <div class="distribution-card">
+                        <h3>Revamp Status</h3>
+                        <div class="status-bars" id="statusBars">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Health Summary -->
+            <section class="dashboard-section">
+                <h2 class="section-title">Tutorial Health Summary</h2>
+                <div class="health-summary" id="healthSummary">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Priority Tutorials -->
+            <section class="dashboard-section">
+                <h2 class="section-title">Tutorials Requiring Attention</h2>
+                <div class="priority-list" id="priorityList">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="section-footer">
+                    <a href="revamp.html" class="btn btn-secondary">View Full Revamp Queue</a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

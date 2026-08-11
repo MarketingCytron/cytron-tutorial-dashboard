@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revamp Queue - Cytron Tutorial Validation Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">C</span>
+                    <span class="logo-text">Cytron Tutorials</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                </button>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="tutorials.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <span>All Tutorials</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="revamp.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                        <span>Revamp Queue</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="methodology.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span>Methodology</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <p>Tutorial Validation v1.0</p>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="header-content">
+                    <h1>Revamp Queue</h1>
+                    <p class="subtitle">Tutorials requiring updates, prioritized by urgency and target audience</p>
+                </div>
+            </header>
+
+            <!-- Queue Summary -->
+            <section class="queue-summary">
+                <div class="summary-cards">
+                    <div class="summary-card critical">
+                        <span class="count" id="criticalCount">0</span>
+                        <span class="label">P0 Critical</span>
+                    </div>
+                    <div class="summary-card high">
+                        <span class="count" id="highCount">0</span>
+                        <span class="label">P1 High Priority</span>
+                    </div>
+                    <div class="summary-card beginner">
+                        <span class="count" id="beginnerCount">0</span>
+                        <span class="label">Beginner Tutorials</span>
+                    </div>
+                    <div class="summary-card total">
+                        <span class="count" id="queueTotal">0</span>
+                        <span class="label">Total in Queue</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Critical Section -->
+            <section class="queue-section" id="criticalSection">
+                <h2 class="section-title priority-critical">
+                    <span class="priority-badge p0">P0</span>
+                    Critical - Tutorial Cannot Work
+                </h2>
+                <div class="queue-grid" id="criticalQueue">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="empty-state" id="criticalEmpty" style="display: none;">
+                    <p>No P0 critical issues found.</p>
+                </div>
+            </section>
+
+            <!-- High Priority Section -->
+            <section class="queue-section" id="highSection">
+                <h2 class="section-title priority-high">
+                    <span class="priority-badge p1">P1</span>
+                    High Priority - Major Technical Problems
+                </h2>
+                <div class="queue-grid" id="highQueue">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="empty-state" id="highEmpty" style="display: none;">
+                    <p>No P1 high priority issues found.</p>
+                </div>
+            </section>
+
+            <!-- Beginner Tutorials Section -->
+            <section class="queue-section" id="beginnerSection">
+                <h2 class="section-title priority-beginner">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5"></path>
+                        <path d="M2 12l10 5 10-5"></path>
+                    </svg>
+                    Beginner Tutorials Requiring Action
+                </h2>
+                <div class="queue-grid" id="beginnerQueue">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="empty-state" id="beginnerEmpty" style="display: none;">
+                    <p>All beginner tutorials are up to date.</p>
+                </div>
+            </section>
+
+            <!-- Remaining Queue Section -->
+            <section class="queue-section" id="remainingSection">
+                <h2 class="section-title">Remaining Queue</h2>
+                <div class="queue-grid" id="remainingQueue">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="empty-state" id="remainingEmpty" style="display: none;">
+                    <p>No additional tutorials require revamping.</p>
+                </div>
+            </section>
+
+            <!-- All Clear State -->
+            <div class="all-clear-state" id="allClearState" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <h2>All Clear!</h2>
+                <p>No tutorials currently require revamping. Great job keeping everything up to date!</p>
+                <a href="tutorials.html" class="btn btn-primary">View All Tutorials</a>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/revamp.js"></script>
+</body>
+</html>

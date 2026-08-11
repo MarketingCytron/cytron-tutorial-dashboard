@@ -1,0 +1,468 @@
+/**
+ * Cytron Tutorial Validation Dashboard
+ * Main Application JavaScript
+ */
+
+// Global state
+let tutorialsData = null;
+
+// Utility functions
+const Utils = {
+    // Get base path for GitHub Pages compatibility
+    getBasePath() {
+        const path = window.location.pathname;
+        const lastSlash = path.lastIndexOf('/');
+        return path.substring(0, lastSlash + 1);
+    },
+
+    // Load JSON data
+    async loadData() {
+        if (tutorialsData) return tutorialsData;
+
+        try {
+            const response = await fetch(`${this.getBasePath()}data/tutorials.json`);
+            if (!response.ok) throw new Error('Failed to load data');
+            tutorialsData = await response.json();
+            return tutorialsData;
+        } catch (error) {
+            console.error('Error loading tutorials data:', error);
+            return { tutorials: [] };
+        }
+    },
+
+    // Format date
+    formatDate(dateStr) {
+        if (!dateStr) return '-';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        });
+    },
+
+    // Get validity class
+    getValidityClass(grade) {
+        if (!grade) return 'not-reviewed';
+        return `grade-${grade.toLowerCase()}`;
+    },
+
+    // Get validity label
+    getValidityLabel(grade) {
+        const labels = {
+            'A': 'Valid',
+            'B': 'Mostly Valid',
+            'C': 'Partially Outdated',
+            'D': 'Outdated',
+            'E': 'Invalid'
+        };
+        return labels[grade] || 'Not Reviewed';
+    },
+
+    // Get decision class
+    getDecisionClass(decision) {
+        const classes = {
+            'Keep': 'decision-keep',
+            'Minor Update': 'decision-minor',
+            'Major Revamp': 'decision-major',
+            'Replace': 'decision-replace',
+            'Not Decided': 'decision-not-decided'
+        };
+        return classes[decision] || 'decision-not-decided';
+    },
+
+    // Get priority class
+    getPriorityClass(priority) {
+        if (!priority || priority === 'None') return 'none';
+        return priority.toLowerCase();
+    },
+
+    // Get status class
+    getStatusClass(status) {
+        const classes = {
+            'Not Reviewed': 'status-not-reviewed',
+            'Reviewed': 'status-reviewed',
+            'Planned': 'status-planned',
+            'Revamping': 'status-revamping',
+            'Completed': 'status-completed',
+            'Archived': 'status-archived'
+        };
+        return classes[status] || 'status-not-reviewed';
+    },
+
+    // Get level class
+    getLevelClass(level) {
+        const classes = {
+            'Beginner': 'level-beginner',
+            'Intermediate': 'level-intermediate',
+            'Advanced': 'level-advanced'
+        };
+        return classes[level] || '';
+    },
+
+    // Get score class
+    getScoreClass(score) {
+        if (score >= 8) return 'high';
+        if (score >= 5) return 'medium';
+        return 'low';
+    },
+
+    // Check if tutorial needs action
+    needsAction(tutorial) {
+        if (!tutorial.reviewed) return false;
+        if (tutorial.revampStatus === 'Completed' || tutorial.revampStatus === 'Archived') return false;
+        if (tutorial.decision === 'Keep' && (!tutorial.priority || tutorial.priority === 'None' || tutorial.priority === 'P3')) return false;
+        return true;
+    },
+
+    // Check if beginner tutorial needs action
+    isBeginnerNeedingAction(tutorial) {
+        return tutorial.targetLevel === 'Beginner' && this.needsAction(tutorial);
+    },
+
+    // Calculate priority score for sorting
+    getPriorityScore(tutorial) {
+        let score = 0;
+
+        // Priority weight
+        const priorityWeights = { 'P0': 10000, 'P1': 1000, 'P2': 100, 'P3': 10 };
+        score += priorityWeights[tutorial.priority] || 0;
+
+        // Beginner tutorials get boost
+        if (tutorial.targetLevel === 'Beginner') score += 500;
+
+        // Decision weight
+        const decisionWeights = { 'Replace': 80, 'Major Revamp': 60, 'Minor Update': 40 };
+        score += decisionWeights[tutorial.decision] || 0;
+
+        // Validity grade weight (E=5, D=4, C=3, B=2, A=1)
+        const validityWeights = { 'E': 5, 'D': 4, 'C': 3, 'B': 2, 'A': 1 };
+        score += (validityWeights[tutorial.validity?.grade] || 0);
+
+        return score;
+    },
+
+    // Create badge HTML
+    createBadge(text, className) {
+        return `<span class="${className}">${this.escapeHtml(text)}</span>`;
+    },
+
+    // Escape HTML
+    escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    },
+
+    // Get URL parameter
+    getUrlParam(name) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(name);
+    },
+
+    // Set URL parameter
+    setUrlParam(name, value) {
+        const params = new URLSearchParams(window.location.search);
+        if (value) {
+            params.set(name, value);
+        } else {
+            params.delete(name);
+        }
+        const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+        window.history.replaceState({}, '', newUrl);
+    }
+};
+
+// Sidebar functionality
+const Sidebar = {
+    init() {
+        const toggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        if (!toggle || !sidebar) return;
+
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        document.body.appendChild(overlay);
+
+        toggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+
+        // Close on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            }
+        });
+    }
+};
+
+// Dashboard functionality
+const Dashboard = {
+    async init() {
+        const data = await Utils.loadData();
+        if (!data.tutorials.length) {
+            this.showEmptyState();
+            return;
+        }
+
+        this.updateKPIs(data.tutorials);
+        this.updateDistributions(data.tutorials);
+        this.updateHealthSummary(data.tutorials);
+        this.updatePriorityList(data.tutorials);
+        this.updateLastUpdated(data);
+        this.initKPIClicks();
+    },
+
+    showEmptyState() {
+        const priorityList = document.getElementById('priorityList');
+        if (priorityList) {
+            priorityList.innerHTML = `
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <h3>No tutorials reviewed yet</h3>
+                    <p>Add tutorial audits to see them here.</p>
+                </div>
+            `;
+        }
+    },
+
+    updateKPIs(tutorials) {
+        const total = tutorials.length;
+        const reviewed = tutorials.filter(t => t.reviewed).length;
+        const notReviewed = total - reviewed;
+
+        const decisions = {
+            keep: tutorials.filter(t => t.decision === 'Keep').length,
+            minor: tutorials.filter(t => t.decision === 'Minor Update').length,
+            major: tutorials.filter(t => t.decision === 'Major Revamp').length,
+            replace: tutorials.filter(t => t.decision === 'Replace').length
+        };
+
+        const beginnerAction = tutorials.filter(t => Utils.isBeginnerNeedingAction(t)).length;
+
+        document.getElementById('totalTutorials').textContent = total;
+        document.getElementById('reviewedCount').textContent = reviewed;
+        document.getElementById('notReviewedCount').textContent = notReviewed;
+        document.getElementById('keepCount').textContent = decisions.keep;
+        document.getElementById('minorUpdateCount').textContent = decisions.minor;
+        document.getElementById('majorRevampCount').textContent = decisions.major;
+        document.getElementById('replaceCount').textContent = decisions.replace;
+        document.getElementById('beginnerActionCount').textContent = beginnerAction;
+    },
+
+    updateDistributions(tutorials) {
+        // Validity distribution
+        const validityBars = document.getElementById('validityBars');
+        if (validityBars) {
+            const grades = ['A', 'B', 'C', 'D', 'E'];
+            const total = tutorials.filter(t => t.reviewed).length || 1;
+
+            validityBars.innerHTML = grades.map(grade => {
+                const count = tutorials.filter(t => t.validity?.grade === grade).length;
+                const percent = (count / total) * 100;
+                return `
+                    <div class="bar-item">
+                        <span class="bar-label">${grade} - ${Utils.getValidityLabel(grade)}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill grade-${grade.toLowerCase()}" style="width: ${percent}%"></div>
+                        </div>
+                        <span class="bar-count">${count}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Decision distribution
+        const decisionBars = document.getElementById('decisionBars');
+        if (decisionBars) {
+            const decisions = ['Keep', 'Minor Update', 'Major Revamp', 'Replace'];
+            const total = tutorials.filter(t => t.reviewed).length || 1;
+
+            decisionBars.innerHTML = decisions.map(decision => {
+                const count = tutorials.filter(t => t.decision === decision).length;
+                const percent = (count / total) * 100;
+                const cssClass = Utils.getDecisionClass(decision).replace('decision-', '');
+                return `
+                    <div class="bar-item">
+                        <span class="bar-label">${decision}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill decision-${cssClass}" style="width: ${percent}%"></div>
+                        </div>
+                        <span class="bar-count">${count}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Status distribution
+        const statusBars = document.getElementById('statusBars');
+        if (statusBars) {
+            const statuses = ['Not Reviewed', 'Reviewed', 'Planned', 'Revamping', 'Completed', 'Archived'];
+            const total = tutorials.length || 1;
+
+            statusBars.innerHTML = statuses.map(status => {
+                const count = tutorials.filter(t => t.revampStatus === status).length;
+                const percent = (count / total) * 100;
+                const cssClass = Utils.getStatusClass(status).replace('status-', '');
+                return `
+                    <div class="bar-item">
+                        <span class="bar-label">${status}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill status-${cssClass}" style="width: ${percent}%"></div>
+                        </div>
+                        <span class="bar-count">${count}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+    },
+
+    updateHealthSummary(tutorials) {
+        const summary = document.getElementById('healthSummary');
+        if (!summary) return;
+
+        const total = tutorials.length;
+        const needsWork = tutorials.filter(t =>
+            t.decision === 'Major Revamp' || t.decision === 'Replace'
+        ).length;
+        const beginnerNeedsWork = tutorials.filter(t => Utils.isBeginnerNeedingAction(t)).length;
+        const p0Count = tutorials.filter(t => t.priority === 'P0').length;
+        const p1Count = tutorials.filter(t => t.priority === 'P1').length;
+
+        const items = [];
+
+        if (needsWork > 0) {
+            items.push(`<strong>${needsWork}</strong> of ${total} tutorials require major updates or replacement.`);
+        }
+
+        if (beginnerNeedsWork > 0) {
+            items.push(`<strong>${beginnerNeedsWork}</strong> beginner tutorials currently require action.`);
+        }
+
+        if (p0Count > 0) {
+            items.push(`<strong>${p0Count}</strong> tutorials contain P0 critical issues.`);
+        }
+
+        if (p1Count > 0) {
+            items.push(`<strong>${p1Count}</strong> tutorials contain P1 high priority issues.`);
+        }
+
+        if (items.length === 0) {
+            items.push('All tutorials are in good shape!');
+        }
+
+        summary.innerHTML = items.map(item => `
+            <div class="health-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <span>${item}</span>
+            </div>
+        `).join('');
+    },
+
+    updatePriorityList(tutorials) {
+        const list = document.getElementById('priorityList');
+        if (!list) return;
+
+        const priorityTutorials = tutorials
+            .filter(t => Utils.needsAction(t))
+            .sort((a, b) => Utils.getPriorityScore(b) - Utils.getPriorityScore(a))
+            .slice(0, 8);
+
+        if (priorityTutorials.length === 0) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <h3>All caught up!</h3>
+                    <p>No tutorials currently require attention.</p>
+                </div>
+            `;
+            return;
+        }
+
+        list.innerHTML = priorityTutorials.map(t => `
+            <div class="priority-card">
+                <div class="priority-card-content">
+                    <h3><a href="tutorial.html?id=${Utils.escapeHtml(t.id)}">${Utils.escapeHtml(t.title)}</a></h3>
+                    <div class="priority-card-meta">
+                        ${t.validity?.grade ? `<span class="validity-badge ${Utils.getValidityClass(t.validity.grade)}">${t.validity.grade}</span>` : ''}
+                        <span class="decision-badge ${Utils.getDecisionClass(t.decision)}">${Utils.escapeHtml(t.decision || 'Not Decided')}</span>
+                        ${t.priority && t.priority !== 'None' ? `<span class="priority-badge ${Utils.getPriorityClass(t.priority)}">${t.priority}</span>` : ''}
+                        <span class="level-badge ${Utils.getLevelClass(t.targetLevel)}">${Utils.escapeHtml(t.targetLevel)}</span>
+                        <span class="status-badge ${Utils.getStatusClass(t.revampStatus)}">${Utils.escapeHtml(t.revampStatus)}</span>
+                    </div>
+                    ${t.topIssues?.[0] ? `
+                        <div class="priority-card-issue">
+                            <strong>${Utils.escapeHtml(t.topIssues[0].title)}</strong>
+                        </div>
+                    ` : ''}
+                </div>
+                <a href="tutorial.html?id=${Utils.escapeHtml(t.id)}" class="btn btn-secondary btn-sm">View Audit</a>
+            </div>
+        `).join('');
+    },
+
+    updateLastUpdated(data) {
+        const element = document.getElementById('lastUpdated');
+        if (!element) return;
+
+        // Find most recent review date
+        const dates = data.tutorials
+            .filter(t => t.lastReviewed)
+            .map(t => new Date(t.lastReviewed));
+
+        if (dates.length > 0) {
+            const latest = new Date(Math.max(...dates));
+            element.textContent = `Last audit: ${Utils.formatDate(latest.toISOString().split('T')[0])}`;
+        }
+    },
+
+    initKPIClicks() {
+        document.querySelectorAll('.kpi-card.clickable').forEach(card => {
+            card.addEventListener('click', () => {
+                const filter = card.dataset.filter;
+                const value = card.dataset.value;
+
+                if (filter === 'beginnerAction') {
+                    window.location.href = `tutorials.html?level=Beginner`;
+                } else if (filter === 'decision') {
+                    window.location.href = `tutorials.html?decision=${encodeURIComponent(value)}`;
+                }
+            });
+        });
+    }
+};
+
+// Initialize on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+    Sidebar.init();
+
+    // Initialize dashboard if on index page
+    if (document.getElementById('priorityList')) {
+        Dashboard.init();
+    }
+});
+
+// Export for other modules
+window.Utils = Utils;
+window.tutorialsData = tutorialsData;

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Tutorials - Cytron Tutorial Validation Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">C</span>
+                    <span class="logo-text">Cytron Tutorials</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                </button>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="tutorials.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <span>All Tutorials</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="revamp.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                        <span>Revamp Queue</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="methodology.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span>Methodology</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <p>Tutorial Validation v1.0</p>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div class="header-content">
+                    <h1>All Tutorials</h1>
+                    <p class="subtitle">Complete list of Cytron tutorials with validation status</p>
+                </div>
+            </header>
+
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="search-box">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="M21 21l-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search tutorials, categories, products, keywords..." aria-label="Search tutorials">
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="filterLevel">Target Level</label>
+                        <select id="filterLevel">
+                            <option value="">All Levels</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterValidity">Validity</label>
+                        <select id="filterValidity">
+                            <option value="">All Grades</option>
+                            <option value="A">A - Valid</option>
+                            <option value="B">B - Mostly Valid</option>
+                            <option value="C">C - Partially Outdated</option>
+                            <option value="D">D - Outdated</option>
+                            <option value="E">E - Invalid</option>
+                            <option value="Not Reviewed">Not Reviewed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterDecision">Decision</label>
+                        <select id="filterDecision">
+                            <option value="">All Decisions</option>
+                            <option value="Keep">Keep</option>
+                            <option value="Minor Update">Minor Update</option>
+                            <option value="Major Revamp">Major Revamp</option>
+                            <option value="Replace">Replace</option>
+                            <option value="Not Decided">Not Decided</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterStatus">Revamp Status</label>
+                        <select id="filterStatus">
+                            <option value="">All Statuses</option>
+                            <option value="Not Reviewed">Not Reviewed</option>
+                            <option value="Reviewed">Reviewed</option>
+                            <option value="Planned">Planned</option>
+                            <option value="Revamping">Revamping</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Archived">Archived</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterPriority">Priority</label>
+                        <select id="filterPriority">
+                            <option value="">All Priorities</option>
+                            <option value="P0">P0 - Critical</option>
+                            <option value="P1">P1 - High</option>
+                            <option value="P2">P2 - Medium</option>
+                            <option value="P3">P3 - Low</option>
+                            <option value="None">None</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterCategory">Category</label>
+                        <select id="filterCategory">
+                            <option value="">All Categories</option>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-summary">
+                    <span id="filterCount">Showing 0 of 0 tutorials</span>
+                    <button id="clearFilters" class="btn btn-text" style="display: none;">Clear Filters</button>
+                </div>
+            </section>
+
+            <!-- Tutorials Table -->
+            <section class="table-section">
+                <div class="table-container">
+                    <table class="data-table" id="tutorialsTable">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="title">Tutorial <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="category">Category <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="targetLevel">Level <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="validity">Validity <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="decision">Decision <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="priority">Priority <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="revampStatus">Status <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="technicalScore">Score <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="lastReviewed">Reviewed <span class="sort-icon"></span></th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tutorialsBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="M21 21l-4.35-4.35"></path>
+                    </svg>
+                    <h3>No tutorials found</h3>
+                    <p>No tutorials match your current filters. Try adjusting your search criteria.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/tutorials.js"></script>
+</body>
+</html>
