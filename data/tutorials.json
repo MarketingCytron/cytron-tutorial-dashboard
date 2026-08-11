@@ -1065,6 +1065,218 @@
       ],
 
       "auditFile": "audits/control-esp32-outputs-with-telegram.md"
+    },
+    {
+      "id": "esp32-led-pattern-generator",
+      "title": "ESP32 LED Pattern Generator",
+      "url": "https://my.cytron.io/tutorial/esp32-led-pattern-generator",
+
+      "category": "ESP32",
+      "subcategory": "GPIO Basics",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "Robo ESP32"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "GPIO",
+        "Digital Output"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "LED",
+        "Pattern",
+        "Blink",
+        "GPIO",
+        "Arduino",
+        "Beginner",
+        "Robo ESP32",
+        "Loop",
+        "Array",
+        "digitalWrite"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-11",
+
+      "validity": {
+        "grade": "A",
+        "label": "Valid"
+      },
+
+      "decision": "Keep",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P3",
+
+      "technicalScore": 9,
+
+      "scores": {
+        "technicalAccuracy": 9,
+        "currentValidity": 9,
+        "esp32Compatibility": 9,
+        "arduinoIdeCompatibility": 9,
+        "codeQuality": 8,
+        "completeness": 8,
+        "beginnerFriendliness": 10,
+        "reproducibility": 10
+      },
+
+      "mainRecommendation": "Tutorial is well-designed for beginners with no external wiring needed. Consider adding a brief note about non-blocking alternatives (millis()) for users who want to advance, and optionally mention PWM for brightness control.",
+
+      "topIssues": [
+        {
+          "priority": "P3",
+          "title": "Non-Blocking Alternative Not Mentioned",
+          "section": "Advanced Topics",
+          "description": "Tutorial uses delay() which is appropriate for beginners, but could briefly mention millis() for users who want to learn more advanced patterns.",
+          "recommendation": "Add 'Next Steps' section mentioning non-blocking delays"
+        },
+        {
+          "priority": "P3",
+          "title": "PWM Brightness Control",
+          "section": "Extensions",
+          "description": "Could optionally mention ESP32's LEDC peripheral for LED dimming/fading effects as a 'next steps' suggestion.",
+          "recommendation": "Mention LEDC for brightness control"
+        },
+        {
+          "priority": "P3",
+          "title": "GPIO Pin Reference",
+          "section": "Hardware",
+          "description": "Could include a quick reference of which GPIO pins are connected to each onboard LED.",
+          "recommendation": "Add table showing LED to GPIO pin connections"
+        },
+        {
+          "priority": "P3",
+          "title": "Pattern Customization Tips",
+          "section": "Code Examples",
+          "description": "More examples of creative patterns (Knight Rider, random, etc.) would enhance learning value.",
+          "recommendation": "Add more creative pattern examples"
+        },
+        {
+          "priority": "P3",
+          "title": "Video Tutorial Link",
+          "section": "Resources",
+          "description": "Tutorial has a companion YouTube video that could be more prominently linked.",
+          "recommendation": "Add prominent link to YouTube video"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "No External Wiring",
+          "reason": "Excellent beginner-friendly approach using onboard LEDs"
+        },
+        {
+          "section": "Basic Concepts",
+          "reason": "Proper introduction to loops, delays, and arrays"
+        },
+        {
+          "section": "Hardware Setup",
+          "reason": "Clear instructions for board and IDE configuration"
+        },
+        {
+          "section": "Code Structure",
+          "reason": "Well-organized and easy to understand"
+        },
+        {
+          "section": "Customization Tips",
+          "reason": "Helpful suggestions for modifying delays and patterns"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "GPIO Pin Reference",
+          "reason": "Helps users understand hardware mapping",
+          "action": "Add table showing GPIO pin to LED connections (optional)"
+        },
+        {
+          "section": "Next Steps",
+          "reason": "Guide users to advanced topics",
+          "action": "Mention millis(), PWM, and more patterns (optional)"
+        },
+        {
+          "section": "Resources",
+          "reason": "Video not prominently linked",
+          "action": "Add link to companion YouTube video"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "Robo ESP32 LEDs",
+          "currentTutorial": "Uses onboard LEDs",
+          "finding": "10 status LEDs available on Robo ESP32 board",
+          "officialSource": "https://my.cytron.io/p-robo-esp32",
+          "sourceLabel": "Cytron Product Page",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "delay() function",
+          "currentTutorial": "Uses delay() for timing",
+          "finding": "Appropriate for beginners, blocking but simple",
+          "officialSource": "https://www.esp32cube.com/post/how-to-use-millis-instead-of-delay",
+          "sourceLabel": "ESP32Cube",
+          "recommendedChange": "Optionally mention millis() for advanced users"
+        },
+        {
+          "claim": "digitalWrite()",
+          "currentTutorial": "Uses standard function",
+          "finding": "Fully supported on ESP32, uses 3.3V logic",
+          "officialSource": "https://mechatronicslab.net/courses/esp32-arduino-programming-handbook/lessons/digitalwrite-for-esp32-arduino/",
+          "sourceLabel": "Mechatronics Lab",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "GPIO safe pins",
+          "currentTutorial": "Uses onboard LED pins",
+          "finding": "Safe pins: 4, 5, 13-27, 32, 33 for output",
+          "officialSource": "https://randomnerdtutorials.com/esp32-pinout-reference-gpios/",
+          "sourceLabel": "Random Nerd Tutorials",
+          "recommendedChange": "No change needed"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/esp32-led-pattern-generator",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://my.cytron.io/p-robo-esp32",
+          "purpose": "Robo ESP32 product page",
+          "status": "Working",
+          "notes": "Hardware reference"
+        },
+        {
+          "url": "https://www.youtube.com/shorts/OrHVqVMyxYc",
+          "purpose": "Companion YouTube video",
+          "status": "Working",
+          "notes": "Visual tutorial demonstration"
+        },
+        {
+          "url": "https://www.farnell.com/datasheets/4726022.pdf",
+          "purpose": "Robo ESP32 datasheet",
+          "status": "Working",
+          "notes": "Official technical specifications"
+        }
+      ],
+
+      "auditFile": "audits/esp32-led-pattern-generator.md"
     }
   ],
 
