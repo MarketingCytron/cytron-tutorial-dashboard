@@ -226,12 +226,225 @@
       ],
 
       "auditFile": "audits/getting-started-esp32-and-nodered.md"
+    },
+    {
+      "id": "getting-started-thingspeak",
+      "title": "Getting Started with ESP32 & ThingSpeak",
+      "url": "https://my.cytron.io/tutorial/getting-started-thingspeak",
+
+      "category": "IoT",
+      "subcategory": "ESP32 + ThingSpeak",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "Robo ESP32",
+        "DHT11"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "ThingSpeak",
+        "DHT11",
+        "WiFi"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "ThingSpeak",
+        "IoT",
+        "Cloud",
+        "Temperature",
+        "Humidity",
+        "DHT11",
+        "Sensor",
+        "Data Logging",
+        "Robo ESP32"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-11",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 8,
+
+      "scores": {
+        "technicalAccuracy": 8,
+        "currentValidity": 8,
+        "esp32Compatibility": 9,
+        "thingSpeakCompatibility": 8,
+        "codeQuality": 7,
+        "completeness": 7,
+        "beginnerFriendliness": 8,
+        "reproducibility": 8
+      },
+
+      "mainRecommendation": "Add clarification about required library dependencies (Adafruit Unified Sensor) and document ThingSpeak free tier limitations more prominently.",
+
+      "topIssues": [
+        {
+          "priority": "P2",
+          "title": "Adafruit Unified Sensor Dependency",
+          "section": "Library Setup",
+          "description": "The DHT sensor library requires the Adafruit Unified Sensor library as a dependency. If not mentioned, users may encounter 'fatal error: Adafruit_Sensor.h: No such file or directory'.",
+          "recommendation": "Add explicit instruction to install Adafruit Unified Sensor library"
+        },
+        {
+          "priority": "P2",
+          "title": "ThingSpeak Free Tier Limitations",
+          "section": "Introduction",
+          "description": "Free accounts are limited to 15-second update intervals, 4 channels, and 3 million messages/year. These should be clearly stated upfront.",
+          "recommendation": "Add prominent note about free tier limitations at the start"
+        },
+        {
+          "priority": "P3",
+          "title": "HTTPS/SSL Certificate Consideration",
+          "section": "Security",
+          "description": "ThingSpeak supports HTTPS, and SSL certificates have expiration dates. Tutorial should mention this for production deployments.",
+          "recommendation": "Add note about using HTTPS for production"
+        },
+        {
+          "priority": "P3",
+          "title": "DHT11 vs DHT22 Comparison",
+          "section": "Hardware",
+          "description": "Tutorial could mention DHT22 as an alternative with better accuracy and range for users who need more precision.",
+          "recommendation": "Briefly mention DHT22 as higher-accuracy alternative"
+        },
+        {
+          "priority": "P3",
+          "title": "Error Handling",
+          "section": "Code",
+          "description": "Code could include better error handling for WiFi connection failures and ThingSpeak API errors.",
+          "recommendation": "Add WiFi reconnection and API error handling examples"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Robo ESP32 Setup",
+          "reason": "Current hardware with proper documentation"
+        },
+        {
+          "section": "ThingSpeak Account Creation",
+          "reason": "Step-by-step guide for account and channel setup remains valid"
+        },
+        {
+          "section": "Basic Code Structure",
+          "reason": "Working code for reading DHT11 and sending to ThingSpeak"
+        },
+        {
+          "section": "Arduino IDE Configuration",
+          "reason": "Standard ESP32 setup process is current"
+        },
+        {
+          "section": "Data Visualization",
+          "reason": "ThingSpeak chart configuration remains valid"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Library Installation",
+          "reason": "Missing dependency documentation",
+          "action": "Explicitly list all required libraries including Adafruit Unified Sensor"
+        },
+        {
+          "section": "ThingSpeak Limitations",
+          "reason": "Free tier limits not prominent",
+          "action": "Add prominent note about 15-second minimum update interval and 4-channel limit"
+        },
+        {
+          "section": "Error Handling",
+          "reason": "Limited error handling in code",
+          "action": "Add WiFi connection retry logic and ThingSpeak API response checking"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "DHT library installation",
+          "currentTutorial": "May only mention DHT library",
+          "finding": "Adafruit Unified Sensor is required dependency",
+          "officialSource": "https://learn.adafruit.com/dht/using-a-dhtxx-sensor-with-arduino",
+          "sourceLabel": "Adafruit DHT Guide",
+          "recommendedChange": "List all dependencies explicitly"
+        },
+        {
+          "claim": "ThingSpeak update rate",
+          "currentTutorial": "Free account noted",
+          "finding": "15-second minimum for free, 1-second for paid",
+          "officialSource": "https://thingspeak.mathworks.com/pages/license_faq",
+          "sourceLabel": "ThingSpeak License FAQ",
+          "recommendedChange": "Document limitations prominently"
+        },
+        {
+          "claim": "ThingSpeak library compatibility",
+          "currentTutorial": "Uses ThingSpeak library",
+          "finding": "Library actively maintained, ESP32 compatible",
+          "officialSource": "https://github.com/mathworks/thingspeak-arduino",
+          "sourceLabel": "GitHub",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "Robo ESP32 specifications",
+          "currentTutorial": "Uses Robo ESP32",
+          "finding": "Current product, released May 2025",
+          "officialSource": "https://my.cytron.io/p-robo-esp32",
+          "sourceLabel": "Cytron Product Page",
+          "recommendedChange": "No change needed"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/getting-started-thingspeak",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://thingspeak.com",
+          "purpose": "ThingSpeak IoT platform",
+          "status": "Working",
+          "notes": "MathWorks IoT platform - actively maintained"
+        },
+        {
+          "url": "https://github.com/mathworks/thingspeak-arduino",
+          "purpose": "ThingSpeak Arduino library",
+          "status": "Working",
+          "notes": "Official library by MathWorks"
+        },
+        {
+          "url": "https://github.com/adafruit/DHT-sensor-library",
+          "purpose": "DHT sensor library",
+          "status": "Working",
+          "notes": "Requires Adafruit Unified Sensor as dependency"
+        }
+      ],
+
+      "auditFile": "audits/getting-started-thingspeak.md"
     }
   ],
 
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2026-08-10",
+    "lastUpdated": "2026-08-11",
     "description": "Cytron Tutorial Validation Dashboard data file"
   }
 }
