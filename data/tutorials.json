@@ -853,6 +853,218 @@
       ],
 
       "auditFile": "audits/getting-started-freertos-esp32.md"
+    },
+    {
+      "id": "control-esp32-outputs-with-telegram",
+      "title": "Control ESP32 Outputs with Telegram",
+      "url": "https://my.cytron.io/tutorial/control-esp32-outputs-with-telegram",
+
+      "category": "IoT",
+      "subcategory": "Telegram Bot",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "Telegram Bot API",
+        "WiFiClientSecure",
+        "UniversalTelegramBot"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Telegram",
+        "Bot",
+        "Remote Control",
+        "IoT",
+        "LED",
+        "WiFi",
+        "BotFather",
+        "Chat ID",
+        "Wireless Control"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-11",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 7,
+
+      "scores": {
+        "technicalAccuracy": 8,
+        "currentValidity": 7,
+        "esp32Compatibility": 7,
+        "arduinoIdeCompatibility": 8,
+        "codeQuality": 7,
+        "completeness": 6,
+        "beginnerFriendliness": 8,
+        "reproducibility": 7
+      },
+
+      "mainRecommendation": "Add security best practices section emphasizing bot token protection, chat ID validation importance, and the risks of hardcoding credentials. Also document ArduinoJson version requirements explicitly.",
+
+      "topIssues": [
+        {
+          "priority": "P1",
+          "title": "Bot Token Security Warning Missing",
+          "section": "Security",
+          "description": "The bot token is essentially a master key. Anyone who obtains it gains complete control over the bot. Tutorial must warn against hardcoding tokens in public repositories.",
+          "recommendation": "Add prominent warning about token protection"
+        },
+        {
+          "priority": "P2",
+          "title": "Chat ID Validation Importance",
+          "section": "Security",
+          "description": "Tutorial should emphasize that chat ID acts as an authorization filter. Without it, anyone can control the ESP32.",
+          "recommendation": "Explain importance of validating chat_id"
+        },
+        {
+          "priority": "P2",
+          "title": "ArduinoJson Version Requirement",
+          "section": "Library Setup",
+          "description": "UniversalTelegramBot requires ArduinoJson v6.x. Users with v5.x will encounter DynamicJsonBuffer errors.",
+          "recommendation": "Specify ArduinoJson 6.x requirement"
+        },
+        {
+          "priority": "P2",
+          "title": "ESP32 Core Version Conflicts",
+          "section": "Troubleshooting",
+          "description": "Some users report issues with ESP32 core 2.0.2+. Tutorial should note known compatibility versions.",
+          "recommendation": "Document known working versions"
+        },
+        {
+          "priority": "P3",
+          "title": "SSL Certificate Handling",
+          "section": "Code",
+          "description": "Tutorial should explain WiFiClientSecure and certificate setup for secure Telegram API communication.",
+          "recommendation": "Add brief explanation of SSL setup"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "BotFather Setup",
+          "reason": "Instructions for creating Telegram bot remain valid"
+        },
+        {
+          "section": "Library Installation",
+          "reason": "UniversalTelegramBot via Library Manager works correctly"
+        },
+        {
+          "section": "Basic Code Structure",
+          "reason": "LED control code pattern is functional"
+        },
+        {
+          "section": "Command Examples",
+          "reason": "/led_on, /led_off, /state commands work correctly"
+        },
+        {
+          "section": "WiFi Configuration",
+          "reason": "Standard ESP32 WiFi setup is accurate"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Security Section",
+          "reason": "Bot token security is critical but not covered",
+          "action": "Add warning about token protection and chat ID validation"
+        },
+        {
+          "section": "Library Requirements",
+          "reason": "Version requirements not documented",
+          "action": "Specify ArduinoJson 6.x requirement and ESP32 core compatibility"
+        },
+        {
+          "section": "Troubleshooting",
+          "reason": "Common issues not addressed",
+          "action": "Add section for ArduinoJson errors, SSL issues, connection timeouts"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "Bot token security",
+          "currentTutorial": "May not warn about exposure",
+          "finding": "Token grants complete control over bot - major security risk",
+          "officialSource": "https://docs.redhuntlabs.com/docs/exposure-risks/credentials/telegram_bot_token",
+          "sourceLabel": "RedHunt Labs",
+          "recommendedChange": "Add security warning section"
+        },
+        {
+          "claim": "ArduinoJson version",
+          "currentTutorial": "May not specify version",
+          "finding": "UniversalTelegramBot requires ArduinoJson v6.x",
+          "officialSource": "https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot/issues/87",
+          "sourceLabel": "GitHub Issue",
+          "recommendedChange": "Document version requirement"
+        },
+        {
+          "claim": "ESP32 core compatibility",
+          "currentTutorial": "May not mention",
+          "finding": "ESP32 core 2.0.2 has known issues, 2.0.1 is more stable",
+          "officialSource": "https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot/issues/270",
+          "sourceLabel": "GitHub Issue",
+          "recommendedChange": "Document known compatibility"
+        },
+        {
+          "claim": "UniversalTelegramBot library",
+          "currentTutorial": "Uses the library",
+          "finding": "Actively maintained at v1.3.0",
+          "officialSource": "https://docs.arduino.cc/libraries/universaltelegrambot/",
+          "sourceLabel": "Arduino Docs",
+          "recommendedChange": "No change needed"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/control-esp32-outputs-with-telegram",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot",
+          "purpose": "UniversalTelegramBot library",
+          "status": "Working",
+          "notes": "Actively maintained, v1.3.0"
+        },
+        {
+          "url": "https://docs.arduino.cc/libraries/universaltelegrambot/",
+          "purpose": "Arduino library documentation",
+          "status": "Working",
+          "notes": "Official Arduino docs"
+        },
+        {
+          "url": "https://t.me/botfather",
+          "purpose": "Telegram BotFather",
+          "status": "Working",
+          "notes": "Official bot creation tool"
+        }
+      ],
+
+      "auditFile": "audits/control-esp32-outputs-with-telegram.md"
     }
   ],
 
