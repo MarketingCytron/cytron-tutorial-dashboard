@@ -1941,6 +1941,220 @@
       ],
 
       "auditFile": "audits/getting-started-esp32-and-blynk.md"
+    },
+    {
+      "id": "esp32-digital-clock",
+      "title": "ESP32 Digital Clock",
+      "url": "https://my.cytron.io/tutorial/esp32-digital-clock",
+
+      "category": "ESP32",
+      "subcategory": "Time & Display",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32",
+        "OLED Display"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "NTP",
+        "WiFi",
+        "OLED SSD1306",
+        "I2C"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Digital Clock",
+        "NTP",
+        "Time",
+        "OLED",
+        "Display",
+        "WiFi",
+        "Internet Clock",
+        "SSD1306",
+        "Timezone"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-12",
+
+      "validity": {
+        "grade": "A",
+        "label": "Valid"
+      },
+
+      "decision": "Keep",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P3",
+
+      "technicalScore": 9,
+
+      "scores": {
+        "technicalAccuracy": 9,
+        "currentValidity": 9,
+        "esp32Compatibility": 9,
+        "arduinoIdeCompatibility": 9,
+        "codeQuality": 8,
+        "completeness": 8,
+        "beginnerFriendliness": 9,
+        "reproducibility": 8
+      },
+
+      "mainRecommendation": "Tutorial is technically sound. Consider adding timezone configuration guidance with POSIX timezone strings for accurate daylight saving time handling, and document the OLED I2C address difference between module manufacturers.",
+
+      "topIssues": [
+        {
+          "priority": "P3",
+          "title": "Timezone Configuration",
+          "section": "Time Setup",
+          "description": "Tutorial should explain how to adjust timezone offset for different regions. POSIX timezone strings are the proper solution for daylight saving.",
+          "recommendation": "Add timezone offset table and POSIX string option"
+        },
+        {
+          "priority": "P3",
+          "title": "OLED I2C Address Variation",
+          "section": "Hardware",
+          "description": "Different OLED modules use 0x3C or 0x3D addresses. Tutorial should mention how to determine the correct address.",
+          "recommendation": "Note address variation and include I2C scanner"
+        },
+        {
+          "priority": "P3",
+          "title": "NTP Sync Timing",
+          "section": "Code",
+          "description": "getLocalTime() may fail immediately after configTime() as sync is asynchronous. Should add brief delay or retry logic.",
+          "recommendation": "Add delay or retry after configTime"
+        },
+        {
+          "priority": "P3",
+          "title": "Offline Fallback",
+          "section": "Advanced",
+          "description": "Mention that RTC module is needed for timekeeping when WiFi is unavailable.",
+          "recommendation": "Note RTC option for offline use"
+        },
+        {
+          "priority": "P3",
+          "title": "WiFi Reconnection",
+          "section": "Code",
+          "description": "Clock should handle WiFi disconnection and reconnect gracefully.",
+          "recommendation": "Add WiFi reconnection logic"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Project Concept",
+          "reason": "Internet-connected clock is practical and educational"
+        },
+        {
+          "section": "NTP Usage",
+          "reason": "Built-in ESP32 functions (configTime, getLocalTime) are correct"
+        },
+        {
+          "section": "No RTC Required",
+          "reason": "Simplifies hardware for beginners"
+        },
+        {
+          "section": "OLED Display",
+          "reason": "Visual output makes project satisfying"
+        },
+        {
+          "section": "WiFi Setup",
+          "reason": "Standard WiFi connection code"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Timezone Configuration",
+          "reason": "Users need to adjust for their location",
+          "action": "Add timezone offset table and POSIX string option"
+        },
+        {
+          "section": "OLED I2C Address",
+          "reason": "Address varies by manufacturer",
+          "action": "Note 0x3C vs 0x3D and include scanner code"
+        },
+        {
+          "section": "NTP Sync Robustness",
+          "reason": "Initial sync may fail silently",
+          "action": "Add delay or retry after configTime"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "configTime usage",
+          "currentTutorial": "Uses built-in function",
+          "finding": "Correct approach for ESP32 NTP",
+          "officialSource": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/system_time.html",
+          "sourceLabel": "ESP-IDF Docs",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "NTP server",
+          "currentTutorial": "Uses pool.ntp.org",
+          "finding": "Standard, worldwide accessible NTP pool",
+          "officialSource": "https://randomnerdtutorials.com/esp32-date-time-ntp-client-server-arduino/",
+          "sourceLabel": "Random Nerd Tutorials",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "OLED library",
+          "currentTutorial": "Uses Adafruit SSD1306",
+          "finding": "Standard library, actively maintained",
+          "officialSource": "https://github.com/adafruit/Adafruit_SSD1306",
+          "sourceLabel": "Adafruit GitHub",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "Timezone handling",
+          "currentTutorial": "May use simple offset",
+          "finding": "POSIX strings better for DST accuracy",
+          "officialSource": "https://randomnerdtutorials.com/esp32-ntp-timezones-daylight-saving/",
+          "sourceLabel": "Random Nerd Tutorials",
+          "recommendedChange": "Add POSIX timezone option"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/esp32-digital-clock",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/system_time.html",
+          "purpose": "ESP-IDF System Time documentation",
+          "status": "Working",
+          "notes": "Official ESP32 time functions"
+        },
+        {
+          "url": "https://github.com/adafruit/Adafruit_SSD1306",
+          "purpose": "Adafruit SSD1306 library",
+          "status": "Working",
+          "notes": "OLED display driver"
+        },
+        {
+          "url": "https://randomnerdtutorials.com/esp32-ntp-timezones-daylight-saving/",
+          "purpose": "NTP Timezone reference",
+          "status": "Working",
+          "notes": "Timezone and DST handling guide"
+        }
+      ],
+
+      "auditFile": "audits/esp32-digital-clock.md"
     }
   ],
 
