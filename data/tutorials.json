@@ -1495,6 +1495,227 @@
       ],
 
       "auditFile": "audits/esp32-smart-light-control-with-app.md"
+    },
+    {
+      "id": "turn-on-led-finger-esp32-mediapipe",
+      "title": "ESP32 Hand Gesture Control with Mediapipe and OpenCV",
+      "url": "https://my.cytron.io/tutorial/turn-on-led-finger-esp32-mediapipe",
+
+      "category": "AI/ML + IoT",
+      "subcategory": "Computer Vision",
+
+      "targetLevel": "Intermediate",
+
+      "products": [
+        "ESP32"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "Python",
+        "MediaPipe",
+        "OpenCV",
+        "PySerial",
+        "Serial Communication"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "MediaPipe",
+        "OpenCV",
+        "Hand Tracking",
+        "Gesture Control",
+        "LED",
+        "Python",
+        "AI",
+        "Machine Learning",
+        "Computer Vision",
+        "Serial",
+        "Webcam"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-12",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 8,
+
+      "scores": {
+        "technicalAccuracy": 8,
+        "currentValidity": 8,
+        "esp32Compatibility": 9,
+        "pythonCompatibility": 7,
+        "codeQuality": 8,
+        "completeness": 7,
+        "beginnerFriendliness": 5,
+        "reproducibility": 6
+      },
+
+      "mainRecommendation": "Update Python version requirements to reflect current MediaPipe compatibility (3.9-3.12), add virtual environment setup instructions, and include cross-platform serial port guidance. Consider relabeling as Intermediate level due to multi-technology complexity.",
+
+      "topIssues": [
+        {
+          "priority": "P2",
+          "title": "Python Version Compatibility",
+          "section": "Prerequisites",
+          "description": "Tutorial specifies Python 3.10, but should clarify MediaPipe supports 3.9-3.12. Python 3.13 is NOT supported.",
+          "recommendation": "Specify supported versions and warn about 3.13 incompatibility"
+        },
+        {
+          "priority": "P2",
+          "title": "Virtual Environment Not Mentioned",
+          "section": "Setup",
+          "description": "Best practice is to use venv or conda for Python projects to avoid dependency conflicts.",
+          "recommendation": "Add virtual environment setup instructions"
+        },
+        {
+          "priority": "P2",
+          "title": "Cross-Platform Serial Port Guidance",
+          "section": "Setup",
+          "description": "Windows uses COM ports, Linux/Mac use /dev/tty*. This difference should be documented.",
+          "recommendation": "Document platform-specific serial port configuration"
+        },
+        {
+          "priority": "P2",
+          "title": "Difficulty Level Mismatch",
+          "section": "Overall",
+          "description": "Project combines Python, AI/ML, OpenCV, and hardware - more appropriate for Intermediate level, not Beginner.",
+          "recommendation": "Relabel as Intermediate difficulty"
+        },
+        {
+          "priority": "P3",
+          "title": "Troubleshooting Section Missing",
+          "section": "Troubleshooting",
+          "description": "Common issues like webcam access, serial port conflicts, and MediaPipe installation errors should be addressed.",
+          "recommendation": "Add troubleshooting section"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Project Concept",
+          "reason": "Excellent introduction to AI + hardware integration"
+        },
+        {
+          "section": "MediaPipe Usage",
+          "reason": "Correct implementation of hand tracking with 21 landmarks"
+        },
+        {
+          "section": "ESP32 Code",
+          "reason": "Standard, correct Arduino serial reading"
+        },
+        {
+          "section": "Hardware Diagram",
+          "reason": "LED circuit setup with resistors is accurate"
+        },
+        {
+          "section": "Real-Time Feedback",
+          "reason": "Visual demonstration of gesture recognition"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Python Version Requirements",
+          "reason": "MediaPipe has specific version requirements",
+          "action": "Specify Python 3.9-3.12, warn about 3.13 incompatibility"
+        },
+        {
+          "section": "Virtual Environment Setup",
+          "reason": "Best practice for Python projects",
+          "action": "Add venv/conda setup instructions"
+        },
+        {
+          "section": "Serial Port Configuration",
+          "reason": "Different platforms use different port naming",
+          "action": "Document Windows (COM) vs Linux/Mac (/dev/tty) differences"
+        },
+        {
+          "section": "Difficulty Level",
+          "reason": "Multi-technology project is not beginner-friendly",
+          "action": "Change from Beginner to Intermediate"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "Python 3.10",
+          "currentTutorial": "Recommends Python 3.10",
+          "finding": "MediaPipe 1.0.0 supports 3.9-3.12, NOT 3.13",
+          "officialSource": "https://pypi.org/project/mediapipe/",
+          "sourceLabel": "PyPI MediaPipe",
+          "recommendedChange": "Clarify supported versions"
+        },
+        {
+          "claim": "MediaPipe installation",
+          "currentTutorial": "Uses pip install",
+          "finding": "MediaPipe 1.0.0 is current (July 2026)",
+          "officialSource": "https://ai.google.dev/edge/mediapipe/solutions/setup_python",
+          "sourceLabel": "Google AI Edge",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "Serial communication",
+          "currentTutorial": "Uses pyserial",
+          "finding": "Standard approach, cross-platform compatible",
+          "officialSource": "https://www.dfrobot.com/blog-814.html",
+          "sourceLabel": "DFRobot Tutorial",
+          "recommendedChange": "Add platform-specific notes"
+        },
+        {
+          "claim": "Hand landmarks",
+          "currentTutorial": "Uses 21 landmarks",
+          "finding": "Correct MediaPipe Hands implementation",
+          "officialSource": "https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker",
+          "sourceLabel": "MediaPipe Hands Docs",
+          "recommendedChange": "No change needed"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/turn-on-led-finger-esp32-mediapipe",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://pypi.org/project/mediapipe/",
+          "purpose": "MediaPipe PyPI page",
+          "status": "Working",
+          "notes": "Version 1.0.0 current (July 2026)"
+        },
+        {
+          "url": "https://ai.google.dev/edge/mediapipe/solutions/setup_python",
+          "purpose": "MediaPipe Python setup guide",
+          "status": "Working",
+          "notes": "Official Google documentation"
+        },
+        {
+          "url": "https://circuitdigest.com/microcontroller-projects/controlling-leds-using-hand-gestures-with-esp32-and-python",
+          "purpose": "Similar tutorial reference",
+          "status": "Working",
+          "notes": "Circuit Digest hand gesture tutorial"
+        }
+      ],
+
+      "auditFile": "audits/turn-on-led-finger-esp32-mediapipe.md"
     }
   ],
 
