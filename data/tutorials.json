@@ -1716,6 +1716,231 @@
       ],
 
       "auditFile": "audits/turn-on-led-finger-esp32-mediapipe.md"
+    },
+    {
+      "id": "getting-started-esp32-and-blynk",
+      "title": "Getting Started with ESP32 & Blynk",
+      "url": "https://my.cytron.io/tutorial/getting-started-esp32-and-blynk",
+
+      "category": "IoT",
+      "subcategory": "Blynk Platform",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "Robo ESP32",
+        "DHT11"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "Blynk IoT",
+        "WiFi",
+        "DHT11"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Blynk",
+        "IoT",
+        "Temperature",
+        "Humidity",
+        "DHT11",
+        "Cloud",
+        "Dashboard",
+        "Mobile App",
+        "Robo ESP32",
+        "Smart Home"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-12",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 7,
+
+      "scores": {
+        "technicalAccuracy": 8,
+        "currentValidity": 7,
+        "esp32Compatibility": 9,
+        "blynkCompatibility": 7,
+        "codeQuality": 7,
+        "completeness": 7,
+        "beginnerFriendliness": 8,
+        "reproducibility": 7
+      },
+
+      "mainRecommendation": "Ensure tutorial uses Blynk IoT (2.0) code structure with BLYNK_TEMPLATE_ID and BLYNK_TEMPLATE_NAME macros. Document free plan limitations and add Adafruit Unified Sensor library dependency. Blynk Legacy is discontinued.",
+
+      "topIssues": [
+        {
+          "priority": "P2",
+          "title": "Blynk 2.0 Code Structure",
+          "section": "Code",
+          "description": "Must use BLYNK_TEMPLATE_ID, BLYNK_TEMPLATE_NAME, and BLYNK_AUTH_TOKEN macros. Legacy single auth token approach no longer works.",
+          "recommendation": "Ensure all three Blynk 2.0 macros are included"
+        },
+        {
+          "priority": "P2",
+          "title": "Free Plan Limitations Not Documented",
+          "section": "Introduction",
+          "description": "Blynk free tier has limits on devices (2), datastreams (10 per template), and features that beginners should know.",
+          "recommendation": "Document free plan limitations upfront"
+        },
+        {
+          "priority": "P2",
+          "title": "Adafruit Unified Sensor Dependency",
+          "section": "Library Setup",
+          "description": "DHT sensor library requires Adafruit Unified Sensor library. Missing this causes compilation errors.",
+          "recommendation": "Add explicit instruction for both libraries"
+        },
+        {
+          "priority": "P3",
+          "title": "Datastream Configuration",
+          "section": "Blynk Setup",
+          "description": "Virtual pins now require datastream configuration in Blynk Console before use. This differs from legacy approach.",
+          "recommendation": "Add step-by-step datastream setup guide"
+        },
+        {
+          "priority": "P3",
+          "title": "Blynk.Edgent vs BlynkSimpleEsp32",
+          "section": "Advanced",
+          "description": "Tutorial should clarify when to use simple connection vs Edgent (which includes WiFi provisioning).",
+          "recommendation": "Brief explanation of Edgent benefits"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Project Concept",
+          "reason": "Temperature/humidity monitoring via Blynk is practical"
+        },
+        {
+          "section": "Robo ESP32 Setup",
+          "reason": "Hardware configuration is accurate"
+        },
+        {
+          "section": "DHT11 Wiring",
+          "reason": "Sensor connection diagram is valid"
+        },
+        {
+          "section": "Blynk Dashboard",
+          "reason": "Mobile monitoring concept is valuable"
+        },
+        {
+          "section": "Real-Time Data",
+          "reason": "Sensor to cloud workflow is educational"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Blynk 2.0 Code Structure",
+          "reason": "Legacy code won't connect",
+          "action": "Add BLYNK_TEMPLATE_ID and BLYNK_TEMPLATE_NAME macros"
+        },
+        {
+          "section": "Library Installation",
+          "reason": "Missing dependency causes errors",
+          "action": "Add Adafruit Unified Sensor library instruction"
+        },
+        {
+          "section": "Free Plan Limitations",
+          "reason": "Users should know limits",
+          "action": "Document 2 devices, 10 datastreams per template"
+        },
+        {
+          "section": "Datastream Setup",
+          "reason": "Different from legacy approach",
+          "action": "Add Blynk Console configuration steps"
+        }
+      ],
+
+      "remove": [
+        {
+          "section": "Legacy Blynk References",
+          "reason": "Blynk Legacy discontinued June 2022",
+          "action": "Remove any legacy code or screenshots"
+        }
+      ],
+
+      "evidence": [
+        {
+          "claim": "Blynk library",
+          "currentTutorial": "Uses Blynk library",
+          "finding": "Version 1.3.2 current, actively maintained",
+          "officialSource": "https://docs.arduino.cc/libraries/blynk/",
+          "sourceLabel": "Arduino Docs",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "Auth token only",
+          "currentTutorial": "May use legacy approach",
+          "finding": "Blynk 2.0 requires Template ID + Name + Token",
+          "officialSource": "https://docs.blynk.io/en/troubleshooting/blynk-1.0-and-2.0-comparison/migrate-from-1.0-to-2.0",
+          "sourceLabel": "Blynk Migration Guide",
+          "recommendedChange": "Update to 3-macro approach"
+        },
+        {
+          "claim": "Free plan limits",
+          "currentTutorial": "May not mention",
+          "finding": "2 devices, 10 datastreams per template on free tier",
+          "officialSource": "https://www.blynk.io/pricing",
+          "sourceLabel": "Blynk Pricing",
+          "recommendedChange": "Document limitations"
+        },
+        {
+          "claim": "DHT library dependency",
+          "currentTutorial": "May not mention Unified Sensor",
+          "finding": "Adafruit Unified Sensor required",
+          "officialSource": "https://learn.adafruit.com/dht/using-a-dhtxx-sensor-with-arduino",
+          "sourceLabel": "Adafruit DHT Guide",
+          "recommendedChange": "Add dependency note"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/getting-started-esp32-and-blynk",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://blynk.cloud",
+          "purpose": "Blynk IoT Console",
+          "status": "Working",
+          "notes": "Current Blynk platform (not legacy)"
+        },
+        {
+          "url": "https://github.com/Blynk-Technologies/blynk-library",
+          "purpose": "Blynk Library GitHub",
+          "status": "Working",
+          "notes": "Version 1.3.2 current"
+        },
+        {
+          "url": "https://docs.blynk.io/en/troubleshooting/blynk-1.0-and-2.0-comparison/migrate-from-1.0-to-2.0",
+          "purpose": "Blynk Migration Guide",
+          "status": "Working",
+          "notes": "Legacy to IoT migration documentation"
+        }
+      ],
+
+      "auditFile": "audits/getting-started-esp32-and-blynk.md"
     }
   ],
 
