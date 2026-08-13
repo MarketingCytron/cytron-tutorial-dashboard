@@ -2601,6 +2601,226 @@
       ],
 
       "auditFile": "audits/esp32-air-quality-monitoring.md"
+    },
+    {
+      "id": "esp32-smoke-detection-alarm",
+      "title": "ESP32 Smoke Detection Alarm",
+      "url": "https://my.cytron.io/tutorial/esp32-smoke-detection-alarm",
+
+      "category": "IoT",
+      "subcategory": "Safety & Alerts",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "Robo ESP32",
+        "MQ2 Gas Sensor",
+        "Buzzer"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "MQ2",
+        "NeoPixel",
+        "Buzzer",
+        "ADC"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Smoke Detector",
+        "MQ2",
+        "Gas Sensor",
+        "Fire Alarm",
+        "Buzzer",
+        "NeoPixel",
+        "Safety",
+        "Alert System",
+        "Robo ESP32"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 8,
+
+      "scores": {
+        "technicalAccuracy": 8,
+        "currentValidity": 8,
+        "esp32Compatibility": 9,
+        "arduinoIdeCompatibility": 9,
+        "codeQuality": 7,
+        "completeness": 7,
+        "beginnerFriendliness": 8,
+        "reproducibility": 8
+      },
+
+      "mainRecommendation": "Add safety disclaimer that this is for educational purposes only and not a replacement for certified smoke detectors. Include sensor calibration and preheat time documentation (24-48 hours for new sensors), and add threshold adjustment guidance.",
+
+      "topIssues": [
+        {
+          "priority": "P1",
+          "title": "Safety Disclaimer Missing",
+          "section": "Introduction",
+          "description": "Tutorial creates a smoke detector but must clarify this is for educational purposes only and NOT a replacement for certified smoke alarms (UL 217, EN 14604).",
+          "recommendation": "Add prominent safety disclaimer at top"
+        },
+        {
+          "priority": "P2",
+          "title": "Sensor Calibration Not Documented",
+          "section": "Sensor Setup",
+          "description": "MQ2 requires preheat time (20 seconds minimum, 24-48 hours for new sensors) and load resistor calibration for accurate readings.",
+          "recommendation": "Add calibration and warm-up section"
+        },
+        {
+          "priority": "P2",
+          "title": "Threshold Adjustment Guidance",
+          "section": "Code",
+          "description": "Users need guidance on how to adjust detection threshold based on their environment. Default values may not suit all conditions.",
+          "recommendation": "Add threshold tuning instructions"
+        },
+        {
+          "priority": "P3",
+          "title": "ADC Voltage Considerations",
+          "section": "Wiring",
+          "description": "MQ2 outputs 0-5V but ESP32 ADC accepts 0-3.3V. Should document if using analog or digital output.",
+          "recommendation": "Clarify voltage handling approach"
+        },
+        {
+          "priority": "P3",
+          "title": "False Alarm Prevention",
+          "section": "Troubleshooting",
+          "description": "Should mention factors that can cause false alarms (cooking fumes, humidity, sensor warm-up) and how to address them.",
+          "recommendation": "Add troubleshooting section"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Project Concept",
+          "reason": "Smoke detection alarm is practical and educational"
+        },
+        {
+          "section": "Robo ESP32 Usage",
+          "reason": "Built-in NeoPixels simplify visual alerts"
+        },
+        {
+          "section": "MQ-2 Sensor",
+          "reason": "Appropriate sensor for smoke/gas detection"
+        },
+        {
+          "section": "Buzzer Alert",
+          "reason": "Audible alarm is essential for detection systems"
+        },
+        {
+          "section": "Adafruit NeoPixel Library",
+          "reason": "Well-maintained, ESP32 compatible"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Safety Disclaimer",
+          "reason": "Life safety requires proper warnings",
+          "action": "Add prominent disclaimer about educational use only"
+        },
+        {
+          "section": "Sensor Warm-up",
+          "reason": "Critical for accurate readings",
+          "action": "Add 24-48 hour burn-in for new sensors"
+        },
+        {
+          "section": "Threshold Adjustment",
+          "reason": "Users need calibration guidance",
+          "action": "Add instructions for tuning sensitivity"
+        },
+        {
+          "section": "Troubleshooting",
+          "reason": "Users need help with common issues",
+          "action": "Add false alarm prevention tips"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "MQ2 detection range",
+          "currentTutorial": "Uses MQ2 sensor",
+          "finding": "200-10,000 ppm, detects LPG, smoke, CO, H2",
+          "officialSource": "https://lastminuteengineers.com/mq2-gas-senser-arduino-tutorial/",
+          "sourceLabel": "Last Minute Engineers",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "Preheat time",
+          "currentTutorial": "May mention 20 seconds",
+          "finding": "24-48 hours for new sensors, 5-10 min routine",
+          "officialSource": "https://wiki.seeedstudio.com/Grove-Gas_Sensor-MQ2/",
+          "sourceLabel": "Seeed Studio Wiki",
+          "recommendedChange": "Add calibration section"
+        },
+        {
+          "claim": "NeoPixel library",
+          "currentTutorial": "Uses Adafruit NeoPixel",
+          "finding": "Version 1.15.2+, ESP32 compatible",
+          "officialSource": "https://github.com/adafruit/Adafruit_NeoPixel",
+          "sourceLabel": "Adafruit GitHub",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "tone() support",
+          "currentTutorial": "May use tone() for buzzer",
+          "finding": "Supported since ESP32 Arduino core v2.0.3",
+          "officialSource": "https://makeabilitylab.github.io/physcomp/esp32/tone.html",
+          "sourceLabel": "Makeability Lab",
+          "recommendedChange": "No change needed"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/esp32-smoke-detection-alarm",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://www.cytron.io/p-mq2-smoke-lpg-co-sensor-module",
+          "purpose": "Cytron MQ2 product page",
+          "status": "Working",
+          "notes": "Hardware reference"
+        },
+        {
+          "url": "https://github.com/adafruit/Adafruit_NeoPixel",
+          "purpose": "Adafruit NeoPixel library",
+          "status": "Working",
+          "notes": "Version 1.15.2+ current"
+        },
+        {
+          "url": "https://lastminuteengineers.com/mq2-gas-senser-arduino-tutorial/",
+          "purpose": "MQ2 sensor guide",
+          "status": "Working",
+          "notes": "Comprehensive MQ2 documentation"
+        }
+      ],
+
+      "auditFile": "audits/esp32-smoke-detection-alarm.md"
     }
   ],
 
