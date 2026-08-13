@@ -2155,12 +2155,239 @@
       ],
 
       "auditFile": "audits/esp32-digital-clock.md"
+    },
+    {
+      "id": "dot-matrix-clock-ntp-esp32",
+      "title": "Dot Matrix Clock with NTP Server Using ESP32",
+      "url": "https://my.cytron.io/tutorial/dot-matrix-clock-with-ntp-server-using-esp32",
+
+      "category": "ESP32",
+      "subcategory": "Time & Display",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32",
+        "MAX7219 Dot Matrix"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "NTP",
+        "WiFi",
+        "MAX7219",
+        "SPI",
+        "MD_Parola",
+        "MD_MAX72XX"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Dot Matrix",
+        "MAX7219",
+        "NTP",
+        "Clock",
+        "LED Matrix",
+        "Scrolling Text",
+        "WiFi",
+        "Time",
+        "Display"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 8,
+
+      "scores": {
+        "technicalAccuracy": 8,
+        "currentValidity": 7,
+        "esp32Compatibility": 9,
+        "arduinoIdeCompatibility": 8,
+        "codeQuality": 7,
+        "completeness": 7,
+        "beginnerFriendliness": 7,
+        "reproducibility": 7
+      },
+
+      "mainRecommendation": "Update library versions (MD_Parola 3.7.5, MD_MAX72XX 3.5.1), consider using ESP32's built-in configTime() instead of NTPClient library, add hardware type identification guidance for different MAX7219 modules, and document non-default SPI pin usage.",
+
+      "topIssues": [
+        {
+          "priority": "P2",
+          "title": "Library Versions Outdated",
+          "section": "Library Setup",
+          "description": "Tutorial specifies MD_Parola 3.3.0 and MD_MAX72XX 3.2.1, but current versions are 3.7.5 and 3.5.1 respectively.",
+          "recommendation": "Update to latest library versions"
+        },
+        {
+          "priority": "P2",
+          "title": "NTPClient vs Built-in configTime",
+          "section": "Code",
+          "description": "ESP32 has built-in NTP support via configTime() which is simpler and doesn't require external library. Tutorial uses NTPClient library which adds unnecessary dependency.",
+          "recommendation": "Document configTime() as alternative or primary approach"
+        },
+        {
+          "priority": "P2",
+          "title": "Hardware Type Not Explained",
+          "section": "Hardware",
+          "description": "MAX7219 modules have different wiring (FC16_HW, ICSTATION_HW, GENERIC_HW). Tutorial uses ICSTATION_HW but doesn't explain how to identify module type.",
+          "recommendation": "Add hardware type identification guide"
+        },
+        {
+          "priority": "P3",
+          "title": "Non-Default SPI Pins",
+          "section": "Wiring",
+          "description": "Tutorial uses GPIO 25/26/27 instead of ESP32's default VSPI pins (GPIO 18/23). While valid, this should be explained for beginners.",
+          "recommendation": "Explain pin choice and mention defaults"
+        },
+        {
+          "priority": "P3",
+          "title": "Timezone Hardcoded",
+          "section": "Configuration",
+          "description": "GMT+8 offset (28800 seconds) is hardcoded without explanation of how to change for different regions.",
+          "recommendation": "Add timezone configuration guide"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Project Concept",
+          "reason": "Dot matrix clock with NTP is a great visual project"
+        },
+        {
+          "section": "4-in-1 Module",
+          "reason": "Using chained modules creates impressive display"
+        },
+        {
+          "section": "Scrolling Effects",
+          "reason": "MD_Parola effects make display engaging"
+        },
+        {
+          "section": "WiFi Setup",
+          "reason": "Standard WiFi connection code is correct"
+        },
+        {
+          "section": "Time Display",
+          "reason": "Alternating colon effect is nice visual touch"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Library Versions",
+          "reason": "Outdated versions specified",
+          "action": "Update to MD_Parola 3.7.5, MD_MAX72XX 3.5.1"
+        },
+        {
+          "section": "Hardware Type Section",
+          "reason": "Users may have different module types",
+          "action": "Add guide to identify FC16_HW, ICSTATION_HW, GENERIC_HW"
+        },
+        {
+          "section": "NTP Approach",
+          "reason": "Built-in approach is simpler",
+          "action": "Document configTime() as alternative to NTPClient"
+        },
+        {
+          "section": "Timezone Configuration",
+          "reason": "Users need to adjust for their region",
+          "action": "Add timezone offset table and calculation guide"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "MD_Parola version",
+          "currentTutorial": "Uses 3.3.0",
+          "finding": "Current version is 3.7.5 (October 2025)",
+          "officialSource": "https://www.arduinolibraries.info/libraries/md_parola",
+          "sourceLabel": "Arduino Libraries",
+          "recommendedChange": "Update version number"
+        },
+        {
+          "claim": "MD_MAX72XX version",
+          "currentTutorial": "Uses 3.2.1",
+          "finding": "Current version is 3.5.1 (December 2023)",
+          "officialSource": "https://www.arduinolibraries.info/libraries/md-max72-xx",
+          "sourceLabel": "Arduino Libraries",
+          "recommendedChange": "Update version number"
+        },
+        {
+          "claim": "NTPClient library",
+          "currentTutorial": "Uses NTPClient library",
+          "finding": "ESP32 has built-in configTime() which is simpler",
+          "officialSource": "https://randomnerdtutorials.com/esp32-date-time-ntp-client-server-arduino/",
+          "sourceLabel": "Random Nerd Tutorials",
+          "recommendedChange": "Document both options"
+        },
+        {
+          "claim": "Hardware types",
+          "currentTutorial": "Uses ICSTATION_HW",
+          "finding": "Multiple types exist (FC16_HW, GENERIC_HW, ICSTATION_HW)",
+          "officialSource": "https://lastminuteengineers.com/max7219-dot-matrix-arduino-tutorial/",
+          "sourceLabel": "Last Minute Engineers",
+          "recommendedChange": "Add identification guide"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/dot-matrix-clock-with-ntp-server-using-esp32",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://gist.github.com/IdrisCytron/76c76822d4ddc255b94e05b283560691",
+          "purpose": "Sample code on GitHub",
+          "status": "Working",
+          "notes": "Cytron official code sample"
+        },
+        {
+          "url": "https://www.arduinolibraries.info/libraries/md_parola",
+          "purpose": "MD_Parola library info",
+          "status": "Working",
+          "notes": "Version 3.7.5 current"
+        },
+        {
+          "url": "https://www.arduinolibraries.info/libraries/md-max72-xx",
+          "purpose": "MD_MAX72XX library info",
+          "status": "Working",
+          "notes": "Version 3.5.1 current"
+        },
+        {
+          "url": "https://majicdesigns.github.io/MD_MAX72XX/page_hardware.html",
+          "purpose": "Hardware type documentation",
+          "status": "Working",
+          "notes": "Official hardware identification guide"
+        }
+      ],
+
+      "auditFile": "audits/dot-matrix-clock-ntp-esp32.md"
     }
   ],
 
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2026-08-11",
+    "lastUpdated": "2026-08-13",
     "description": "Cytron Tutorial Validation Dashboard data file"
   }
 }
