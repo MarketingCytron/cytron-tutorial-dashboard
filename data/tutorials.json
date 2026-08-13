@@ -3044,6 +3044,231 @@
       ],
 
       "auditFile": "audits/farm-automation-system-roboesp32.md"
+    },
+    {
+      "id": "esp32-water-tank-monitoring",
+      "title": "ESP32 Water Tank Monitoring",
+      "url": "https://my.cytron.io/tutorial/esp32-water-tank-monitoring",
+
+      "category": "IoT",
+      "subcategory": "Water Management",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "Robo ESP32",
+        "Ultrasonic SR04P",
+        "Grove LCD RGB",
+        "NeoPixel LED"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "WiFi",
+        "WebServer",
+        "Ultrasonic Sensor",
+        "I2C LCD"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Water Tank",
+        "Level Monitoring",
+        "Ultrasonic",
+        "SR04P",
+        "Web Dashboard",
+        "LCD Display",
+        "NeoPixel",
+        "IoT",
+        "Real-time"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "A",
+        "label": "Valid"
+      },
+
+      "decision": "Keep",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P3",
+
+      "technicalScore": 9,
+
+      "scores": {
+        "technicalAccuracy": 9,
+        "currentValidity": 9,
+        "esp32Compatibility": 9,
+        "arduinoIdeCompatibility": 9,
+        "codeQuality": 8,
+        "completeness": 8,
+        "beginnerFriendliness": 8,
+        "reproducibility": 8
+      },
+
+      "mainRecommendation": "Tutorial is technically sound. Consider adding voltage level considerations for HC-SR04 vs SR04P sensors, document minimum sensor-to-water distance requirement, and add guidance for waterproofing the sensor for outdoor installations.",
+
+      "topIssues": [
+        {
+          "priority": "P3",
+          "title": "Sensor Voltage Compatibility",
+          "section": "Hardware",
+          "description": "SR04P is 3.3V compatible, but if users substitute HC-SR04 (5V), they need a voltage divider on Echo pin.",
+          "recommendation": "Add note about sensor compatibility differences"
+        },
+        {
+          "priority": "P3",
+          "title": "Minimum Distance Requirement",
+          "section": "Sensor Setup",
+          "description": "Ultrasonic sensors have a dead zone (~2-4cm). Sensor must be mounted above maximum water level.",
+          "recommendation": "Document dead zone and mounting requirements"
+        },
+        {
+          "priority": "P3",
+          "title": "Waterproofing Not Addressed",
+          "section": "Installation",
+          "description": "For outdoor/real tank installations, sensor waterproofing or JSN-SR04T variant should be mentioned.",
+          "recommendation": "Add outdoor installation tips"
+        },
+        {
+          "priority": "P3",
+          "title": "Tank Calibration",
+          "section": "Code",
+          "description": "Users need to input their tank height for accurate percentage calculation.",
+          "recommendation": "Add tank dimension calibration instructions"
+        },
+        {
+          "priority": "P3",
+          "title": "WiFi Reconnection",
+          "section": "Robustness",
+          "description": "Long-running IoT devices should handle WiFi disconnection with automatic reconnection.",
+          "recommendation": "Add WiFi reconnection logic"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Project Concept",
+          "reason": "Water tank monitoring is practical and widely needed"
+        },
+        {
+          "section": "SR04P Sensor Choice",
+          "reason": "Correct 3.3V-compatible sensor for ESP32"
+        },
+        {
+          "section": "Web Dashboard",
+          "reason": "Real-time browser-based monitoring"
+        },
+        {
+          "section": "LCD Display",
+          "reason": "Local visual feedback without needing phone/computer"
+        },
+        {
+          "section": "NeoPixel Indicators",
+          "reason": "Quick visual status at a glance"
+        },
+        {
+          "section": "Multiple Outputs",
+          "reason": "Web + LCD + LED provides comprehensive feedback"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Sensor Compatibility",
+          "reason": "Users may substitute sensors",
+          "action": "Add note about SR04P vs HC-SR04 voltage differences"
+        },
+        {
+          "section": "Dead Zone Warning",
+          "reason": "Common installation mistake",
+          "action": "Document 2-4cm minimum distance requirement"
+        },
+        {
+          "section": "Tank Calibration",
+          "reason": "Required for accurate readings",
+          "action": "Add calibration instructions for tank height"
+        },
+        {
+          "section": "Outdoor Installation",
+          "reason": "Real-world deployment needs",
+          "action": "Mention waterproof sensor alternatives"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "SR04P sensor",
+          "currentTutorial": "Uses SR04P sensor",
+          "finding": "3.3V compatible, safe for ESP32 direct connect",
+          "officialSource": "https://microcontrollerslab.com/hc-sr04-ultrasonic-esp32-tutorial/",
+          "sourceLabel": "Microcontrollers Lab",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "WebServer library",
+          "currentTutorial": "Uses built-in WebServer",
+          "finding": "Standard approach for ESP32 web servers",
+          "officialSource": "https://docs.arduino.cc/libraries/webserver/",
+          "sourceLabel": "Arduino Docs",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "rgb_lcd library",
+          "currentTutorial": "Uses Grove LCD",
+          "finding": "Version 1.0.2 current, MIT license",
+          "officialSource": "https://www.arduinolibraries.info/libraries/grove-lcd-rgb-backlight",
+          "sourceLabel": "Arduino Libraries",
+          "recommendedChange": "No change needed"
+        },
+        {
+          "claim": "Distance calculation",
+          "currentTutorial": "Uses standard formula",
+          "finding": "0.034 cm/µs is correct speed of sound",
+          "officialSource": "https://randomnerdtutorials.com/esp32-hc-sr04-ultrasonic-arduino/",
+          "sourceLabel": "Random Nerd Tutorials",
+          "recommendedChange": "No change needed"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/esp32-water-tank-monitoring",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://randomnerdtutorials.com/esp32-hc-sr04-ultrasonic-arduino/",
+          "purpose": "HC-SR04 reference guide",
+          "status": "Working",
+          "notes": "Ultrasonic sensor with ESP32"
+        },
+        {
+          "url": "https://www.arduinolibraries.info/libraries/grove-lcd-rgb-backlight",
+          "purpose": "Grove LCD library info",
+          "status": "Working",
+          "notes": "Version 1.0.2 current"
+        },
+        {
+          "url": "https://zbotic.in/water-level-sensor-guide-tank-monitoring-with-arduino-and-esp32/",
+          "purpose": "Water level sensor guide",
+          "status": "Working",
+          "notes": "Comprehensive monitoring guide"
+        }
+      ],
+
+      "auditFile": "audits/esp32-water-tank-monitoring.md"
     }
   ],
 
