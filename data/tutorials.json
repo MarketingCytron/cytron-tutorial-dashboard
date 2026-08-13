@@ -2382,6 +2382,225 @@
       ],
 
       "auditFile": "audits/dot-matrix-clock-ntp-esp32.md"
+    },
+    {
+      "id": "esp32-air-quality-monitoring",
+      "title": "ESP32 Air Quality Monitoring",
+      "url": "https://my.cytron.io/tutorial/esp32-air-quality-monitoring",
+
+      "category": "IoT",
+      "subcategory": "Environmental Monitoring",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32",
+        "MQ135 Gas Sensor"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "MQ135",
+        "WiFi",
+        "Web Server",
+        "ADC"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Air Quality",
+        "MQ135",
+        "Gas Sensor",
+        "Environmental",
+        "Monitoring",
+        "WiFi",
+        "Web Interface",
+        "Pollution",
+        "IoT"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 7,
+
+      "scores": {
+        "technicalAccuracy": 7,
+        "currentValidity": 8,
+        "esp32Compatibility": 8,
+        "arduinoIdeCompatibility": 8,
+        "codeQuality": 7,
+        "completeness": 6,
+        "beginnerFriendliness": 7,
+        "reproducibility": 6
+      },
+
+      "mainRecommendation": "Add sensor calibration guidance (preheat time, R0 calibration), document ESP32 ADC voltage level considerations (3.3V vs 5V), and clarify the meaning of raw ADC values vs actual PPM readings. Include sensor warm-up requirements prominently.",
+
+      "topIssues": [
+        {
+          "priority": "P2",
+          "title": "Sensor Calibration Not Documented",
+          "section": "Sensor Setup",
+          "description": "MQ135 requires proper calibration (R0 value in clean air) for accurate PPM readings. Without calibration, readings are meaningless. New sensors need 24-48 hours burn-in.",
+          "recommendation": "Add R0 calibration process in clean air"
+        },
+        {
+          "priority": "P2",
+          "title": "Preheat Time Not Mentioned",
+          "section": "Hardware Setup",
+          "description": "MQ sensors require warm-up time (20-60 minutes for routine use, 24-48 hours for new sensors) before giving stable readings.",
+          "recommendation": "Add prominent preheat warning"
+        },
+        {
+          "priority": "P2",
+          "title": "ADC Voltage Level Consideration",
+          "section": "Wiring",
+          "description": "MQ135 outputs 0-5V but ESP32 ADC accepts 0-3.3V max. Connecting directly can damage ESP32.",
+          "recommendation": "Add voltage divider circuit diagram"
+        },
+        {
+          "priority": "P2",
+          "title": "Raw Values vs PPM Confusion",
+          "section": "Code",
+          "description": "Thresholds of 500-1500 appear to be raw ADC values, not calibrated PPM readings. Users may misinterpret these values.",
+          "recommendation": "Clarify value interpretation and conversion"
+        },
+        {
+          "priority": "P3",
+          "title": "Web Server Library Not Specified",
+          "section": "Libraries",
+          "description": "Should document whether using standard WebServer or ESPAsyncWebServer library for the interactive display.",
+          "recommendation": "Document library requirements"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Project Concept",
+          "reason": "Air quality monitoring is practical and relevant"
+        },
+        {
+          "section": "Web Interface",
+          "reason": "Real-time browser display is user-friendly"
+        },
+        {
+          "section": "Visual Indicators",
+          "reason": "Color-coded warnings (yellow/red) are intuitive"
+        },
+        {
+          "section": "WiFi Connectivity",
+          "reason": "Accessible from any device on network"
+        },
+        {
+          "section": "ESP32 Choice",
+          "reason": "Good platform for IoT monitoring"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Sensor Calibration",
+          "reason": "Required for accurate readings",
+          "action": "Add R0 calibration process in clean air environment"
+        },
+        {
+          "section": "Preheat Warning",
+          "reason": "Critical for sensor accuracy",
+          "action": "Add prominent warning about 24-48 hour burn-in for new sensors"
+        },
+        {
+          "section": "Voltage Divider",
+          "reason": "Prevents hardware damage",
+          "action": "Add circuit diagram for 5V to 3.3V conversion"
+        },
+        {
+          "section": "Value Interpretation",
+          "reason": "Users need to understand readings",
+          "action": "Clarify raw ADC values vs calibrated PPM"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "MQ135 calibration",
+          "currentTutorial": "May not mention calibration",
+          "finding": "Requires R0 calibration in clean air for accurate PPM",
+          "officialSource": "https://dronebotworkshop.com/air-quality/",
+          "sourceLabel": "DroneBot Workshop",
+          "recommendedChange": "Add calibration section"
+        },
+        {
+          "claim": "Preheat time",
+          "currentTutorial": "May mention 20 seconds",
+          "finding": "24-48 hours for new sensors, 30-60 min routine",
+          "officialSource": "https://pcbsync.com/mq-135-air-quality-sensor-arduino/",
+          "sourceLabel": "PCBSync Guide",
+          "recommendedChange": "Document warm-up requirements"
+        },
+        {
+          "claim": "Voltage levels",
+          "currentTutorial": "May not address",
+          "finding": "ESP32 ADC is 3.3V max, MQ135 outputs 5V",
+          "officialSource": "https://embeddedprep.com/esp32-with-mq135/",
+          "sourceLabel": "EmbeddedPrep",
+          "recommendedChange": "Add voltage divider"
+        },
+        {
+          "claim": "MQ135 library",
+          "currentTutorial": "May use library",
+          "finding": "Version 1.1.1 current (July 2023)",
+          "officialSource": "https://www.arduinolibraries.info/libraries/mq135",
+          "sourceLabel": "Arduino Libraries",
+          "recommendedChange": "No change needed"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/esp32-air-quality-monitoring",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://www.cytron.io/p-mq135-air-quality-sensor-module",
+          "purpose": "Cytron MQ135 product page",
+          "status": "Working",
+          "notes": "Hardware reference"
+        },
+        {
+          "url": "https://www.arduinolibraries.info/libraries/mq135",
+          "purpose": "MQ135 library info",
+          "status": "Working",
+          "notes": "Version 1.1.1 current"
+        },
+        {
+          "url": "https://embeddedprep.com/esp32-with-mq135/",
+          "purpose": "ESP32 MQ135 reference guide",
+          "status": "Working",
+          "notes": "Comprehensive tutorial with calibration"
+        }
+      ],
+
+      "auditFile": "audits/esp32-air-quality-monitoring.md"
     }
   ],
 
