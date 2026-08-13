@@ -3489,6 +3489,1754 @@
       ],
 
       "auditFile": "audits/wifi-weather-station-esp32.md"
+    },
+    {
+      "id": "esp32-high-temperature-alert-system-with-dht22-sensor",
+      "title": "ESP32 High Temperature Alert System with DHT22 Sensor",
+      "url": "https://my.cytron.io/tutorial/esp32-high-temperature-alert-system-with-dht22-sensor",
+
+      "category": "IoT",
+      "subcategory": "Sensors",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "DHT22",
+        "Adafruit DHT Library"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "DHT22",
+        "Temperature",
+        "Humidity",
+        "Alert",
+        "Sensor",
+        "Beginner"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P3",
+
+      "technicalScore": 7,
+
+      "scores": {
+        "technicalAccuracy": 8,
+        "currentValidity": 7,
+        "esp32Compatibility": 8,
+        "codeQuality": 7,
+        "completeness": 7,
+        "beginnerFriendliness": 8,
+        "reproducibility": 7
+      },
+
+      "mainRecommendation": "Update library installation instructions to include Adafruit Unified Sensor as a required dependency.",
+
+      "topIssues": [
+        {
+          "priority": "P3",
+          "title": "Library Dependency Missing",
+          "section": "Installation",
+          "description": "Adafruit Unified Sensor library must be installed alongside DHT library.",
+          "recommendation": "Add instruction to install both libraries"
+        },
+        {
+          "priority": "P3",
+          "title": "Pull-up Resistor Recommendation",
+          "section": "Hardware Setup",
+          "description": "Should mention 10kΩ pull-up resistor for stable readings.",
+          "recommendation": "Add hardware recommendation"
+        },
+        {
+          "priority": "P3",
+          "title": "NaN Reading Troubleshooting",
+          "section": "Troubleshooting",
+          "description": "Should address common NaN reading issues with DHT22.",
+          "recommendation": "Add troubleshooting section"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Hardware Wiring",
+          "reason": "Standard DHT22 to ESP32 wiring remains valid"
+        },
+        {
+          "section": "Basic Code Structure",
+          "reason": "Reading temperature/humidity using DHT library is correct"
+        },
+        {
+          "section": "Alert Logic",
+          "reason": "Threshold comparison and alert triggering is sound"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Library Installation",
+          "reason": "Missing Adafruit Unified Sensor dependency",
+          "action": "Add instruction to install both DHT and Unified Sensor libraries"
+        },
+        {
+          "section": "Hardware Recommendations",
+          "reason": "Pull-up resistor improves stability",
+          "action": "Add 10kΩ pull-up resistor recommendation"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "DHT library works",
+          "currentTutorial": "Uses Adafruit DHT library",
+          "finding": "Library is current and actively maintained",
+          "officialSource": "https://docs.arduino.cc/libraries/dht-sensor-library/",
+          "sourceLabel": "Arduino Documentation",
+          "recommendedChange": "Keep using Adafruit DHT library"
+        },
+        {
+          "claim": "Unified Sensor needed",
+          "currentTutorial": "May not mention dependency",
+          "finding": "Required for DHT library to function properly",
+          "officialSource": "https://randomnerdtutorials.com/esp32-dht11-dht22-temperature-humidity-sensor-arduino-ide/",
+          "sourceLabel": "Random Nerd Tutorials",
+          "recommendedChange": "Add installation instruction"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://github.com/adafruit/DHT-sensor-library",
+          "purpose": "DHT sensor library",
+          "status": "Working",
+          "notes": "Adafruit DHT library"
+        }
+      ],
+
+      "auditFile": "audits/esp32-high-temperature-alert-system-with-dht22-sensor.md"
+    },
+    {
+      "id": "esp32-clap-switch",
+      "title": "ESP32 Clap Switch",
+      "url": "https://my.cytron.io/tutorial/esp32-clap-switch",
+
+      "category": "IoT",
+      "subcategory": "Home Automation",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "Sound Sensor"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Clap Switch",
+        "Sound Sensor",
+        "Home Automation",
+        "Beginner"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "A",
+        "label": "Valid"
+      },
+
+      "decision": "Keep",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "None",
+
+      "technicalScore": 8,
+
+      "scores": {
+        "technicalAccuracy": 9,
+        "currentValidity": 9,
+        "esp32Compatibility": 9,
+        "codeQuality": 8,
+        "completeness": 8,
+        "beginnerFriendliness": 9,
+        "reproducibility": 8
+      },
+
+      "mainRecommendation": "Tutorial uses standard sound sensor technology that remains fully valid. Consider adding debounce timing recommendations.",
+
+      "topIssues": [
+        {
+          "priority": "P3",
+          "title": "Debounce Timing",
+          "section": "Code",
+          "description": "Should recommend 25ms+ debounce to filter false triggers.",
+          "recommendation": "Add software debounce"
+        },
+        {
+          "priority": "P3",
+          "title": "ADC Attenuation",
+          "section": "Code",
+          "description": "For analog reading on ESP32, may need 11dB attenuation setting.",
+          "recommendation": "Add ADC configuration note"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Hardware Wiring",
+          "reason": "Sound sensor to ESP32 wiring is standard and valid"
+        },
+        {
+          "section": "Basic Code Structure",
+          "reason": "Digital/analog read for sound detection is correct"
+        },
+        {
+          "section": "Toggle Logic",
+          "reason": "State toggle on clap detection is properly implemented"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Debounce Timing",
+          "reason": "Prevent false triggers",
+          "action": "Add 25ms+ debounce in code"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "Sound sensor works",
+          "currentTutorial": "Uses standard sound module",
+          "finding": "Fully valid technology",
+          "officialSource": "https://diyables.io/products/sound-sensor-sound-detector",
+          "sourceLabel": "DIYables",
+          "recommendedChange": "Keep as-is"
+        }
+      ],
+
+      "links": [],
+
+      "auditFile": "audits/esp32-clap-switch.md"
+    },
+    {
+      "id": "esp32-motion-detector-alert",
+      "title": "ESP32 Motion Detector Alert",
+      "url": "https://my.cytron.io/tutorial/esp32-motion-detector-alert",
+
+      "category": "IoT",
+      "subcategory": "Security",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32",
+        "HC-SR501"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "PIR Sensor",
+        "HC-SR501"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Motion Detector",
+        "PIR",
+        "HC-SR501",
+        "Security",
+        "Alert",
+        "Beginner"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "A",
+        "label": "Valid"
+      },
+
+      "decision": "Keep",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "None",
+
+      "technicalScore": 8,
+
+      "scores": {
+        "technicalAccuracy": 9,
+        "currentValidity": 9,
+        "esp32Compatibility": 9,
+        "codeQuality": 8,
+        "completeness": 8,
+        "beginnerFriendliness": 9,
+        "reproducibility": 9
+      },
+
+      "mainRecommendation": "Tutorial uses standard PIR sensor technology that remains fully valid. Add warm-up time and 5V power requirements.",
+
+      "topIssues": [
+        {
+          "priority": "P3",
+          "title": "Warm-up Time",
+          "section": "Code",
+          "description": "HC-SR501 needs 30 seconds warm-up, should be mentioned in code.",
+          "recommendation": "Add 30-second delay in setup()"
+        },
+        {
+          "priority": "P3",
+          "title": "Power Source",
+          "section": "Hardware",
+          "description": "Should specify using VIN (5V) not 3.3V for reliable operation.",
+          "recommendation": "Specify VIN connection"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Hardware Wiring",
+          "reason": "HC-SR501 to ESP32 wiring is standard and valid"
+        },
+        {
+          "section": "Basic Code Structure",
+          "reason": "Digital read for motion detection is correct"
+        },
+        {
+          "section": "Alert Mechanism",
+          "reason": "LED/buzzer triggering is sound"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Power Requirements",
+          "reason": "PIR needs 5V minimum",
+          "action": "Specify VIN (5V) connection"
+        },
+        {
+          "section": "Warm-up Time",
+          "reason": "30 seconds required for accurate detection",
+          "action": "Add delay in setup() function"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "PIR sensor works",
+          "currentTutorial": "Uses HC-SR501",
+          "finding": "Fully valid technology",
+          "officialSource": "https://zaitronics.com.au/blogs/esp32/esp32-detecting-motion-with-hc-sr501-pir-sensor",
+          "sourceLabel": "Zaitronics",
+          "recommendedChange": "Keep as-is"
+        }
+      ],
+
+      "links": [],
+
+      "auditFile": "audits/esp32-motion-detector-alert.md"
+    },
+    {
+      "id": "ws2812-ring-led-clock-with-ntp-server-using-esp32",
+      "title": "WS2812 Ring LED Clock with NTP Server Using ESP32",
+      "url": "https://my.cytron.io/tutorial/ws2812-ring-led-clock-with-ntp-server-using-esp32",
+
+      "category": "IoT",
+      "subcategory": "Display",
+
+      "targetLevel": "Intermediate",
+
+      "products": [
+        "ESP32",
+        "WS2812 LED Ring"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "WS2812",
+        "NeoPixel",
+        "NTP",
+        "FastLED"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "WS2812",
+        "NeoPixel",
+        "LED Ring",
+        "Clock",
+        "NTP",
+        "Time",
+        "Intermediate"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 7,
+
+      "scores": {
+        "technicalAccuracy": 7,
+        "currentValidity": 7,
+        "esp32Compatibility": 7,
+        "codeQuality": 7,
+        "completeness": 8,
+        "beginnerFriendliness": 7,
+        "reproducibility": 7
+      },
+
+      "mainRecommendation": "Address ESP32 WiFi timing conflicts with NeoPixel libraries. Recommend using RMT driver for reliable LED control.",
+
+      "topIssues": [
+        {
+          "priority": "P2",
+          "title": "WiFi Timing Conflicts",
+          "section": "Code",
+          "description": "ESP32 WiFi can interfere with NeoPixel timing, causing flickering.",
+          "recommendation": "Use RMT driver or timing isolation"
+        },
+        {
+          "priority": "P2",
+          "title": "RMT Driver Recommendation",
+          "section": "Library",
+          "description": "Should use ESP32's RMT peripheral for reliable WS2812 control.",
+          "recommendation": "Add ESP32-specific configuration"
+        },
+        {
+          "priority": "P3",
+          "title": "Level Shifter",
+          "section": "Hardware",
+          "description": "3.3V data line may be unreliable; 5V logic preferred for WS2812.",
+          "recommendation": "Recommend 330-470Ω resistor"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "NTP Concept",
+          "reason": "Using NTP for accurate time is still the best approach"
+        },
+        {
+          "section": "LED Ring Clock Concept",
+          "reason": "Creative and visually appealing project"
+        },
+        {
+          "section": "configTime() Usage",
+          "reason": "Built-in NTP function is correct approach"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Library Configuration",
+          "reason": "WiFi timing conflicts",
+          "action": "Add ESP32-specific RMT settings for NeoPixel"
+        },
+        {
+          "section": "Hardware",
+          "reason": "Signal integrity",
+          "action": "Add 330-470Ω resistor between data pin and LED strip"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "NeoPixel library works",
+          "currentTutorial": "Uses Adafruit or FastLED",
+          "finding": "Works but timing issues with WiFi",
+          "officialSource": "https://www.sunfounder.com/blogs/news/esp32-with-ws2812b-neopixel-leds-complete-beginner-s-guide",
+          "sourceLabel": "SunFounder",
+          "recommendedChange": "Add RMT driver configuration"
+        },
+        {
+          "claim": "NTP function",
+          "currentTutorial": "Uses configTime()",
+          "finding": "Correct, built into ESP32 core",
+          "officialSource": "https://randomnerdtutorials.com/esp32-ntp-client-date-time-arduino-ide/",
+          "sourceLabel": "Random Nerd Tutorials",
+          "recommendedChange": "Keep as-is"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://github.com/adafruit/Adafruit_NeoPixel",
+          "purpose": "NeoPixel library",
+          "status": "Working",
+          "notes": "Adafruit NeoPixel library"
+        }
+      ],
+
+      "auditFile": "audits/ws2812-ring-led-clock-with-ntp-server-using-esp32.md"
+    },
+    {
+      "id": "getting-started-espnow",
+      "title": "Getting Started ESP-NOW",
+      "url": "https://my.cytron.io/tutorial/getting-started-espnow",
+
+      "category": "IoT",
+      "subcategory": "Communication",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "ESP-NOW"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "ESP-NOW",
+        "Peer-to-Peer",
+        "Wireless",
+        "Communication",
+        "Beginner"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "A",
+        "label": "Valid"
+      },
+
+      "decision": "Keep",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "None",
+
+      "technicalScore": 9,
+
+      "scores": {
+        "technicalAccuracy": 9,
+        "currentValidity": 9,
+        "esp32Compatibility": 10,
+        "codeQuality": 8,
+        "completeness": 8,
+        "beginnerFriendliness": 8,
+        "reproducibility": 9
+      },
+
+      "mainRecommendation": "Tutorial uses ESP-NOW protocol which remains fully valid and unchanged. Minor updates could mention long-range mode and encryption options.",
+
+      "topIssues": [
+        {
+          "priority": "P3",
+          "title": "MAC Address Discovery",
+          "section": "Setup",
+          "description": "Could use built-in method to print MAC address more clearly.",
+          "recommendation": "Use WiFi.macAddress() helper"
+        },
+        {
+          "priority": "P3",
+          "title": "Long-Range Mode",
+          "section": "Advanced",
+          "description": "Could mention ESP-NOW long-range capability (256Kbps).",
+          "recommendation": "Add advanced note"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "ESP-NOW Introduction",
+          "reason": "Concept explanation is accurate and helpful"
+        },
+        {
+          "section": "Peer Registration",
+          "reason": "Standard peer setup process is correct"
+        },
+        {
+          "section": "Send/Receive Callbacks",
+          "reason": "Callback pattern is correct implementation"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "MAC Address Discovery",
+          "reason": "Could be streamlined",
+          "action": "Add helper code"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "ESP-NOW protocol",
+          "currentTutorial": "Standard implementation",
+          "finding": "Fully valid and current",
+          "officialSource": "https://developer.espressif.com/blog/arduino-esp-now-lib/",
+          "sourceLabel": "Espressif Developer Portal",
+          "recommendedChange": "Keep as-is"
+        },
+        {
+          "claim": "Range capability",
+          "currentTutorial": "May mention 200m",
+          "finding": "Up to 480m possible",
+          "officialSource": "https://microcontrollerslab.com/esp32-esp-now-tutorial-arduino-ide/",
+          "sourceLabel": "Microcontrollers Lab",
+          "recommendedChange": "Update range info"
+        }
+      ],
+
+      "links": [],
+
+      "auditFile": "audits/getting-started-espnow.md"
+    },
+    {
+      "id": "send-sensors-data-to-thingspeak-using-esp32",
+      "title": "Send Sensors Data to ThingSpeak Using ESP32",
+      "url": "https://my.cytron.io/tutorial/send-sensors-data-to-thingspeak-using-esp32",
+
+      "category": "IoT",
+      "subcategory": "Cloud",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "ThingSpeak",
+        "WiFi"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "ThingSpeak",
+        "Cloud",
+        "IoT",
+        "Sensors",
+        "Data",
+        "Beginner"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P3",
+
+      "technicalScore": 8,
+
+      "scores": {
+        "technicalAccuracy": 8,
+        "currentValidity": 8,
+        "esp32Compatibility": 9,
+        "codeQuality": 7,
+        "completeness": 8,
+        "beginnerFriendliness": 8,
+        "reproducibility": 8
+      },
+
+      "mainRecommendation": "ThingSpeak platform remains valid. Update to use official ThingSpeak library and mention 15-second rate limit.",
+
+      "topIssues": [
+        {
+          "priority": "P3",
+          "title": "Official Library",
+          "section": "Code",
+          "description": "Could use official ThingSpeak library instead of raw HTTP.",
+          "recommendation": "Recommend ThingSpeak library"
+        },
+        {
+          "priority": "P3",
+          "title": "Rate Limiting",
+          "section": "Code",
+          "description": "Must mention 15-second minimum update interval.",
+          "recommendation": "Add delay warning"
+        },
+        {
+          "priority": "P3",
+          "title": "API Key Security",
+          "section": "Security",
+          "description": "Should emphasize keeping Write API Key private.",
+          "recommendation": "Add security note"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "ThingSpeak Account Setup",
+          "reason": "Registration process is still valid"
+        },
+        {
+          "section": "Channel Creation",
+          "reason": "Process for creating channels unchanged"
+        },
+        {
+          "section": "WiFi Connection",
+          "reason": "ESP32 WiFi code remains valid"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Library Usage",
+          "reason": "Official library is cleaner",
+          "action": "Recommend ThingSpeak library"
+        },
+        {
+          "section": "Rate Limiting",
+          "reason": "API limit not mentioned",
+          "action": "Add 15-second minimum delay"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "ThingSpeak API",
+          "currentTutorial": "Uses api.thingspeak.com",
+          "finding": "Still valid",
+          "officialSource": "https://www.mathworks.com/matlabcentral/discussions/thingspeak/707382-thingspeak-communication-library-for-arduino-esp8266-and-esp32",
+          "sourceLabel": "MathWorks",
+          "recommendedChange": "Keep endpoint"
+        },
+        {
+          "claim": "Rate limit",
+          "currentTutorial": "May not mention",
+          "finding": "15 seconds minimum",
+          "officialSource": "https://robocraze.com/blogs/post/how-to-read-data-from-thingspeak-using-esp32-complete-guide",
+          "sourceLabel": "Robocraze",
+          "recommendedChange": "Add delay warning"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://github.com/mathworks/thingspeak-arduino",
+          "purpose": "ThingSpeak library",
+          "status": "Working",
+          "notes": "Official ThingSpeak Arduino library"
+        }
+      ],
+
+      "auditFile": "audits/send-sensors-data-to-thingspeak-using-esp32.md"
+    },
+    {
+      "id": "how-to-start-up-and-get-auth-token-from-blynk",
+      "title": "How to Start Up and Get Auth Token from Blynk",
+      "url": "https://my.cytron.io/tutorial/how-to-start-up-and-get-auth-token-from-blynk",
+
+      "category": "IoT",
+      "subcategory": "Platform Setup",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32"
+      ],
+
+      "technologies": [
+        "Blynk Legacy"
+      ],
+
+      "keywords": [
+        "Blynk",
+        "Auth Token",
+        "Setup",
+        "BROKEN",
+        "Legacy",
+        "Deprecated"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "E",
+        "label": "Invalid"
+      },
+
+      "decision": "Major Revamp",
+
+      "revampScope": "Large",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P0",
+
+      "technicalScore": 1,
+
+      "scores": {
+        "technicalAccuracy": 2,
+        "currentValidity": 1,
+        "codeQuality": 2,
+        "completeness": 2,
+        "beginnerFriendliness": 2,
+        "reproducibility": 0
+      },
+
+      "mainRecommendation": "CRITICAL: Blynk Legacy servers were permanently shut down on December 31, 2022. Tutorial must be completely rewritten for Blynk 2.0/Blynk IoT platform.",
+
+      "topIssues": [
+        {
+          "priority": "P0",
+          "title": "Blynk Legacy Shutdown",
+          "section": "Entire Tutorial",
+          "description": "Legacy Blynk servers shut down December 31, 2022. Tutorial is completely broken.",
+          "recommendation": "Complete rewrite for Blynk 2.0"
+        },
+        {
+          "priority": "P0",
+          "title": "Old Auth Token Method",
+          "section": "Authentication",
+          "description": "Single auth token no longer works. Need Template ID + Name + Token.",
+          "recommendation": "Update to new 3-parameter authentication"
+        },
+        {
+          "priority": "P0",
+          "title": "Old Mobile App",
+          "section": "App Setup",
+          "description": "Legacy Blynk app removed from App Store and Google Play.",
+          "recommendation": "Use new Blynk IoT app"
+        },
+        {
+          "priority": "P0",
+          "title": "Server Connection",
+          "section": "Connection",
+          "description": "blynk-cloud.com no longer accepts connections.",
+          "recommendation": "Use blynk.cloud"
+        }
+      ],
+
+      "keep": [],
+
+      "update": [],
+
+      "remove": [
+        {
+          "section": "Entire Tutorial",
+          "reason": "Blynk Legacy platform shut down",
+          "action": "Complete rewrite for Blynk 2.0"
+        }
+      ],
+
+      "evidence": [
+        {
+          "claim": "Legacy platform works",
+          "currentTutorial": "Uses Legacy Blynk",
+          "finding": "Server shut down Dec 31, 2022",
+          "officialSource": "https://community.blynk.cc/t/new-blynk-vs-legacy-blynk/57602",
+          "sourceLabel": "Blynk Community",
+          "recommendedChange": "Complete rewrite"
+        },
+        {
+          "claim": "Single auth token",
+          "currentTutorial": "One token method",
+          "finding": "Need Template ID + Name + Token",
+          "officialSource": "https://community.blynk.cc/t/new-blynk-vs-legacy-blynk/57602",
+          "sourceLabel": "Blynk Community",
+          "recommendedChange": "Update to 3-parameter system"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://blynk.cloud",
+          "purpose": "New Blynk platform",
+          "status": "Working",
+          "notes": "Replacement for legacy Blynk"
+        }
+      ],
+
+      "auditFile": "audits/how-to-start-up-and-get-auth-token-from-blynk.md"
+    },
+    {
+      "id": "how-to-create-a-telegram-bot-get-the-api-key-and-chat-id",
+      "title": "How to Create a Telegram Bot, Get the API Key and Chat ID",
+      "url": "https://my.cytron.io/tutorial/how-to-create-a-telegram-bot-get-the-api-key-and-chat-id",
+
+      "category": "IoT",
+      "subcategory": "Messaging",
+
+      "targetLevel": "Beginner",
+
+      "products": [],
+
+      "technologies": [
+        "Telegram",
+        "Bot API",
+        "BotFather"
+      ],
+
+      "keywords": [
+        "Telegram",
+        "Bot",
+        "API Key",
+        "Chat ID",
+        "BotFather",
+        "Messaging",
+        "Beginner"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "A",
+        "label": "Valid"
+      },
+
+      "decision": "Keep",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "None",
+
+      "technicalScore": 9,
+
+      "scores": {
+        "technicalAccuracy": 9,
+        "currentValidity": 9,
+        "platformIndependence": 10,
+        "completeness": 8,
+        "beginnerFriendliness": 9,
+        "reproducibility": 9
+      },
+
+      "mainRecommendation": "Telegram Bot API and BotFather process remain unchanged. Tutorial is valid with minor screenshot updates if needed.",
+
+      "topIssues": [
+        {
+          "priority": "P3",
+          "title": "Screenshots",
+          "section": "Visual Guide",
+          "description": "Telegram interface may have minor visual updates.",
+          "recommendation": "Update screenshots if significantly different"
+        },
+        {
+          "priority": "P3",
+          "title": "IDBot Alternative",
+          "section": "Chat ID",
+          "description": "Could mention @userinfobot as Chat ID alternative.",
+          "recommendation": "Add alternative method"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "BotFather Process",
+          "reason": "Creating bot via /newbot is unchanged"
+        },
+        {
+          "section": "Token Format",
+          "reason": "API token structure is the same"
+        },
+        {
+          "section": "Chat ID Concept",
+          "reason": "Chat ID usage is unchanged"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Screenshots",
+          "reason": "Interface may have changed",
+          "action": "Update if significantly different"
+        },
+        {
+          "section": "Chat ID Methods",
+          "reason": "Alternatives available",
+          "action": "Mention @userinfobot"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "BotFather process",
+          "currentTutorial": "/newbot command",
+          "finding": "Still correct",
+          "officialSource": "https://docs.arduino.cc/libraries/universaltelegrambot/",
+          "sourceLabel": "Arduino Docs",
+          "recommendedChange": "Keep as-is"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://t.me/BotFather",
+          "purpose": "Telegram BotFather",
+          "status": "Working",
+          "notes": "Official bot creation interface"
+        }
+      ],
+
+      "auditFile": "audits/how-to-create-a-telegram-bot-get-the-api-key-and-chat-id.md"
+    },
+    {
+      "id": "interface-water-flow-sensor-using-esp32-board-2",
+      "title": "Interface Water Flow Sensor Using ESP32 Board (Part 2)",
+      "url": "https://my.cytron.io/tutorial/interface-water-flow-sensor-using-esp32-board-2",
+
+      "category": "IoT",
+      "subcategory": "Sensors",
+
+      "targetLevel": "Intermediate",
+
+      "products": [
+        "ESP32",
+        "YF-S201"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "Water Flow Sensor",
+        "Hall Effect"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Water Flow",
+        "YF-S201",
+        "Sensor",
+        "Pulse Counting",
+        "Intermediate"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 7,
+
+      "scores": {
+        "technicalAccuracy": 7,
+        "currentValidity": 7,
+        "esp32Compatibility": 6,
+        "codeQuality": 7,
+        "completeness": 7,
+        "beginnerFriendliness": 6,
+        "reproducibility": 6
+      },
+
+      "mainRecommendation": "IMPORTANT: YF-S201 outputs 5V pulses which can damage ESP32's 3.3V GPIO pins. Add voltage divider or level shifter requirement.",
+
+      "topIssues": [
+        {
+          "priority": "P2",
+          "title": "Voltage Level Mismatch",
+          "section": "Hardware",
+          "description": "YF-S201 outputs 5V, ESP32 GPIO is 3.3V - potential damage!",
+          "recommendation": "Add voltage divider/level shifter"
+        },
+        {
+          "priority": "P2",
+          "title": "Level Shifter Required",
+          "section": "Wiring",
+          "description": "Need voltage divider or level shifter for safe operation.",
+          "recommendation": "Update wiring diagram"
+        },
+        {
+          "priority": "P3",
+          "title": "Interrupt Usage",
+          "section": "Code",
+          "description": "Should use hardware interrupts, not polling.",
+          "recommendation": "Use attachInterrupt with IRAM_ATTR"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Sensor Concept",
+          "reason": "Hall effect flow measurement principle is valid"
+        },
+        {
+          "section": "Flow Calculation",
+          "reason": "Mathematical approach is sound"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Voltage Protection",
+          "reason": "5V signal damages 3.3V GPIO",
+          "action": "Add voltage divider requirement"
+        },
+        {
+          "section": "Wiring Diagram",
+          "reason": "Safety concern",
+          "action": "Show level shifting components"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "Direct connection works",
+          "currentTutorial": "May show direct wiring",
+          "finding": "5V output damages 3.3V GPIO",
+          "officialSource": "https://www.tinkered.ai/components/yf-s201-water-flow-sensor",
+          "sourceLabel": "Tinkered.ai",
+          "recommendedChange": "Add level shifting"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://github.com/galihru/YFS201",
+          "purpose": "YFS201 library",
+          "status": "Working",
+          "notes": "Arduino library for YF-S201"
+        }
+      ],
+
+      "auditFile": "audits/interface-water-flow-sensor-using-esp32-board-2.md"
+    },
+    {
+      "id": "water-notification-for-plants-using-blynk-and-moisture-sensor-on-esp32",
+      "title": "Water Notification for Plants Using Blynk and Moisture Sensor on ESP32",
+      "url": "https://my.cytron.io/tutorial/water-notification-for-plants-using-blynk-and-moisture-sensor-on-esp32",
+
+      "category": "IoT",
+      "subcategory": "Smart Garden",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32",
+        "Soil Moisture Sensor"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Blynk Legacy",
+        "Soil Moisture Sensor"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Blynk",
+        "Moisture",
+        "Plant",
+        "Notification",
+        "BROKEN",
+        "Legacy"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "E",
+        "label": "Invalid"
+      },
+
+      "decision": "Major Revamp",
+
+      "revampScope": "Large",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P0",
+
+      "technicalScore": 2,
+
+      "scores": {
+        "technicalAccuracy": 3,
+        "currentValidity": 1,
+        "esp32Compatibility": 5,
+        "codeQuality": 3,
+        "completeness": 3,
+        "beginnerFriendliness": 3,
+        "reproducibility": 0
+      },
+
+      "mainRecommendation": "CRITICAL: Blynk Legacy servers shut down December 31, 2022. Moisture sensor code is valid but all Blynk integration must be completely rewritten for Blynk 2.0.",
+
+      "topIssues": [
+        {
+          "priority": "P0",
+          "title": "Blynk Legacy Shutdown",
+          "section": "Blynk Integration",
+          "description": "Legacy Blynk servers shut down December 31, 2022 - tutorial broken!",
+          "recommendation": "Complete rewrite for Blynk 2.0"
+        },
+        {
+          "priority": "P0",
+          "title": "Old Auth Token",
+          "section": "Authentication",
+          "description": "Single auth token no longer works. Need Template ID + Name + Token.",
+          "recommendation": "Update to new authentication"
+        },
+        {
+          "priority": "P0",
+          "title": "Push Notifications",
+          "section": "Alerts",
+          "description": "Blynk.notify() deprecated. Use Blynk.logEvent() with Events.",
+          "recommendation": "Update notification method"
+        },
+        {
+          "priority": "P2",
+          "title": "Sensor Calibration",
+          "section": "Sensor",
+          "description": "Moisture sensor calibration should be added.",
+          "recommendation": "Add calibration procedure"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Moisture Sensor Wiring",
+          "reason": "Hardware connection to ESP32 is valid"
+        },
+        {
+          "section": "Analog Reading",
+          "reason": "Reading moisture via analogRead() is correct"
+        }
+      ],
+
+      "update": [],
+
+      "remove": [
+        {
+          "section": "All Blynk Code",
+          "reason": "Legacy platform shut down",
+          "action": "Complete rewrite for Blynk 2.0"
+        }
+      ],
+
+      "evidence": [
+        {
+          "claim": "Blynk works",
+          "currentTutorial": "Uses Legacy Blynk",
+          "finding": "Server shut down Dec 31, 2022",
+          "officialSource": "https://community.blynk.cc/t/new-blynk-vs-legacy-blynk/57602",
+          "sourceLabel": "Blynk Community",
+          "recommendedChange": "Complete Blynk rewrite"
+        },
+        {
+          "claim": "Moisture sensor",
+          "currentTutorial": "Standard sensor",
+          "finding": "Still valid technology",
+          "officialSource": "https://how2electronics.com/capacitive-soil-moisture-sensor-esp8266-esp32-oled-display/",
+          "sourceLabel": "How2Electronics",
+          "recommendedChange": "Keep sensor code"
+        }
+      ],
+
+      "links": [],
+
+      "auditFile": "audits/water-notification-for-plants-using-blynk-and-moisture-sensor-on-esp32.md"
+    },
+    {
+      "id": "gas-detector-using-mq2-on-esp32-and-blynk-app",
+      "title": "Gas Detector Using MQ2 on ESP32 and Blynk App",
+      "url": "https://my.cytron.io/tutorial/gas-detector-using-mq2-on-esp32-and-blynk-app",
+
+      "category": "IoT",
+      "subcategory": "Safety",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32",
+        "MQ2"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Blynk Legacy",
+        "MQ2 Gas Sensor"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "MQ2",
+        "Gas Detector",
+        "Blynk",
+        "Safety",
+        "BROKEN",
+        "Legacy"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "E",
+        "label": "Invalid"
+      },
+
+      "decision": "Major Revamp",
+
+      "revampScope": "Large",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P0",
+
+      "technicalScore": 2,
+
+      "scores": {
+        "technicalAccuracy": 3,
+        "currentValidity": 1,
+        "esp32Compatibility": 5,
+        "codeQuality": 3,
+        "completeness": 3,
+        "beginnerFriendliness": 3,
+        "reproducibility": 0
+      },
+
+      "mainRecommendation": "CRITICAL: Blynk Legacy servers shut down December 31, 2022. MQ2 sensor code is valid but all Blynk integration must be completely rewritten for Blynk 2.0.",
+
+      "topIssues": [
+        {
+          "priority": "P0",
+          "title": "Blynk Legacy Shutdown",
+          "section": "Blynk Integration",
+          "description": "Legacy Blynk servers shut down December 31, 2022 - tutorial broken!",
+          "recommendation": "Complete rewrite for Blynk 2.0"
+        },
+        {
+          "priority": "P0",
+          "title": "Old Auth Token",
+          "section": "Authentication",
+          "description": "Single auth token no longer works. Need Template ID + Name + Token.",
+          "recommendation": "Update to new authentication"
+        },
+        {
+          "priority": "P0",
+          "title": "Notifications Broken",
+          "section": "Alerts",
+          "description": "Blynk.notify() deprecated. Use Blynk.logEvent() with Events.",
+          "recommendation": "Update notification method"
+        },
+        {
+          "priority": "P2",
+          "title": "MQ2 Warm-up Time",
+          "section": "Sensor",
+          "description": "2-3 minutes preheating required before accurate readings.",
+          "recommendation": "Add preheating delay"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "MQ2 Wiring",
+          "reason": "Hardware connection to ESP32 is valid"
+        },
+        {
+          "section": "Analog Reading",
+          "reason": "Reading gas levels via analogRead() is correct"
+        }
+      ],
+
+      "update": [],
+
+      "remove": [
+        {
+          "section": "All Blynk Code",
+          "reason": "Legacy platform shut down",
+          "action": "Complete rewrite for Blynk 2.0"
+        }
+      ],
+
+      "evidence": [
+        {
+          "claim": "Blynk works",
+          "currentTutorial": "Uses Legacy Blynk",
+          "finding": "Server shut down Dec 31, 2022",
+          "officialSource": "https://community.blynk.cc/t/new-blynk-vs-legacy-blynk/57602",
+          "sourceLabel": "Blynk Community",
+          "recommendedChange": "Complete Blynk rewrite"
+        },
+        {
+          "claim": "MQ2 sensor",
+          "currentTutorial": "Standard implementation",
+          "finding": "Still valid, needs warm-up",
+          "officialSource": "https://linuxhint.com/mq2-gas-sensor-esp32-arduino-ide/",
+          "sourceLabel": "Linux Hint",
+          "recommendedChange": "Add preheating delay"
+        }
+      ],
+
+      "links": [],
+
+      "auditFile": "audits/gas-detector-using-mq2-on-esp32-and-blynk-app.md"
+    },
+    {
+      "id": "home-security-system-with-esp32",
+      "title": "Home Security System with ESP32",
+      "url": "https://my.cytron.io/tutorial/home-security-system-with-esp32",
+
+      "category": "IoT",
+      "subcategory": "Security",
+
+      "targetLevel": "Intermediate",
+
+      "products": [
+        "ESP32",
+        "HC-SR501",
+        "Reed Switch"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "PIR Sensor",
+        "Door Sensor"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Security",
+        "PIR",
+        "Motion",
+        "Door Sensor",
+        "Alert",
+        "Intermediate"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "C",
+        "label": "Partially Outdated"
+      },
+
+      "decision": "Major Revamp",
+
+      "revampScope": "Medium",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P1",
+
+      "technicalScore": 5,
+
+      "scores": {
+        "technicalAccuracy": 6,
+        "currentValidity": 5,
+        "esp32Compatibility": 7,
+        "codeQuality": 6,
+        "completeness": 6,
+        "beginnerFriendliness": 6,
+        "reproducibility": 4
+      },
+
+      "mainRecommendation": "Sensor technology (PIR, door sensors) remains valid. Verify notification platform - if using Blynk Legacy, it's completely broken and needs replacing.",
+
+      "topIssues": [
+        {
+          "priority": "P1",
+          "title": "Notification Platform",
+          "section": "Alerts",
+          "description": "If using Blynk Legacy, it's broken (shutdown Dec 2022).",
+          "recommendation": "Verify and update notification method"
+        },
+        {
+          "priority": "P2",
+          "title": "PIR Warm-up Time",
+          "section": "Sensor Setup",
+          "description": "HC-SR501 needs 30-second warm-up.",
+          "recommendation": "Add initialization delay"
+        },
+        {
+          "priority": "P2",
+          "title": "Power Requirements",
+          "section": "Hardware",
+          "description": "PIR sensors need 5V, not 3.3V.",
+          "recommendation": "Clarify VIN connection"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "PIR Sensor Wiring",
+          "reason": "Hardware connections remain valid"
+        },
+        {
+          "section": "Reed Switch Logic",
+          "reason": "Simple switch logic unchanged"
+        },
+        {
+          "section": "Buzzer/Alarm",
+          "reason": "Basic alarm triggering is correct"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Notification System",
+          "reason": "Platform may be deprecated",
+          "action": "Verify and update if needed"
+        },
+        {
+          "section": "PIR Initialization",
+          "reason": "Warm-up required",
+          "action": "Add 30-second delay"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "PIR sensors work",
+          "currentTutorial": "Uses HC-SR501",
+          "finding": "Valid, needs warm-up",
+          "officialSource": "https://zaitronics.com.au/blogs/esp32/esp32-detecting-motion-with-hc-sr501-pir-sensor",
+          "sourceLabel": "Zaitronics",
+          "recommendedChange": "Add 30-second delay"
+        }
+      ],
+
+      "links": [],
+
+      "auditFile": "audits/home-security-system-with-esp32.md"
+    },
+    {
+      "id": "interface-water-flow-sensor-using-esp32-board",
+      "title": "Interface Water Flow Sensor Using ESP32 Board",
+      "url": "https://my.cytron.io/tutorial/interface-water-flow-sensor-using-esp32-board",
+
+      "category": "IoT",
+      "subcategory": "Sensors",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32",
+        "YF-S201"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "Water Flow Sensor",
+        "Hall Effect"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Water Flow",
+        "YF-S201",
+        "Sensor",
+        "Pulse Counting",
+        "Beginner"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 7,
+
+      "scores": {
+        "technicalAccuracy": 7,
+        "currentValidity": 7,
+        "esp32Compatibility": 6,
+        "codeQuality": 7,
+        "completeness": 7,
+        "beginnerFriendliness": 7,
+        "reproducibility": 6
+      },
+
+      "mainRecommendation": "IMPORTANT: YF-S201 outputs 5V pulses which can damage ESP32's 3.3V GPIO pins. Add voltage divider or level shifter requirement.",
+
+      "topIssues": [
+        {
+          "priority": "P2",
+          "title": "Voltage Level Mismatch",
+          "section": "Hardware",
+          "description": "YF-S201 outputs 5V, ESP32 GPIO is 3.3V - potential damage!",
+          "recommendation": "Add voltage divider circuit"
+        },
+        {
+          "priority": "P2",
+          "title": "Level Shifter Required",
+          "section": "Wiring",
+          "description": "Need voltage divider or level shifter for safe operation.",
+          "recommendation": "Update wiring with protection"
+        },
+        {
+          "priority": "P3",
+          "title": "Interrupt Usage",
+          "section": "Code",
+          "description": "Should use hardware interrupts instead of polling.",
+          "recommendation": "Use attachInterrupt with IRAM_ATTR"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Sensor Concept",
+          "reason": "Hall effect flow measurement is valid"
+        },
+        {
+          "section": "Flow Calculation",
+          "reason": "Mathematical formulas are correct"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Signal Line Wiring",
+          "reason": "5V damages 3.3V GPIO",
+          "action": "Add voltage divider (10kΩ + 20kΩ)"
+        },
+        {
+          "section": "Warning",
+          "reason": "Safety concern",
+          "action": "Add clear warning about voltage mismatch"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "Direct connection works",
+          "currentTutorial": "May show direct wiring",
+          "finding": "5V damages 3.3V GPIO",
+          "officialSource": "https://www.tinkered.ai/components/yf-s201-water-flow-sensor",
+          "sourceLabel": "Tinkered.ai",
+          "recommendedChange": "Add level shifting"
+        },
+        {
+          "claim": "Interrupt counting",
+          "currentTutorial": "May use polling",
+          "finding": "Interrupts essential for accuracy",
+          "officialSource": "https://pcbsync.com/water-flow-sensor-arduino/",
+          "sourceLabel": "PCBSync",
+          "recommendedChange": "Use attachInterrupt"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://github.com/galihru/YFS201",
+          "purpose": "YFS201 library",
+          "status": "Working",
+          "notes": "Arduino library for YF-S201"
+        }
+      ],
+
+      "auditFile": "audits/interface-water-flow-sensor-using-esp32-board.md"
     }
   ],
 
