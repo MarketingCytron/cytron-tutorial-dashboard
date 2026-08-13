@@ -3269,6 +3269,226 @@
       ],
 
       "auditFile": "audits/esp32-water-tank-monitoring.md"
+    },
+    {
+      "id": "wifi-weather-station-esp32",
+      "title": "WiFi Weather Station ESP32",
+      "url": "https://my.cytron.io/tutorial/wifi-weather-station-esp32",
+
+      "category": "IoT",
+      "subcategory": "Weather & Environment",
+
+      "targetLevel": "Beginner",
+
+      "products": [
+        "ESP32",
+        "OLED Display SSD1306"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "WiFi",
+        "OpenWeatherMap API",
+        "HTTPS",
+        "JSON",
+        "I2C OLED"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Weather Station",
+        "OpenWeatherMap",
+        "API",
+        "OLED",
+        "Temperature",
+        "Humidity",
+        "WiFi",
+        "ArduinoJson",
+        "IoT"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 8,
+
+      "scores": {
+        "technicalAccuracy": 8,
+        "currentValidity": 7,
+        "esp32Compatibility": 9,
+        "arduinoIdeCompatibility": 8,
+        "codeQuality": 7,
+        "completeness": 7,
+        "beginnerFriendliness": 7,
+        "reproducibility": 7
+      },
+
+      "mainRecommendation": "Verify ArduinoJson version compatibility (v6 vs v7 syntax differs), document OpenWeatherMap API free tier limitations (60 calls/min), ensure HTTPS is used with proper certificate handling, and add guidance for API key security.",
+
+      "topIssues": [
+        {
+          "priority": "P2",
+          "title": "ArduinoJson Version Compatibility",
+          "section": "Code",
+          "description": "ArduinoJson v6 and v7 have different syntax. Tutorial should specify which version to use and provide matching code.",
+          "recommendation": "Specify ArduinoJson version and use correct syntax"
+        },
+        {
+          "priority": "P2",
+          "title": "API Rate Limits Not Documented",
+          "section": "API Setup",
+          "description": "OpenWeatherMap free tier allows 60 calls/minute, 1M calls/month. Users need to know appropriate refresh intervals.",
+          "recommendation": "Document rate limits and recommend 10-15 min refresh"
+        },
+        {
+          "priority": "P2",
+          "title": "HTTPS Certificate Handling",
+          "section": "Security",
+          "description": "Modern APIs require HTTPS. ESP32 needs WiFiClientSecure with proper certificate validation.",
+          "recommendation": "Document WiFiClientSecure usage"
+        },
+        {
+          "priority": "P3",
+          "title": "API Key Security",
+          "section": "Security",
+          "description": "API keys should not be hardcoded in shared code. Users should be warned about key protection.",
+          "recommendation": "Add API key security warning"
+        },
+        {
+          "priority": "P3",
+          "title": "Error Handling",
+          "section": "Code",
+          "description": "Network failures, API errors, and JSON parsing errors should be handled gracefully.",
+          "recommendation": "Add comprehensive error handling"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Project Concept",
+          "reason": "Weather station is a classic, practical IoT project"
+        },
+        {
+          "section": "OpenWeatherMap API",
+          "reason": "Well-documented, reliable, free tier available"
+        },
+        {
+          "section": "OLED Display",
+          "reason": "Visual feedback makes project engaging"
+        },
+        {
+          "section": "WiFi Connectivity",
+          "reason": "Essential for fetching real-time data"
+        },
+        {
+          "section": "JSON Parsing",
+          "reason": "Valuable skill for API integration"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "ArduinoJson Version",
+          "reason": "v6 and v7 have different syntax",
+          "action": "Specify version and use matching code"
+        },
+        {
+          "section": "API Rate Limits",
+          "reason": "Users may exceed limits",
+          "action": "Document 60 calls/min limit and refresh recommendations"
+        },
+        {
+          "section": "HTTPS Security",
+          "reason": "Modern APIs require HTTPS",
+          "action": "Document WiFiClientSecure usage"
+        },
+        {
+          "section": "Error Handling",
+          "reason": "Network/API failures need handling",
+          "action": "Add error checking for HTTP and JSON"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "ArduinoJson library",
+          "currentTutorial": "May use v6 syntax",
+          "finding": "v7 current with different API (JsonDocument vs StaticJsonDocument)",
+          "officialSource": "https://arduinojson.org/",
+          "sourceLabel": "ArduinoJson.org",
+          "recommendedChange": "Specify version"
+        },
+        {
+          "claim": "OpenWeatherMap limits",
+          "currentTutorial": "May not document limits",
+          "finding": "60 calls/min, 1M/month free tier",
+          "officialSource": "https://openweathermap.org/appid",
+          "sourceLabel": "OpenWeatherMap",
+          "recommendedChange": "Add rate limit note"
+        },
+        {
+          "claim": "HTTPS requirement",
+          "currentTutorial": "May use HTTP",
+          "finding": "Modern APIs require HTTPS",
+          "officialSource": "https://openweathermap.org/api",
+          "sourceLabel": "OpenWeatherMap Docs",
+          "recommendedChange": "Use WiFiClientSecure"
+        },
+        {
+          "claim": "SSD1306 library",
+          "currentTutorial": "Uses Adafruit SSD1306",
+          "finding": "Current and well-maintained",
+          "officialSource": "https://github.com/adafruit/Adafruit_SSD1306",
+          "sourceLabel": "Adafruit GitHub",
+          "recommendedChange": "No change needed"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/wifi-weather-station-esp32",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://openweathermap.org/api",
+          "purpose": "OpenWeatherMap API docs",
+          "status": "Working",
+          "notes": "Official API documentation"
+        },
+        {
+          "url": "https://arduinojson.org/",
+          "purpose": "ArduinoJson library",
+          "status": "Working",
+          "notes": "JSON parsing library"
+        },
+        {
+          "url": "https://github.com/adafruit/Adafruit_SSD1306",
+          "purpose": "OLED display library",
+          "status": "Working",
+          "notes": "Adafruit SSD1306 driver"
+        }
+      ],
+
+      "auditFile": "audits/wifi-weather-station-esp32.md"
     }
   ],
 
