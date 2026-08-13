@@ -2821,6 +2821,229 @@
       ],
 
       "auditFile": "audits/esp32-smoke-detection-alarm.md"
+    },
+    {
+      "id": "farm-automation-system-roboesp32",
+      "title": "Farm Automation System using Robo ESP32",
+      "url": "https://my.cytron.io/tutorial/farm-automation-system-using-roboesp32",
+
+      "category": "IoT",
+      "subcategory": "Agriculture & Automation",
+
+      "targetLevel": "Intermediate",
+
+      "products": [
+        "Robo ESP32",
+        "Maker Soil Moisture Sensor",
+        "DHT11",
+        "HC-SR04 Ultrasonic",
+        "Relay Module",
+        "Water Pump"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "Blynk IoT",
+        "WiFi",
+        "ADC",
+        "Relay Control"
+      ],
+
+      "keywords": [
+        "ESP32",
+        "Farm Automation",
+        "Smart Irrigation",
+        "Soil Moisture",
+        "DHT11",
+        "Water Level",
+        "Blynk",
+        "Relay",
+        "Pump Control",
+        "IoT Agriculture"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-13",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Medium",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 7,
+
+      "scores": {
+        "technicalAccuracy": 8,
+        "currentValidity": 7,
+        "esp32Compatibility": 9,
+        "arduinoIdeCompatibility": 8,
+        "codeQuality": 7,
+        "completeness": 7,
+        "beginnerFriendliness": 6,
+        "reproducibility": 7
+      },
+
+      "mainRecommendation": "Ensure Blynk 2.0 code structure is used (Template ID, Template Name, Auth Token), add sensor calibration guidance for soil moisture, include electrical safety warnings for relay/pump circuits, and document Blynk free plan limitations.",
+
+      "topIssues": [
+        {
+          "priority": "P2",
+          "title": "Blynk 2.0 Code Structure",
+          "section": "Code",
+          "description": "Must use BLYNK_TEMPLATE_ID, BLYNK_TEMPLATE_NAME, and BLYNK_AUTH_TOKEN macros. Legacy single auth token approach no longer works.",
+          "recommendation": "Update to three-macro Blynk 2.0 structure"
+        },
+        {
+          "priority": "P2",
+          "title": "Soil Moisture Calibration",
+          "section": "Sensor Setup",
+          "description": "Capacitive soil moisture sensors require calibration for accurate readings. Dry air vs water calibration values needed.",
+          "recommendation": "Add calibration process with mapping code"
+        },
+        {
+          "priority": "P2",
+          "title": "Electrical Safety for Relay/Pump",
+          "section": "Hardware",
+          "description": "Relay circuits controlling pumps require safety warnings about electrical hazards and proper isolation, especially for AC pumps.",
+          "recommendation": "Add electrical safety warning section"
+        },
+        {
+          "priority": "P2",
+          "title": "Blynk Free Plan Limitations",
+          "section": "Blynk Setup",
+          "description": "Free tier limits (2 devices, 10 datastreams) should be documented so users understand constraints.",
+          "recommendation": "Document Blynk pricing and limits"
+        },
+        {
+          "priority": "P3",
+          "title": "DHT Library Dependency",
+          "section": "Libraries",
+          "description": "DHT sensor library requires Adafruit Unified Sensor as dependency. Missing this causes compilation errors.",
+          "recommendation": "Document both library requirements"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Project Concept",
+          "reason": "Farm automation is practical and increasingly relevant"
+        },
+        {
+          "section": "Multi-Sensor Integration",
+          "reason": "Good demonstration of combining multiple sensors"
+        },
+        {
+          "section": "Blynk IoT Platform",
+          "reason": "Excellent for remote monitoring and control"
+        },
+        {
+          "section": "Robo ESP32",
+          "reason": "Appropriate board with built-in WiFi"
+        },
+        {
+          "section": "Water Level Monitoring",
+          "reason": "Prevents dry-running the pump"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Blynk Code Structure",
+          "reason": "Legacy auth-only approach deprecated",
+          "action": "Update to Template ID + Name + Token"
+        },
+        {
+          "section": "Soil Moisture Calibration",
+          "reason": "Required for accurate readings",
+          "action": "Add dry air/water calibration process"
+        },
+        {
+          "section": "Electrical Safety",
+          "reason": "Relay/pump circuits pose hazards",
+          "action": "Add safety warnings for AC circuits"
+        },
+        {
+          "section": "DHT Library",
+          "reason": "Dependency often missed",
+          "action": "Document Unified Sensor requirement"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "Blynk authentication",
+          "currentTutorial": "May use legacy approach",
+          "finding": "Blynk 2.0 requires Template ID + Name + Token",
+          "officialSource": "https://docs.blynk.io/",
+          "sourceLabel": "Blynk Docs",
+          "recommendedChange": "Update to three-macro approach"
+        },
+        {
+          "claim": "Soil moisture calibration",
+          "currentTutorial": "May not explain calibration",
+          "finding": "Calibration required for accurate readings",
+          "officialSource": "https://makersportal.com/blog/2020/5/26/capacitive-soil-moisture-calibration-with-arduino",
+          "sourceLabel": "Makers Portal",
+          "recommendedChange": "Add calibration section"
+        },
+        {
+          "claim": "DHT library dependency",
+          "currentTutorial": "Uses DHT library",
+          "finding": "Requires Adafruit Unified Sensor",
+          "officialSource": "https://learn.adafruit.com/dht",
+          "sourceLabel": "Adafruit Learn",
+          "recommendedChange": "Document both libraries"
+        },
+        {
+          "claim": "Relay safety",
+          "currentTutorial": "May not address safety",
+          "finding": "Optocoupler isolation recommended",
+          "officialSource": "https://www.upesy.com/blogs/tutorials/esp32-relay-module-using-arduino-code",
+          "sourceLabel": "uPesy Tutorial",
+          "recommendedChange": "Add safety warnings"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://my.cytron.io/tutorial/farm-automation-system-using-roboesp32",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Primary tutorial URL"
+        },
+        {
+          "url": "https://zbotic.in/blynk-2-0-with-esp32-cloud-dashboard-for-iot-projects/",
+          "purpose": "Blynk 2.0 reference",
+          "status": "Working",
+          "notes": "Current Blynk IoT setup guide"
+        },
+        {
+          "url": "https://makersportal.com/blog/2020/5/26/capacitive-soil-moisture-calibration-with-arduino",
+          "purpose": "Soil moisture calibration guide",
+          "status": "Working",
+          "notes": "Calibration methodology"
+        },
+        {
+          "url": "https://randomnerdtutorials.com/esp32-hc-sr04-ultrasonic-arduino/",
+          "purpose": "HC-SR04 ultrasonic guide",
+          "status": "Working",
+          "notes": "Water level sensor reference"
+        }
+      ],
+
+      "auditFile": "audits/farm-automation-system-roboesp32.md"
     }
   ],
 
