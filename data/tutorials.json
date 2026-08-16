@@ -5237,12 +5237,225 @@
       ],
 
       "auditFile": "audits/interface-water-flow-sensor-using-esp32-board.md"
+    },
+    {
+      "id": "esp32-smart-home-dashboard-with-real-time-sensor-data",
+      "title": "ESP32 Smart Home Dashboard with Real-Time Sensor Data",
+      "url": "https://my.cytron.io/tutorial/esp32-smart-home-dashboard-with-real-time-sensor-data",
+
+      "category": "IoT",
+      "subcategory": "Smart Home",
+
+      "targetLevel": "Intermediate",
+
+      "products": [
+        "Robo ESP32"
+      ],
+
+      "technologies": [
+        "ESP32",
+        "Arduino IDE",
+        "DHT11",
+        "MQ-135",
+        "Web Server",
+        "WiFi",
+        "HTML/CSS/JavaScript"
+      ],
+
+      "keywords": [
+        "Smart Home",
+        "Dashboard",
+        "Temperature",
+        "Humidity",
+        "Air Quality",
+        "Real-Time",
+        "Web Server",
+        "Environmental Monitoring",
+        "IoT"
+      ],
+
+      "reviewed": true,
+
+      "lastReviewed": "2026-08-16",
+
+      "validity": {
+        "grade": "B",
+        "label": "Mostly Valid"
+      },
+
+      "decision": "Minor Update",
+
+      "revampScope": "Small",
+
+      "revampStatus": "Reviewed",
+
+      "priority": "P2",
+
+      "technicalScore": 7,
+
+      "scores": {
+        "technicalAccuracy": 7,
+        "currentValidity": 8,
+        "esp32Compatibility": 8,
+        "codeQuality": 7,
+        "completeness": 7,
+        "beginnerFriendliness": 6,
+        "reproducibility": 7
+      },
+
+      "mainRecommendation": "Add critical warning about MQ-135 voltage divider requirement (5V output can damage ESP32's 3.3V GPIO) and document the 24-48 hour sensor warmup period for accurate air quality readings.",
+
+      "topIssues": [
+        {
+          "priority": "P1",
+          "title": "MQ-135 Voltage Divider Requirement",
+          "section": "Hardware Setup",
+          "description": "MQ-135 analog output can exceed 3.3V, potentially damaging ESP32 GPIO pins. A voltage divider is essential but often overlooked.",
+          "recommendation": "Add voltage divider circuit diagram and clear warning about 5V to 3.3V conversion"
+        },
+        {
+          "priority": "P2",
+          "title": "MQ-135 Warmup/Calibration Period",
+          "section": "Sensor Setup",
+          "description": "MQ-135 requires 24-48 hours of continuous operation for accurate readings. Initial readings will be unreliable.",
+          "recommendation": "Document warmup period and set user expectations for initial inaccuracy"
+        },
+        {
+          "priority": "P2",
+          "title": "Web Server Architecture Choice",
+          "section": "Code",
+          "description": "Synchronous WebServer blocks main loop during requests; sensor readings may freeze during web access.",
+          "recommendation": "Recommend ESPAsyncWebServer for real-time dashboards"
+        },
+        {
+          "priority": "P3",
+          "title": "DHT Library Dependencies",
+          "section": "Prerequisites",
+          "description": "Adafruit DHT library requires Adafruit Unified Sensor library as a dependency.",
+          "recommendation": "Explicitly list all library dependencies including Unified Sensor"
+        },
+        {
+          "priority": "P3",
+          "title": "Power Consumption",
+          "section": "Hardware",
+          "description": "MQ-135 heater draws ~150mA. Combined with ESP32 WiFi, adequate power supply is critical.",
+          "recommendation": "Document power requirements and recommend quality USB power supply"
+        }
+      ],
+
+      "keep": [
+        {
+          "section": "Project Concept",
+          "reason": "Smart home environmental monitoring is practical and educational"
+        },
+        {
+          "section": "Sensor Selection",
+          "reason": "DHT11 + MQ-135 combination covers key environmental metrics"
+        },
+        {
+          "section": "Web Dashboard Approach",
+          "reason": "Local web server is network-independent and responsive"
+        },
+        {
+          "section": "ESP32 Platform",
+          "reason": "Ideal for WiFi-enabled sensor projects"
+        }
+      ],
+
+      "update": [
+        {
+          "section": "Hardware Setup",
+          "reason": "MQ-135 voltage can damage ESP32",
+          "action": "Add voltage divider circuit (10K-20K) and warning"
+        },
+        {
+          "section": "Sensor Calibration",
+          "reason": "MQ-135 warmup period not explained",
+          "action": "Document 24-48 hour calibration period for accurate readings"
+        },
+        {
+          "section": "Web Server Code",
+          "reason": "Sync server may block sensor readings",
+          "action": "Recommend ESPAsyncWebServer v3.11.1 for real-time updates"
+        },
+        {
+          "section": "Prerequisites",
+          "reason": "Library dependencies incomplete",
+          "action": "List DHT library v1.4.7 and Adafruit Unified Sensor dependency"
+        }
+      ],
+
+      "remove": [],
+
+      "evidence": [
+        {
+          "claim": "MQ-135 voltage safe for ESP32",
+          "currentTutorial": "May not address voltage levels",
+          "finding": "MQ-135 output can reach 5V, ESP32 ADC maximum is 3.3V",
+          "officialSource": "https://docs.arduino.cc/libraries/mq135/",
+          "sourceLabel": "Arduino MQ135 Docs",
+          "recommendedChange": "Add voltage divider circuit"
+        },
+        {
+          "claim": "DHT library installation",
+          "currentTutorial": "Uses Adafruit DHT",
+          "finding": "Version 1.4.7 current, requires Adafruit Unified Sensor",
+          "officialSource": "https://github.com/adafruit/DHT-sensor-library",
+          "sourceLabel": "Adafruit GitHub",
+          "recommendedChange": "Document Unified Sensor dependency"
+        },
+        {
+          "claim": "Web server for real-time",
+          "currentTutorial": "May use synchronous WebServer",
+          "finding": "ESPAsyncWebServer v3.11.1 better for real-time dashboards",
+          "officialSource": "https://github.com/ESP32Async/ESPAsyncWebServer",
+          "sourceLabel": "ESPAsyncWebServer GitHub",
+          "recommendedChange": "Recommend async web server"
+        },
+        {
+          "claim": "MQ-135 accuracy",
+          "currentTutorial": "May not document warmup",
+          "finding": "24-48 hour warmup required for accurate readings",
+          "officialSource": "https://www.sparkfun.com/datasheets/Sensors/Biometric/MQ-135.pdf",
+          "sourceLabel": "MQ-135 Datasheet",
+          "recommendedChange": "Add warmup period documentation"
+        }
+      ],
+
+      "links": [
+        {
+          "url": "https://github.com/adafruit/DHT-sensor-library",
+          "purpose": "DHT Sensor Library",
+          "status": "Working",
+          "notes": "Version 1.4.7, requires Unified Sensor"
+        },
+        {
+          "url": "https://github.com/ESP32Async/ESPAsyncWebServer",
+          "purpose": "Async Web Server Library",
+          "status": "Working",
+          "notes": "Version 3.11.1, recommended for real-time"
+        },
+        {
+          "url": "https://docs.arduino.cc/libraries/mq135/",
+          "purpose": "MQ135 Library Documentation",
+          "status": "Working",
+          "notes": "Official Arduino library docs"
+        },
+        {
+          "url": "https://github.com/miguel5612/MQSensorsLib",
+          "purpose": "MQ Unified Sensor Library",
+          "status": "Working",
+          "notes": "Advanced calibration support"
+        }
+      ],
+
+      "auditFile": "audits/esp32-smart-home-dashboard-with-real-time-sensor-data.md"
     }
   ],
 
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2026-08-14",
+    "lastUpdated": "2026-08-16",
     "description": "Cytron Tutorial Validation Dashboard data file"
   }
 }
