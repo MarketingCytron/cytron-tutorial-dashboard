@@ -64,7 +64,13 @@
         "reproducibility": 5
       },
 
-      "mainRecommendation": "Replace the deprecated node-red-dashboard with FlowFuse Dashboard 2.0, and update MQTT broker recommendations due to HiveMQ public broker reliability issues.",
+      "mainRecommendation": "Replace the deprecated node-red-dashboard with FlowFuse Dashboard 2.0, and update MQTT broker recommendations due to HiveMQ public broker reliability issues. Maker ESP32 fully compatible.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible with Maker ESP32. MQTT and WiFi functionality identical to generic ESP32.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -293,7 +299,13 @@
         "reproducibility": 8
       },
 
-      "mainRecommendation": "Add clarification about required library dependencies (Adafruit Unified Sensor) and document ThingSpeak free tier limitations more prominently.",
+      "mainRecommendation": "Add clarification about required library dependencies (Adafruit Unified Sensor) and document ThingSpeak free tier limitations more prominently. Maker ESP32 fully compatible.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible with Maker ESP32. Use any available GPIO for DHT11 data (avoid GPIO4 user button, GPIO26 buzzer).",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -919,7 +931,13 @@
         "reproducibility": 7
       },
 
-      "mainRecommendation": "Add security best practices section emphasizing bot token protection, chat ID validation importance, and the risks of hardcoding credentials. Also document ArduinoJson version requirements explicitly.",
+      "mainRecommendation": "Add security best practices section emphasizing bot token protection, chat ID validation importance, and the risks of hardcoding credentials. Maker ESP32 fully compatible - use GPIO2 LED (has status LED) or GPIO16.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible. GPIO2 has onboard status LED for visual feedback. Avoid GPIO4 (button) and GPIO26 (buzzer) for other outputs.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -1131,9 +1149,22 @@
         "reproducibility": 10
       },
 
-      "mainRecommendation": "Tutorial is well-designed for beginners with no external wiring needed. Consider adding a brief note about non-blocking alternatives (millis()) for users who want to advance, and optionally mention PWM for brightness control.",
+      "mainRecommendation": "Tutorial is well-designed for beginners with no external wiring needed. For Maker ESP32: Adapt code for 14 GPIO LEDs (pins 2,12,13,16,17,18,19,21,22,23,25,27,32,33) instead of Robo ESP32's 10 LEDs.",
+
+      "makerEsp32": {
+        "compatibility": "minor",
+        "notes": "Robo ESP32 has 10 onboard LEDs, Maker ESP32 has 14 GPIO LEDs on different pins",
+        "requiredChanges": ["Update LED pin array to: 2,12,13,16,17,18,19,21,22,23,25,27,32,33", "Adjust pattern code for 14 LEDs instead of 10"]
+      },
 
       "topIssues": [
+        {
+          "priority": "P2",
+          "title": "Maker ESP32 LED Pin Adaptation",
+          "section": "Hardware",
+          "description": "Tutorial uses Robo ESP32 with 10 onboard LEDs. Maker ESP32 has 14 GPIO status LEDs on different pins (2,12,13,16,17,18,19,21,22,23,25,27,32,33).",
+          "recommendation": "Add Maker ESP32 pin configuration section with updated LED array"
+        },
         {
           "priority": "P3",
           "title": "Non-Blocking Alternative Not Mentioned",
@@ -1784,7 +1815,13 @@
         "reproducibility": 7
       },
 
-      "mainRecommendation": "Ensure tutorial uses Blynk IoT (2.0) code structure with BLYNK_TEMPLATE_ID and BLYNK_TEMPLATE_NAME macros. Document free plan limitations and add Adafruit Unified Sensor library dependency. Blynk Legacy is discontinued.",
+      "mainRecommendation": "Ensure tutorial uses Blynk IoT (2.0) code structure with BLYNK_TEMPLATE_ID and BLYNK_TEMPLATE_NAME macros. Document free plan limitations and add Adafruit Unified Sensor library dependency. Maker ESP32 fully compatible.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible with Maker ESP32. Use any available GPIO for DHT11 (avoid GPIO4, GPIO26). Blynk functionality identical.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -2225,9 +2262,22 @@
         "reproducibility": 7
       },
 
-      "mainRecommendation": "Update library versions (MD_Parola 3.7.5, MD_MAX72XX 3.5.1), consider using ESP32's built-in configTime() instead of NTPClient library, add hardware type identification guidance for different MAX7219 modules, and document non-default SPI pin usage.",
+      "mainRecommendation": "Update library versions (MD_Parola 3.7.5, MD_MAX72XX 3.5.1), consider using ESP32's built-in configTime() instead of NTPClient library, add hardware type identification guidance for different MAX7219 modules, and document non-default SPI pin usage. For Maker ESP32: Change CS pin from GPIO26 to GPIO17 to avoid buzzer conflict.",
+
+      "makerEsp32": {
+        "compatibility": "conflict",
+        "notes": "GPIO26 used for CS pin conflicts with Maker ESP32 onboard buzzer",
+        "requiredChanges": ["Change CS pin from GPIO26 to GPIO17"]
+      },
 
       "topIssues": [
+        {
+          "priority": "P1",
+          "title": "Maker ESP32 GPIO26 Conflict",
+          "section": "Wiring",
+          "description": "Tutorial uses GPIO26 for SPI CS (Chip Select), but Maker ESP32 has onboard piezo buzzer on GPIO26. This will cause unwanted buzzer noise during SPI communication.",
+          "recommendation": "Change CS pin from GPIO26 to GPIO17 for Maker ESP32 compatibility"
+        },
         {
           "priority": "P2",
           "title": "Library Versions Outdated",
@@ -2450,7 +2500,13 @@
         "reproducibility": 6
       },
 
-      "mainRecommendation": "Add sensor calibration guidance (preheat time, R0 calibration), document ESP32 ADC voltage level considerations (3.3V vs 5V), and clarify the meaning of raw ADC values vs actual PPM readings. Include sensor warm-up requirements prominently.",
+      "mainRecommendation": "Add sensor calibration guidance (preheat time, R0 calibration), document ESP32 ADC voltage level considerations (3.3V vs 5V), and clarify the meaning of raw ADC values vs actual PPM readings. Maker ESP32 compatible - use ADC1 pins (GPIO32-33).",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible. Use ADC1 pins (GPIO32, GPIO33) for MQ135 analog reading. Voltage divider still required for 5V sensor output.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -2670,9 +2726,22 @@
         "reproducibility": 8
       },
 
-      "mainRecommendation": "Add safety disclaimer that this is for educational purposes only and not a replacement for certified smoke detectors. Include sensor calibration and preheat time documentation (24-48 hours for new sensors), and add threshold adjustment guidance.",
+      "mainRecommendation": "Add safety disclaimer that this is for educational purposes only and not a replacement for certified smoke detectors. For Maker ESP32: Replace NeoPixel visual alerts with GPIO LED indicators, and use onboard buzzer (GPIO26) for audio alerts.",
+
+      "makerEsp32": {
+        "compatibility": "significant",
+        "notes": "Robo ESP32 has built-in NeoPixel LEDs which Maker ESP32 lacks. Maker ESP32 has onboard buzzer on GPIO26 and 14 GPIO status LEDs instead.",
+        "requiredChanges": ["Replace NeoPixel code with GPIO LED control", "Use Maker ESP32 onboard buzzer (GPIO26) instead of external buzzer", "Use GPIO status LEDs (2,12,13,16,17,18,19,21,22,23,25,27,32,33) for visual alerts"]
+      },
 
       "topIssues": [
+        {
+          "priority": "P2",
+          "title": "Maker ESP32 NeoPixel Incompatibility",
+          "section": "Hardware",
+          "description": "Tutorial uses Robo ESP32's built-in NeoPixel LEDs for visual alerts. Maker ESP32 does not have NeoPixel but has 14 GPIO status LEDs and onboard buzzer instead.",
+          "recommendation": "Add Maker ESP32 section using GPIO LEDs for visual alerts and onboard buzzer (GPIO26) for audio"
+        },
         {
           "priority": "P1",
           "title": "Safety Disclaimer Missing",
@@ -2893,7 +2962,13 @@
         "reproducibility": 7
       },
 
-      "mainRecommendation": "Ensure Blynk 2.0 code structure is used (Template ID, Template Name, Auth Token), add sensor calibration guidance for soil moisture, include electrical safety warnings for relay/pump circuits, and document Blynk free plan limitations.",
+      "mainRecommendation": "Ensure Blynk 2.0 code structure is used (Template ID, Template Name, Auth Token), add sensor calibration guidance for soil moisture, include electrical safety warnings for relay/pump circuits. Maker ESP32 compatible with pin adjustments.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Compatible with Maker ESP32. Avoid GPIO4 (user button) and GPIO26 (buzzer) for sensors. ADC and relay control work identically.",
+        "requiredChanges": ["Use GPIO16/17 instead of GPIO4 for DHT sensor if applicable"]
+      },
 
       "topIssues": [
         {
@@ -3114,9 +3189,22 @@
         "reproducibility": 8
       },
 
-      "mainRecommendation": "Tutorial is technically sound. Consider adding voltage level considerations for HC-SR04 vs SR04P sensors, document minimum sensor-to-water distance requirement, and add guidance for waterproofing the sensor for outdoor installations.",
+      "mainRecommendation": "Tutorial is technically sound. For Maker ESP32: Replace NeoPixel indicators with GPIO LED status indicators, I2C LCD works via Maker Port (GPIO21/22).",
+
+      "makerEsp32": {
+        "compatibility": "minor",
+        "notes": "Robo ESP32 NeoPixel can be replaced with Maker ESP32 GPIO status LEDs. I2C LCD compatible via Maker Port.",
+        "requiredChanges": ["Replace NeoPixel water level indicators with GPIO LED indicators", "Use Maker Port (GPIO21 SDA, GPIO22 SCL) for I2C LCD"]
+      },
 
       "topIssues": [
+        {
+          "priority": "P2",
+          "title": "Maker ESP32 NeoPixel Replacement",
+          "section": "Hardware",
+          "description": "Tutorial uses Robo ESP32's built-in NeoPixel for water level indication. Maker ESP32 uses 14 GPIO status LEDs instead.",
+          "recommendation": "Add Maker ESP32 section using GPIO LEDs as level indicators"
+        },
         {
           "priority": "P3",
           "title": "Sensor Voltage Compatibility",
@@ -3550,9 +3638,22 @@
         "reproducibility": 7
       },
 
-      "mainRecommendation": "Update library installation instructions to include Adafruit Unified Sensor as a required dependency.",
+      "mainRecommendation": "Update library installation instructions to include Adafruit Unified Sensor as a required dependency. For Maker ESP32: Change DHT data pin from GPIO4 to GPIO16 to avoid user button conflict.",
+
+      "makerEsp32": {
+        "compatibility": "conflict",
+        "notes": "GPIO4 commonly used for DHT data conflicts with Maker ESP32 onboard user button",
+        "requiredChanges": ["Change DHT data pin from GPIO4 to GPIO16 or GPIO13"]
+      },
 
       "topIssues": [
+        {
+          "priority": "P1",
+          "title": "Maker ESP32 GPIO4 Conflict",
+          "section": "Wiring",
+          "description": "Tutorial commonly uses GPIO4 for DHT data pin, but Maker ESP32 has onboard user button on GPIO4. This will cause interference with sensor readings.",
+          "recommendation": "Change DHT data pin from GPIO4 to GPIO16 or GPIO13 for Maker ESP32 compatibility"
+        },
         {
           "priority": "P3",
           "title": "Library Dependency Missing",
@@ -4085,7 +4186,13 @@
         "reproducibility": 9
       },
 
-      "mainRecommendation": "Tutorial uses ESP-NOW protocol which remains fully valid and unchanged. Minor updates could mention long-range mode and encryption options.",
+      "mainRecommendation": "Tutorial uses ESP-NOW protocol which remains fully valid and unchanged. Maker ESP32 fully compatible - ESP-NOW works identically.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible. ESP-NOW protocol works identically on Maker ESP32. MAC address retrieval and peer communication unchanged.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -5303,7 +5410,13 @@
         "reproducibility": 7
       },
 
-      "mainRecommendation": "Add critical warning about MQ-135 voltage divider requirement (5V output can damage ESP32's 3.3V GPIO) and document the 24-48 hour sensor warmup period for accurate air quality readings.",
+      "mainRecommendation": "Add critical warning about MQ-135 voltage divider requirement (5V output can damage ESP32's 3.3V GPIO) and document the 24-48 hour sensor warmup period. Maker ESP32 compatible - avoid GPIO4/GPIO26 for sensors.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible with Maker ESP32. Use ADC pins (GPIO32/33) for MQ-135. Avoid GPIO4 (user button) and GPIO26 (buzzer) for DHT sensor.",
+        "requiredChanges": ["Use GPIO16 or GPIO13 for DHT data instead of GPIO4"]
+      },
 
       "topIssues": [
         {
@@ -5455,7 +5568,7 @@
 
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2026-08-16",
+    "lastUpdated": "2026-08-17",
     "description": "Cytron Tutorial Validation Dashboard data file"
   }
 }
