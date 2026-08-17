@@ -4,16 +4,12 @@
       "id": "getting-started-esp32-and-nodered",
       "title": "Getting Started ESP32 and Node-RED",
       "url": "https://my.cytron.io/tutorial/getting-started-esp32-and-nodered",
-
       "category": "IoT",
       "subcategory": "ESP32 + Node-RED",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -21,7 +17,6 @@
         "MQTT",
         "HiveMQ"
       ],
-
       "keywords": [
         "ESP32",
         "Node-RED",
@@ -33,26 +28,17 @@
         "Humidity",
         "Sensor"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-10",
-
       "validity": {
         "grade": "C",
         "label": "Partially Outdated"
       },
-
       "decision": "Major Revamp",
-
       "revampScope": "Medium",
-
       "revampStatus": "Reviewed",
-
       "priority": "P1",
-
       "technicalScore": 6,
-
       "scores": {
         "technicalAccuracy": 6,
         "currentValidity": 4,
@@ -63,15 +49,12 @@
         "beginnerFriendliness": 8,
         "reproducibility": 5
       },
-
       "mainRecommendation": "Replace the deprecated node-red-dashboard with FlowFuse Dashboard 2.0, and update MQTT broker recommendations due to HiveMQ public broker reliability issues. Maker ESP32 fully compatible.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible with Maker ESP32. MQTT and WiFi functionality identical to generic ESP32.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P1",
@@ -109,7 +92,6 @@
           "recommendation": "Optionally mention ESP32MQTTClient as a modern alternative"
         }
       ],
-
       "keep": [
         {
           "section": "ESP32 Hardware Setup",
@@ -132,7 +114,6 @@
           "reason": "The library still functions correctly for basic MQTT operations"
         }
       ],
-
       "update": [
         {
           "section": "Node-RED Dashboard",
@@ -155,7 +136,6 @@
           "action": "Replace all UI screenshots with current versions"
         }
       ],
-
       "remove": [
         {
           "section": "node-red-contrib-mqtt-broker Installation",
@@ -168,7 +148,6 @@
           "action": "Replace with current versions or use general recommendations"
         }
       ],
-
       "evidence": [
         {
           "claim": "node-red-dashboard is current",
@@ -203,7 +182,6 @@
           "recommendedChange": "Update tutorial to use Dashboard 2.0"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/getting-started-esp32-and-nodered",
@@ -230,24 +208,20 @@
           "notes": "Official deprecation notice for node-red-dashboard"
         }
       ],
-
-      "auditFile": "audits/getting-started-esp32-and-nodered.md"
+      "auditFile": "audits/getting-started-esp32-and-nodered.md",
+      "makerEsp32PublishDate": "2026-09-27"
     },
     {
       "id": "getting-started-thingspeak",
       "title": "Getting Started with ESP32 & ThingSpeak",
       "url": "https://my.cytron.io/tutorial/getting-started-thingspeak",
-
       "category": "IoT",
       "subcategory": "ESP32 + ThingSpeak",
-
       "targetLevel": "Beginner",
-
       "products": [
         "Robo ESP32",
         "DHT11"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -255,7 +229,6 @@
         "DHT11",
         "WiFi"
       ],
-
       "keywords": [
         "ESP32",
         "ThingSpeak",
@@ -268,26 +241,17 @@
         "Data Logging",
         "Robo ESP32"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-11",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 8,
-
       "scores": {
         "technicalAccuracy": 8,
         "currentValidity": 8,
@@ -298,15 +262,12 @@
         "beginnerFriendliness": 8,
         "reproducibility": 8
       },
-
       "mainRecommendation": "Add clarification about required library dependencies (Adafruit Unified Sensor) and document ThingSpeak free tier limitations more prominently. Maker ESP32 fully compatible.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible with Maker ESP32. Use any available GPIO for DHT11 data (avoid GPIO4 user button, GPIO26 buzzer).",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P2",
@@ -344,7 +305,6 @@
           "recommendation": "Add WiFi reconnection and API error handling examples"
         }
       ],
-
       "keep": [
         {
           "section": "Robo ESP32 Setup",
@@ -367,7 +327,6 @@
           "reason": "ThingSpeak chart configuration remains valid"
         }
       ],
-
       "update": [
         {
           "section": "Library Installation",
@@ -385,9 +344,7 @@
           "action": "Add WiFi connection retry logic and ThingSpeak API response checking"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "DHT library installation",
@@ -422,7 +379,6 @@
           "recommendedChange": "No change needed"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/getting-started-thingspeak",
@@ -449,23 +405,19 @@
           "notes": "Requires Adafruit Unified Sensor as dependency"
         }
       ],
-
-      "auditFile": "audits/getting-started-thingspeak.md"
+      "auditFile": "audits/getting-started-thingspeak.md",
+      "makerEsp32PublishDate": "2026-09-08"
     },
     {
       "id": "getting-started-with-esp32-ota",
       "title": "Getting Started with ESP32 and Over-The-Air Programming (OTA)",
       "url": "https://my.cytron.io/tutorial/getting-started-with-esp32-ota",
-
       "category": "ESP32",
       "subcategory": "OTA Programming",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -473,7 +425,6 @@
         "WiFi",
         "WebServer"
       ],
-
       "keywords": [
         "ESP32",
         "OTA",
@@ -484,26 +435,17 @@
         "Arduino IDE",
         "Remote Programming"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-11",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 8,
-
       "scores": {
         "technicalAccuracy": 8,
         "currentValidity": 8,
@@ -514,15 +456,12 @@
         "beginnerFriendliness": 8,
         "reproducibility": 8
       },
-
       "mainRecommendation": "Add security best practices section covering password protection, network isolation, and the risks of default credentials. Maker ESP32 fully compatible.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible. OTA functionality works identically on Maker ESP32. WiFi and web server features unchanged.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P1",
@@ -560,7 +499,6 @@
           "recommendation": "Add note about HTTPS for production deployments"
         }
       ],
-
       "keep": [
         {
           "section": "OTA Concept Explanation",
@@ -587,7 +525,6 @@
           "reason": "Important note about keeping OTA code in future uploads"
         }
       ],
-
       "update": [
         {
           "section": "Security Section",
@@ -605,9 +542,7 @@
           "action": "Note that esp32.local may not work on all networks, provide IP fallback"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "OTA security",
@@ -634,7 +569,6 @@
           "recommendedChange": "No change needed"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/getting-started-with-esp32-ota",
@@ -655,29 +589,24 @@
           "notes": "Official example code"
         }
       ],
-
-      "auditFile": "audits/getting-started-with-esp32-ota.md"
+      "auditFile": "audits/getting-started-with-esp32-ota.md",
+      "makerEsp32PublishDate": "2026-09-06"
     },
     {
       "id": "getting-started-freertos-esp32",
       "title": "Getting Started with FreeRTOS on ESP32",
       "url": "https://my.cytron.io/tutorial/getting-started-freertos-esp32",
-
       "category": "ESP32",
       "subcategory": "FreeRTOS",
-
       "targetLevel": "Intermediate",
-
       "products": [
         "Robo ESP32"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
         "FreeRTOS"
       ],
-
       "keywords": [
         "ESP32",
         "FreeRTOS",
@@ -690,26 +619,17 @@
         "Scheduling",
         "Robo ESP32"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-11",
-
       "validity": {
         "grade": "A",
         "label": "Valid"
       },
-
       "decision": "Keep",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P3",
-
       "technicalScore": 9,
-
       "scores": {
         "technicalAccuracy": 9,
         "currentValidity": 9,
@@ -720,15 +640,12 @@
         "beginnerFriendliness": 7,
         "reproducibility": 9
       },
-
       "mainRecommendation": "Tutorial is technically sound. Maker ESP32 fully compatible - FreeRTOS works identically on dual-core ESP32-WROOM-32E.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible. Maker ESP32 uses dual-core ESP32-WROOM-32E, FreeRTOS task pinning works identically.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P3",
@@ -766,7 +683,6 @@
           "recommendation": "Recommend pdMS_TO_TICKS() macro for clarity"
         }
       ],
-
       "keep": [
         {
           "section": "FreeRTOS Concept Explanation",
@@ -793,7 +709,6 @@
           "reason": "Coverage of ESP32's dual-core capabilities"
         }
       ],
-
       "update": [
         {
           "section": "Single-Core Compatibility",
@@ -811,9 +726,7 @@
           "action": "Recommend pdMS_TO_TICKS() and mention vTaskDelayUntil()"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "FreeRTOS is built-in",
@@ -848,7 +761,6 @@
           "recommendedChange": "Add awareness section"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/getting-started-freertos-esp32",
@@ -875,23 +787,19 @@
           "notes": "Part of FreeRTOS tutorial series"
         }
       ],
-
-      "auditFile": "audits/getting-started-freertos-esp32.md"
+      "auditFile": "audits/getting-started-freertos-esp32.md",
+      "makerEsp32PublishDate": "2026-09-15"
     },
     {
       "id": "control-esp32-outputs-with-telegram",
       "title": "Control ESP32 Outputs with Telegram",
       "url": "https://my.cytron.io/tutorial/control-esp32-outputs-with-telegram",
-
       "category": "IoT",
       "subcategory": "Telegram Bot",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -899,7 +807,6 @@
         "WiFiClientSecure",
         "UniversalTelegramBot"
       ],
-
       "keywords": [
         "ESP32",
         "Telegram",
@@ -912,26 +819,17 @@
         "Chat ID",
         "Wireless Control"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-11",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 7,
-
       "scores": {
         "technicalAccuracy": 8,
         "currentValidity": 7,
@@ -942,15 +840,12 @@
         "beginnerFriendliness": 8,
         "reproducibility": 7
       },
-
       "mainRecommendation": "Add security best practices section emphasizing bot token protection, chat ID validation importance, and the risks of hardcoding credentials. Maker ESP32 fully compatible - use GPIO2 LED (has status LED) or GPIO16.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible. GPIO2 has onboard status LED for visual feedback. Avoid GPIO4 (button) and GPIO26 (buzzer) for other outputs.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P1",
@@ -988,7 +883,6 @@
           "recommendation": "Add brief explanation of SSL setup"
         }
       ],
-
       "keep": [
         {
           "section": "BotFather Setup",
@@ -1011,7 +905,6 @@
           "reason": "Standard ESP32 WiFi setup is accurate"
         }
       ],
-
       "update": [
         {
           "section": "Security Section",
@@ -1029,9 +922,7 @@
           "action": "Add section for ArduinoJson errors, SSL issues, connection timeouts"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "Bot token security",
@@ -1066,7 +957,6 @@
           "recommendedChange": "No change needed"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/control-esp32-outputs-with-telegram",
@@ -1093,30 +983,25 @@
           "notes": "Official bot creation tool"
         }
       ],
-
-      "auditFile": "audits/control-esp32-outputs-with-telegram.md"
+      "auditFile": "audits/control-esp32-outputs-with-telegram.md",
+      "makerEsp32PublishDate": "2026-09-07"
     },
     {
       "id": "esp32-led-pattern-generator",
       "title": "ESP32 LED Pattern Generator",
       "url": "https://my.cytron.io/tutorial/esp32-led-pattern-generator",
-
       "category": "ESP32",
       "subcategory": "GPIO Basics",
-
       "targetLevel": "Beginner",
-
       "products": [
         "Robo ESP32"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
         "GPIO",
         "Digital Output"
       ],
-
       "keywords": [
         "ESP32",
         "LED",
@@ -1130,26 +1015,17 @@
         "Array",
         "digitalWrite"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-11",
-
       "validity": {
         "grade": "A",
         "label": "Valid"
       },
-
       "decision": "Keep",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P3",
-
       "technicalScore": 9,
-
       "scores": {
         "technicalAccuracy": 9,
         "currentValidity": 9,
@@ -1160,15 +1036,15 @@
         "beginnerFriendliness": 10,
         "reproducibility": 10
       },
-
       "mainRecommendation": "Tutorial is well-designed for beginners with no external wiring needed. For Maker ESP32: Adapt code for 14 GPIO LEDs (pins 2,12,13,16,17,18,19,21,22,23,25,27,32,33) instead of Robo ESP32's 10 LEDs.",
-
       "makerEsp32": {
         "compatibility": "minor",
         "notes": "Robo ESP32 has 10 onboard LEDs, Maker ESP32 has 14 GPIO LEDs on different pins",
-        "requiredChanges": ["Update LED pin array to: 2,12,13,16,17,18,19,21,22,23,25,27,32,33", "Adjust pattern code for 14 LEDs instead of 10"]
+        "requiredChanges": [
+          "Update LED pin array to: 2,12,13,16,17,18,19,21,22,23,25,27,32,33",
+          "Adjust pattern code for 14 LEDs instead of 10"
+        ]
       },
-
       "topIssues": [
         {
           "priority": "P2",
@@ -1213,7 +1089,6 @@
           "recommendation": "Add prominent link to YouTube video"
         }
       ],
-
       "keep": [
         {
           "section": "No External Wiring",
@@ -1236,7 +1111,6 @@
           "reason": "Helpful suggestions for modifying delays and patterns"
         }
       ],
-
       "update": [
         {
           "section": "GPIO Pin Reference",
@@ -1254,9 +1128,7 @@
           "action": "Add link to companion YouTube video"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "Robo ESP32 LEDs",
@@ -1291,7 +1163,6 @@
           "recommendedChange": "No change needed"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/esp32-led-pattern-generator",
@@ -1318,23 +1189,19 @@
           "notes": "Official technical specifications"
         }
       ],
-
-      "auditFile": "audits/esp32-led-pattern-generator.md"
+      "auditFile": "audits/esp32-led-pattern-generator.md",
+      "makerEsp32PublishDate": "2026-09-22"
     },
     {
       "id": "esp32-smart-light-control-with-app",
       "title": "ESP32 Smart Light Control with App",
       "url": "https://my.cytron.io/tutorial/esp32-smart-light-control-with-app",
-
       "category": "IoT",
       "subcategory": "Smart Home",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -1343,7 +1210,6 @@
         "IoT MQTT Panel",
         "PubSubClient"
       ],
-
       "keywords": [
         "ESP32",
         "MQTT",
@@ -1356,26 +1222,17 @@
         "Home Automation",
         "Wireless Control"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-11",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 8,
-
       "scores": {
         "technicalAccuracy": 8,
         "currentValidity": 8,
@@ -1386,15 +1243,12 @@
         "beginnerFriendliness": 8,
         "reproducibility": 7
       },
-
       "mainRecommendation": "Add WiFi/MQTT reconnection handling code, document MQTT broker limitations, and include security considerations. Maker ESP32 fully compatible.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible. MQTT and WiFi work identically. Use any GPIO for light control (avoid GPIO4/GPIO26).",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P2",
@@ -1432,7 +1286,6 @@
           "recommendation": "Add error handling and troubleshooting section"
         }
       ],
-
       "keep": [
         {
           "section": "Project Concept",
@@ -1455,7 +1308,6 @@
           "reason": "MQTT topic explanation is valid"
         }
       ],
-
       "update": [
         {
           "section": "Reconnection Logic",
@@ -1478,9 +1330,7 @@
           "action": "Use ESP32 MAC address for unique ID"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "PubSubClient library",
@@ -1515,7 +1365,6 @@
           "recommendedChange": "Add reconnection code"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/esp32-smart-light-control-with-app",
@@ -1542,23 +1391,19 @@
           "notes": "Free MQTT broker for testing"
         }
       ],
-
-      "auditFile": "audits/esp32-smart-light-control-with-app.md"
+      "auditFile": "audits/esp32-smart-light-control-with-app.md",
+      "makerEsp32PublishDate": "2026-09-10"
     },
     {
       "id": "turn-on-led-finger-esp32-mediapipe",
       "title": "ESP32 Hand Gesture Control with Mediapipe and OpenCV",
       "url": "https://my.cytron.io/tutorial/turn-on-led-finger-esp32-mediapipe",
-
       "category": "AI/ML + IoT",
       "subcategory": "Computer Vision",
-
       "targetLevel": "Intermediate",
-
       "products": [
         "ESP32"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -1568,7 +1413,6 @@
         "PySerial",
         "Serial Communication"
       ],
-
       "keywords": [
         "ESP32",
         "MediaPipe",
@@ -1583,26 +1427,17 @@
         "Serial",
         "Webcam"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-12",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 8,
-
       "scores": {
         "technicalAccuracy": 8,
         "currentValidity": 8,
@@ -1613,15 +1448,12 @@
         "beginnerFriendliness": 5,
         "reproducibility": 6
       },
-
       "mainRecommendation": "Update Python version requirements to reflect current MediaPipe compatibility (3.9-3.12), add virtual environment setup instructions. Maker ESP32 fully compatible via serial.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible. Serial communication via USB-C works identically. LED control on any GPIO (avoid GPIO4/GPIO26).",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P2",
@@ -1659,7 +1491,6 @@
           "recommendation": "Add troubleshooting section"
         }
       ],
-
       "keep": [
         {
           "section": "Project Concept",
@@ -1682,7 +1513,6 @@
           "reason": "Visual demonstration of gesture recognition"
         }
       ],
-
       "update": [
         {
           "section": "Python Version Requirements",
@@ -1705,9 +1535,7 @@
           "action": "Change from Beginner to Intermediate"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "Python 3.10",
@@ -1742,7 +1570,6 @@
           "recommendedChange": "No change needed"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/turn-on-led-finger-esp32-mediapipe",
@@ -1769,24 +1596,20 @@
           "notes": "Circuit Digest hand gesture tutorial"
         }
       ],
-
-      "auditFile": "audits/turn-on-led-finger-esp32-mediapipe.md"
+      "auditFile": "audits/turn-on-led-finger-esp32-mediapipe.md",
+      "makerEsp32PublishDate": "2026-09-17"
     },
     {
       "id": "getting-started-esp32-and-blynk",
       "title": "Getting Started with ESP32 & Blynk",
       "url": "https://my.cytron.io/tutorial/getting-started-esp32-and-blynk",
-
       "category": "IoT",
       "subcategory": "Blynk Platform",
-
       "targetLevel": "Beginner",
-
       "products": [
         "Robo ESP32",
         "DHT11"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -1794,7 +1617,6 @@
         "WiFi",
         "DHT11"
       ],
-
       "keywords": [
         "ESP32",
         "Blynk",
@@ -1808,26 +1630,17 @@
         "Robo ESP32",
         "Smart Home"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-12",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 7,
-
       "scores": {
         "technicalAccuracy": 8,
         "currentValidity": 7,
@@ -1838,15 +1651,12 @@
         "beginnerFriendliness": 8,
         "reproducibility": 7
       },
-
       "mainRecommendation": "Ensure tutorial uses Blynk IoT (2.0) code structure with BLYNK_TEMPLATE_ID and BLYNK_TEMPLATE_NAME macros. Document free plan limitations and add Adafruit Unified Sensor library dependency. Maker ESP32 fully compatible.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible with Maker ESP32. Use any available GPIO for DHT11 (avoid GPIO4, GPIO26). Blynk functionality identical.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P2",
@@ -1884,7 +1694,6 @@
           "recommendation": "Brief explanation of Edgent benefits"
         }
       ],
-
       "keep": [
         {
           "section": "Project Concept",
@@ -1907,7 +1716,6 @@
           "reason": "Sensor to cloud workflow is educational"
         }
       ],
-
       "update": [
         {
           "section": "Blynk 2.0 Code Structure",
@@ -1930,7 +1738,6 @@
           "action": "Add Blynk Console configuration steps"
         }
       ],
-
       "remove": [
         {
           "section": "Legacy Blynk References",
@@ -1938,7 +1745,6 @@
           "action": "Remove any legacy code or screenshots"
         }
       ],
-
       "evidence": [
         {
           "claim": "Blynk library",
@@ -1973,7 +1779,6 @@
           "recommendedChange": "Add dependency note"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/getting-started-esp32-and-blynk",
@@ -2000,24 +1805,20 @@
           "notes": "Legacy to IoT migration documentation"
         }
       ],
-
-      "auditFile": "audits/getting-started-esp32-and-blynk.md"
+      "auditFile": "audits/getting-started-esp32-and-blynk.md",
+      "makerEsp32PublishDate": "2026-09-09"
     },
     {
       "id": "esp32-digital-clock",
       "title": "ESP32 Digital Clock",
       "url": "https://my.cytron.io/tutorial/esp32-digital-clock",
-
       "category": "ESP32",
       "subcategory": "Time & Display",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32",
         "OLED Display"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -2026,7 +1827,6 @@
         "OLED SSD1306",
         "I2C"
       ],
-
       "keywords": [
         "ESP32",
         "Digital Clock",
@@ -2039,26 +1839,17 @@
         "SSD1306",
         "Timezone"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-12",
-
       "validity": {
         "grade": "A",
         "label": "Valid"
       },
-
       "decision": "Keep",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P3",
-
       "technicalScore": 9,
-
       "scores": {
         "technicalAccuracy": 9,
         "currentValidity": 9,
@@ -2069,15 +1860,12 @@
         "beginnerFriendliness": 9,
         "reproducibility": 8
       },
-
       "mainRecommendation": "Tutorial is technically sound. Maker ESP32 fully compatible - use Maker Port (GPIO21/22) for I2C OLED.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible. Use Maker Port (GPIO21 SDA, GPIO22 SCL) for I2C OLED connection. Qwiic/STEMMA QT adapters work directly.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P3",
@@ -2115,7 +1903,6 @@
           "recommendation": "Add WiFi reconnection logic"
         }
       ],
-
       "keep": [
         {
           "section": "Project Concept",
@@ -2138,7 +1925,6 @@
           "reason": "Standard WiFi connection code"
         }
       ],
-
       "update": [
         {
           "section": "Timezone Configuration",
@@ -2156,9 +1942,7 @@
           "action": "Add delay or retry after configTime"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "configTime usage",
@@ -2193,7 +1977,6 @@
           "recommendedChange": "Add POSIX timezone option"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/esp32-digital-clock",
@@ -2220,24 +2003,20 @@
           "notes": "Timezone and DST handling guide"
         }
       ],
-
-      "auditFile": "audits/esp32-digital-clock.md"
+      "auditFile": "audits/esp32-digital-clock.md",
+      "makerEsp32PublishDate": "2026-09-03"
     },
     {
       "id": "dot-matrix-clock-ntp-esp32",
       "title": "Dot Matrix Clock with NTP Server Using ESP32",
       "url": "https://my.cytron.io/tutorial/dot-matrix-clock-with-ntp-server-using-esp32",
-
       "category": "ESP32",
       "subcategory": "Time & Display",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32",
         "MAX7219 Dot Matrix"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -2248,7 +2027,6 @@
         "MD_Parola",
         "MD_MAX72XX"
       ],
-
       "keywords": [
         "ESP32",
         "Dot Matrix",
@@ -2261,26 +2039,17 @@
         "Time",
         "Display"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 8,
-
       "scores": {
         "technicalAccuracy": 8,
         "currentValidity": 7,
@@ -2291,15 +2060,14 @@
         "beginnerFriendliness": 7,
         "reproducibility": 7
       },
-
       "mainRecommendation": "Update library versions (MD_Parola 3.7.5, MD_MAX72XX 3.5.1), consider using ESP32's built-in configTime() instead of NTPClient library, add hardware type identification guidance for different MAX7219 modules, and document non-default SPI pin usage. For Maker ESP32: Change CS pin from GPIO26 to GPIO17 to avoid buzzer conflict.",
-
       "makerEsp32": {
         "compatibility": "conflict",
         "notes": "GPIO26 used for CS pin conflicts with Maker ESP32 onboard buzzer",
-        "requiredChanges": ["Change CS pin from GPIO26 to GPIO17"]
+        "requiredChanges": [
+          "Change CS pin from GPIO26 to GPIO17"
+        ]
       },
-
       "topIssues": [
         {
           "priority": "P1",
@@ -2344,7 +2112,6 @@
           "recommendation": "Add timezone configuration guide"
         }
       ],
-
       "keep": [
         {
           "section": "Project Concept",
@@ -2367,7 +2134,6 @@
           "reason": "Alternating colon effect is nice visual touch"
         }
       ],
-
       "update": [
         {
           "section": "Library Versions",
@@ -2390,9 +2156,7 @@
           "action": "Add timezone offset table and calculation guide"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "MD_Parola version",
@@ -2427,7 +2191,6 @@
           "recommendedChange": "Add identification guide"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/dot-matrix-clock-with-ntp-server-using-esp32",
@@ -2460,24 +2223,20 @@
           "notes": "Official hardware identification guide"
         }
       ],
-
-      "auditFile": "audits/dot-matrix-clock-ntp-esp32.md"
+      "auditFile": "audits/dot-matrix-clock-ntp-esp32.md",
+      "makerEsp32PublishDate": "2026-09-25"
     },
     {
       "id": "esp32-air-quality-monitoring",
       "title": "ESP32 Air Quality Monitoring",
       "url": "https://my.cytron.io/tutorial/esp32-air-quality-monitoring",
-
       "category": "IoT",
       "subcategory": "Environmental Monitoring",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32",
         "MQ135 Gas Sensor"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -2486,7 +2245,6 @@
         "Web Server",
         "ADC"
       ],
-
       "keywords": [
         "ESP32",
         "Air Quality",
@@ -2499,26 +2257,17 @@
         "Pollution",
         "IoT"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 7,
-
       "scores": {
         "technicalAccuracy": 7,
         "currentValidity": 8,
@@ -2529,15 +2278,12 @@
         "beginnerFriendliness": 7,
         "reproducibility": 6
       },
-
       "mainRecommendation": "Add sensor calibration guidance (preheat time, R0 calibration), document ESP32 ADC voltage level considerations (3.3V vs 5V), and clarify the meaning of raw ADC values vs actual PPM readings. Maker ESP32 compatible - use ADC1 pins (GPIO32-33).",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible. Use ADC1 pins (GPIO32, GPIO33) for MQ135 analog reading. Voltage divider still required for 5V sensor output.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P2",
@@ -2575,7 +2321,6 @@
           "recommendation": "Document library requirements"
         }
       ],
-
       "keep": [
         {
           "section": "Project Concept",
@@ -2598,7 +2343,6 @@
           "reason": "Good platform for IoT monitoring"
         }
       ],
-
       "update": [
         {
           "section": "Sensor Calibration",
@@ -2621,9 +2365,7 @@
           "action": "Clarify raw ADC values vs calibrated PPM"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "MQ135 calibration",
@@ -2658,7 +2400,6 @@
           "recommendedChange": "No change needed"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/esp32-air-quality-monitoring",
@@ -2685,25 +2426,21 @@
           "notes": "Comprehensive tutorial with calibration"
         }
       ],
-
-      "auditFile": "audits/esp32-air-quality-monitoring.md"
+      "auditFile": "audits/esp32-air-quality-monitoring.md",
+      "makerEsp32PublishDate": "2026-09-12"
     },
     {
       "id": "esp32-smoke-detection-alarm",
       "title": "ESP32 Smoke Detection Alarm",
       "url": "https://my.cytron.io/tutorial/esp32-smoke-detection-alarm",
-
       "category": "IoT",
       "subcategory": "Safety & Alerts",
-
       "targetLevel": "Beginner",
-
       "products": [
         "Robo ESP32",
         "MQ2 Gas Sensor",
         "Buzzer"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -2712,7 +2449,6 @@
         "Buzzer",
         "ADC"
       ],
-
       "keywords": [
         "ESP32",
         "Smoke Detector",
@@ -2725,26 +2461,17 @@
         "Alert System",
         "Robo ESP32"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 8,
-
       "scores": {
         "technicalAccuracy": 8,
         "currentValidity": 8,
@@ -2755,15 +2482,16 @@
         "beginnerFriendliness": 8,
         "reproducibility": 8
       },
-
       "mainRecommendation": "Add safety disclaimer that this is for educational purposes only and not a replacement for certified smoke detectors. For Maker ESP32: Replace NeoPixel visual alerts with GPIO LED indicators, and use onboard buzzer (GPIO26) for audio alerts.",
-
       "makerEsp32": {
         "compatibility": "significant",
         "notes": "Robo ESP32 has built-in NeoPixel LEDs which Maker ESP32 lacks. Maker ESP32 has onboard buzzer on GPIO26 and 14 GPIO status LEDs instead.",
-        "requiredChanges": ["Replace NeoPixel code with GPIO LED control", "Use Maker ESP32 onboard buzzer (GPIO26) instead of external buzzer", "Use GPIO status LEDs (2,12,13,16,17,18,19,21,22,23,25,27,32,33) for visual alerts"]
+        "requiredChanges": [
+          "Replace NeoPixel code with GPIO LED control",
+          "Use Maker ESP32 onboard buzzer (GPIO26) instead of external buzzer",
+          "Use GPIO status LEDs (2,12,13,16,17,18,19,21,22,23,25,27,32,33) for visual alerts"
+        ]
       },
-
       "topIssues": [
         {
           "priority": "P2",
@@ -2808,7 +2536,6 @@
           "recommendation": "Add troubleshooting section"
         }
       ],
-
       "keep": [
         {
           "section": "Project Concept",
@@ -2831,7 +2558,6 @@
           "reason": "Well-maintained, ESP32 compatible"
         }
       ],
-
       "update": [
         {
           "section": "Safety Disclaimer",
@@ -2854,9 +2580,7 @@
           "action": "Add false alarm prevention tips"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "MQ2 detection range",
@@ -2891,7 +2615,6 @@
           "recommendedChange": "No change needed"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/esp32-smoke-detection-alarm",
@@ -2918,19 +2641,16 @@
           "notes": "Comprehensive MQ2 documentation"
         }
       ],
-
-      "auditFile": "audits/esp32-smoke-detection-alarm.md"
+      "auditFile": "audits/esp32-smoke-detection-alarm.md",
+      "makerEsp32PublishDate": "2026-09-26"
     },
     {
       "id": "farm-automation-system-roboesp32",
       "title": "Farm Automation System using Robo ESP32",
       "url": "https://my.cytron.io/tutorial/farm-automation-system-using-roboesp32",
-
       "category": "IoT",
       "subcategory": "Agriculture & Automation",
-
       "targetLevel": "Intermediate",
-
       "products": [
         "Robo ESP32",
         "Maker Soil Moisture Sensor",
@@ -2939,7 +2659,6 @@
         "Relay Module",
         "Water Pump"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -2948,7 +2667,6 @@
         "ADC",
         "Relay Control"
       ],
-
       "keywords": [
         "ESP32",
         "Farm Automation",
@@ -2961,26 +2679,17 @@
         "Pump Control",
         "IoT Agriculture"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Medium",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 7,
-
       "scores": {
         "technicalAccuracy": 8,
         "currentValidity": 7,
@@ -2991,15 +2700,14 @@
         "beginnerFriendliness": 6,
         "reproducibility": 7
       },
-
       "mainRecommendation": "Ensure Blynk 2.0 code structure is used (Template ID, Template Name, Auth Token), add sensor calibration guidance for soil moisture, include electrical safety warnings for relay/pump circuits. Maker ESP32 compatible with pin adjustments.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Compatible with Maker ESP32. Avoid GPIO4 (user button) and GPIO26 (buzzer) for sensors. ADC and relay control work identically.",
-        "requiredChanges": ["Use GPIO16/17 instead of GPIO4 for DHT sensor if applicable"]
+        "requiredChanges": [
+          "Use GPIO16/17 instead of GPIO4 for DHT sensor if applicable"
+        ]
       },
-
       "topIssues": [
         {
           "priority": "P2",
@@ -3037,7 +2745,6 @@
           "recommendation": "Document both library requirements"
         }
       ],
-
       "keep": [
         {
           "section": "Project Concept",
@@ -3060,7 +2767,6 @@
           "reason": "Prevents dry-running the pump"
         }
       ],
-
       "update": [
         {
           "section": "Blynk Code Structure",
@@ -3083,9 +2789,7 @@
           "action": "Document Unified Sensor requirement"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "Blynk authentication",
@@ -3120,7 +2824,6 @@
           "recommendedChange": "Add safety warnings"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/farm-automation-system-using-roboesp32",
@@ -3147,26 +2850,22 @@
           "notes": "Water level sensor reference"
         }
       ],
-
-      "auditFile": "audits/farm-automation-system-roboesp32.md"
+      "auditFile": "audits/farm-automation-system-roboesp32.md",
+      "makerEsp32PublishDate": "2026-09-19"
     },
     {
       "id": "esp32-water-tank-monitoring",
       "title": "ESP32 Water Tank Monitoring",
       "url": "https://my.cytron.io/tutorial/esp32-water-tank-monitoring",
-
       "category": "IoT",
       "subcategory": "Water Management",
-
       "targetLevel": "Beginner",
-
       "products": [
         "Robo ESP32",
         "Ultrasonic SR04P",
         "Grove LCD RGB",
         "NeoPixel LED"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -3175,7 +2874,6 @@
         "Ultrasonic Sensor",
         "I2C LCD"
       ],
-
       "keywords": [
         "ESP32",
         "Water Tank",
@@ -3188,26 +2886,17 @@
         "IoT",
         "Real-time"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "A",
         "label": "Valid"
       },
-
       "decision": "Keep",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P3",
-
       "technicalScore": 9,
-
       "scores": {
         "technicalAccuracy": 9,
         "currentValidity": 9,
@@ -3218,15 +2907,15 @@
         "beginnerFriendliness": 8,
         "reproducibility": 8
       },
-
       "mainRecommendation": "Tutorial is technically sound. For Maker ESP32: Replace NeoPixel indicators with GPIO LED status indicators, I2C LCD works via Maker Port (GPIO21/22).",
-
       "makerEsp32": {
         "compatibility": "minor",
         "notes": "Robo ESP32 NeoPixel can be replaced with Maker ESP32 GPIO status LEDs. I2C LCD compatible via Maker Port.",
-        "requiredChanges": ["Replace NeoPixel water level indicators with GPIO LED indicators", "Use Maker Port (GPIO21 SDA, GPIO22 SCL) for I2C LCD"]
+        "requiredChanges": [
+          "Replace NeoPixel water level indicators with GPIO LED indicators",
+          "Use Maker Port (GPIO21 SDA, GPIO22 SCL) for I2C LCD"
+        ]
       },
-
       "topIssues": [
         {
           "priority": "P2",
@@ -3271,7 +2960,6 @@
           "recommendation": "Add WiFi reconnection logic"
         }
       ],
-
       "keep": [
         {
           "section": "Project Concept",
@@ -3298,7 +2986,6 @@
           "reason": "Web + LCD + LED provides comprehensive feedback"
         }
       ],
-
       "update": [
         {
           "section": "Sensor Compatibility",
@@ -3321,9 +3008,7 @@
           "action": "Mention waterproof sensor alternatives"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "SR04P sensor",
@@ -3358,7 +3043,6 @@
           "recommendedChange": "No change needed"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/esp32-water-tank-monitoring",
@@ -3385,24 +3069,20 @@
           "notes": "Comprehensive monitoring guide"
         }
       ],
-
-      "auditFile": "audits/esp32-water-tank-monitoring.md"
+      "auditFile": "audits/esp32-water-tank-monitoring.md",
+      "makerEsp32PublishDate": "2026-09-21"
     },
     {
       "id": "wifi-weather-station-esp32",
       "title": "WiFi Weather Station ESP32",
       "url": "https://my.cytron.io/tutorial/wifi-weather-station-esp32",
-
       "category": "IoT",
       "subcategory": "Weather & Environment",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32",
         "OLED Display SSD1306"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -3412,7 +3092,6 @@
         "JSON",
         "I2C OLED"
       ],
-
       "keywords": [
         "ESP32",
         "Weather Station",
@@ -3425,26 +3104,17 @@
         "ArduinoJson",
         "IoT"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 8,
-
       "scores": {
         "technicalAccuracy": 8,
         "currentValidity": 7,
@@ -3455,15 +3125,12 @@
         "beginnerFriendliness": 7,
         "reproducibility": 7
       },
-
       "mainRecommendation": "Verify ArduinoJson version compatibility (v6 vs v7 syntax differs), document OpenWeatherMap API rate limits. Maker ESP32 fully compatible - use Maker Port for I2C OLED.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible. Use Maker Port (GPIO21/22) for I2C OLED. WiFi and HTTPS API calls work identically.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P2",
@@ -3501,7 +3168,6 @@
           "recommendation": "Add comprehensive error handling"
         }
       ],
-
       "keep": [
         {
           "section": "Project Concept",
@@ -3524,7 +3190,6 @@
           "reason": "Valuable skill for API integration"
         }
       ],
-
       "update": [
         {
           "section": "ArduinoJson Version",
@@ -3547,9 +3212,7 @@
           "action": "Add error checking for HTTP and JSON"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "ArduinoJson library",
@@ -3584,7 +3247,6 @@
           "recommendedChange": "No change needed"
         }
       ],
-
       "links": [
         {
           "url": "https://my.cytron.io/tutorial/wifi-weather-station-esp32",
@@ -3611,30 +3273,25 @@
           "notes": "Adafruit SSD1306 driver"
         }
       ],
-
-      "auditFile": "audits/wifi-weather-station-esp32.md"
+      "auditFile": "audits/wifi-weather-station-esp32.md",
+      "makerEsp32PublishDate": "2026-09-11"
     },
     {
       "id": "esp32-high-temperature-alert-system-with-dht22-sensor",
       "title": "ESP32 High Temperature Alert System with DHT22 Sensor",
       "url": "https://my.cytron.io/tutorial/esp32-high-temperature-alert-system-with-dht22-sensor",
-
       "category": "IoT",
       "subcategory": "Sensors",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
         "DHT22",
         "Adafruit DHT Library"
       ],
-
       "keywords": [
         "ESP32",
         "DHT22",
@@ -3644,26 +3301,17 @@
         "Sensor",
         "Beginner"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P3",
-
       "technicalScore": 7,
-
       "scores": {
         "technicalAccuracy": 8,
         "currentValidity": 7,
@@ -3673,15 +3321,14 @@
         "beginnerFriendliness": 8,
         "reproducibility": 7
       },
-
       "mainRecommendation": "Update library installation instructions to include Adafruit Unified Sensor as a required dependency. For Maker ESP32: Change DHT data pin from GPIO4 to GPIO16 to avoid user button conflict.",
-
       "makerEsp32": {
         "compatibility": "conflict",
         "notes": "GPIO4 commonly used for DHT data conflicts with Maker ESP32 onboard user button",
-        "requiredChanges": ["Change DHT data pin from GPIO4 to GPIO16 or GPIO13"]
+        "requiredChanges": [
+          "Change DHT data pin from GPIO4 to GPIO16 or GPIO13"
+        ]
       },
-
       "topIssues": [
         {
           "priority": "P1",
@@ -3712,7 +3359,6 @@
           "recommendation": "Add troubleshooting section"
         }
       ],
-
       "keep": [
         {
           "section": "Hardware Wiring",
@@ -3727,7 +3373,6 @@
           "reason": "Threshold comparison and alert triggering is sound"
         }
       ],
-
       "update": [
         {
           "section": "Library Installation",
@@ -3740,9 +3385,7 @@
           "action": "Add 10kΩ pull-up resistor recommendation"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "DHT library works",
@@ -3761,7 +3404,6 @@
           "recommendedChange": "Add installation instruction"
         }
       ],
-
       "links": [
         {
           "url": "https://github.com/adafruit/DHT-sensor-library",
@@ -3770,29 +3412,24 @@
           "notes": "Adafruit DHT library"
         }
       ],
-
-      "auditFile": "audits/esp32-high-temperature-alert-system-with-dht22-sensor.md"
+      "auditFile": "audits/esp32-high-temperature-alert-system-with-dht22-sensor.md",
+      "makerEsp32PublishDate": "2026-09-24"
     },
     {
       "id": "esp32-clap-switch",
       "title": "ESP32 Clap Switch",
       "url": "https://my.cytron.io/tutorial/esp32-clap-switch",
-
       "category": "IoT",
       "subcategory": "Home Automation",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
         "Sound Sensor"
       ],
-
       "keywords": [
         "ESP32",
         "Clap Switch",
@@ -3800,26 +3437,17 @@
         "Home Automation",
         "Beginner"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "A",
         "label": "Valid"
       },
-
       "decision": "Keep",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "None",
-
       "technicalScore": 8,
-
       "scores": {
         "technicalAccuracy": 9,
         "currentValidity": 9,
@@ -3829,15 +3457,12 @@
         "beginnerFriendliness": 9,
         "reproducibility": 8
       },
-
       "mainRecommendation": "Tutorial uses standard sound sensor technology that remains fully valid. Maker ESP32 fully compatible.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible. Use any GPIO for digital input or ADC1 pins (GPIO32-33) for analog. Sound sensor works identically.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P3",
@@ -3854,7 +3479,6 @@
           "recommendation": "Add ADC configuration note"
         }
       ],
-
       "keep": [
         {
           "section": "Hardware Wiring",
@@ -3869,7 +3493,6 @@
           "reason": "State toggle on clap detection is properly implemented"
         }
       ],
-
       "update": [
         {
           "section": "Debounce Timing",
@@ -3877,9 +3500,7 @@
           "action": "Add 25ms+ debounce in code"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "Sound sensor works",
@@ -3890,33 +3511,27 @@
           "recommendedChange": "Keep as-is"
         }
       ],
-
       "links": [],
-
-      "auditFile": "audits/esp32-clap-switch.md"
+      "auditFile": "audits/esp32-clap-switch.md",
+      "makerEsp32PublishDate": "2026-09-04"
     },
     {
       "id": "esp32-motion-detector-alert",
       "title": "ESP32 Motion Detector Alert",
       "url": "https://my.cytron.io/tutorial/esp32-motion-detector-alert",
-
       "category": "IoT",
       "subcategory": "Security",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32",
         "HC-SR501"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
         "PIR Sensor",
         "HC-SR501"
       ],
-
       "keywords": [
         "ESP32",
         "Motion Detector",
@@ -3926,26 +3541,17 @@
         "Alert",
         "Beginner"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "A",
         "label": "Valid"
       },
-
       "decision": "Keep",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "None",
-
       "technicalScore": 8,
-
       "scores": {
         "technicalAccuracy": 9,
         "currentValidity": 9,
@@ -3955,15 +3561,12 @@
         "beginnerFriendliness": 9,
         "reproducibility": 9
       },
-
       "mainRecommendation": "Tutorial uses standard PIR sensor technology that remains fully valid. Maker ESP32 fully compatible.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible. PIR digital output (3.3V) works with any GPIO. Power sensor from 5V (VIN), not 3.3V.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P3",
@@ -3980,7 +3583,6 @@
           "recommendation": "Specify VIN connection"
         }
       ],
-
       "keep": [
         {
           "section": "Hardware Wiring",
@@ -3995,7 +3597,6 @@
           "reason": "LED/buzzer triggering is sound"
         }
       ],
-
       "update": [
         {
           "section": "Power Requirements",
@@ -4008,9 +3609,7 @@
           "action": "Add delay in setup() function"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "PIR sensor works",
@@ -4021,26 +3620,21 @@
           "recommendedChange": "Keep as-is"
         }
       ],
-
       "links": [],
-
-      "auditFile": "audits/esp32-motion-detector-alert.md"
+      "auditFile": "audits/esp32-motion-detector-alert.md",
+      "makerEsp32PublishDate": "2026-09-05"
     },
     {
       "id": "ws2812-ring-led-clock-with-ntp-server-using-esp32",
       "title": "WS2812 Ring LED Clock with NTP Server Using ESP32",
       "url": "https://my.cytron.io/tutorial/ws2812-ring-led-clock-with-ntp-server-using-esp32",
-
       "category": "IoT",
       "subcategory": "Display",
-
       "targetLevel": "Intermediate",
-
       "products": [
         "ESP32",
         "WS2812 LED Ring"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -4049,7 +3643,6 @@
         "NTP",
         "FastLED"
       ],
-
       "keywords": [
         "ESP32",
         "WS2812",
@@ -4060,26 +3653,17 @@
         "Time",
         "Intermediate"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 7,
-
       "scores": {
         "technicalAccuracy": 7,
         "currentValidity": 7,
@@ -4089,15 +3673,12 @@
         "beginnerFriendliness": 7,
         "reproducibility": 7
       },
-
       "mainRecommendation": "Address ESP32 WiFi timing conflicts with NeoPixel libraries. Maker ESP32 compatible with external WS2812 ring.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Compatible with external WS2812 LED ring. Use any GPIO for data (avoid GPIO26 buzzer). RMT driver recommended.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P2",
@@ -4121,7 +3702,6 @@
           "recommendation": "Recommend 330-470Ω resistor"
         }
       ],
-
       "keep": [
         {
           "section": "NTP Concept",
@@ -4136,7 +3716,6 @@
           "reason": "Built-in NTP function is correct approach"
         }
       ],
-
       "update": [
         {
           "section": "Library Configuration",
@@ -4149,9 +3728,7 @@
           "action": "Add 330-470Ω resistor between data pin and LED strip"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "NeoPixel library works",
@@ -4170,7 +3747,6 @@
           "recommendedChange": "Keep as-is"
         }
       ],
-
       "links": [
         {
           "url": "https://github.com/adafruit/Adafruit_NeoPixel",
@@ -4179,29 +3755,24 @@
           "notes": "Adafruit NeoPixel library"
         }
       ],
-
-      "auditFile": "audits/ws2812-ring-led-clock-with-ntp-server-using-esp32.md"
+      "auditFile": "audits/ws2812-ring-led-clock-with-ntp-server-using-esp32.md",
+      "makerEsp32PublishDate": "2026-09-18"
     },
     {
       "id": "getting-started-espnow",
       "title": "Getting Started ESP-NOW",
       "url": "https://my.cytron.io/tutorial/getting-started-espnow",
-
       "category": "IoT",
       "subcategory": "Communication",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
         "ESP-NOW"
       ],
-
       "keywords": [
         "ESP32",
         "ESP-NOW",
@@ -4210,26 +3781,17 @@
         "Communication",
         "Beginner"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "A",
         "label": "Valid"
       },
-
       "decision": "Keep",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "None",
-
       "technicalScore": 9,
-
       "scores": {
         "technicalAccuracy": 9,
         "currentValidity": 9,
@@ -4239,15 +3801,12 @@
         "beginnerFriendliness": 8,
         "reproducibility": 9
       },
-
       "mainRecommendation": "Tutorial uses ESP-NOW protocol which remains fully valid and unchanged. Maker ESP32 fully compatible - ESP-NOW works identically.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible. ESP-NOW protocol works identically on Maker ESP32. MAC address retrieval and peer communication unchanged.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P3",
@@ -4264,7 +3823,6 @@
           "recommendation": "Add advanced note"
         }
       ],
-
       "keep": [
         {
           "section": "ESP-NOW Introduction",
@@ -4279,7 +3837,6 @@
           "reason": "Callback pattern is correct implementation"
         }
       ],
-
       "update": [
         {
           "section": "MAC Address Discovery",
@@ -4287,9 +3844,7 @@
           "action": "Add helper code"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "ESP-NOW protocol",
@@ -4308,32 +3863,26 @@
           "recommendedChange": "Update range info"
         }
       ],
-
       "links": [],
-
-      "auditFile": "audits/getting-started-espnow.md"
+      "auditFile": "audits/getting-started-espnow.md",
+      "makerEsp32PublishDate": "2026-09-01"
     },
     {
       "id": "send-sensors-data-to-thingspeak-using-esp32",
       "title": "Send Sensors Data to ThingSpeak Using ESP32",
       "url": "https://my.cytron.io/tutorial/send-sensors-data-to-thingspeak-using-esp32",
-
       "category": "IoT",
       "subcategory": "Cloud",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
         "ThingSpeak",
         "WiFi"
       ],
-
       "keywords": [
         "ESP32",
         "ThingSpeak",
@@ -4343,26 +3892,17 @@
         "Data",
         "Beginner"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P3",
-
       "technicalScore": 8,
-
       "scores": {
         "technicalAccuracy": 8,
         "currentValidity": 8,
@@ -4372,15 +3912,12 @@
         "beginnerFriendliness": 8,
         "reproducibility": 8
       },
-
       "mainRecommendation": "ThingSpeak platform remains valid. Maker ESP32 fully compatible - WiFi and HTTP functionality identical.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible. WiFi and ThingSpeak API work identically on Maker ESP32.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P3",
@@ -4404,7 +3941,6 @@
           "recommendation": "Add security note"
         }
       ],
-
       "keep": [
         {
           "section": "ThingSpeak Account Setup",
@@ -4419,7 +3955,6 @@
           "reason": "ESP32 WiFi code remains valid"
         }
       ],
-
       "update": [
         {
           "section": "Library Usage",
@@ -4432,9 +3967,7 @@
           "action": "Add 15-second minimum delay"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "ThingSpeak API",
@@ -4453,7 +3986,6 @@
           "recommendedChange": "Add delay warning"
         }
       ],
-
       "links": [
         {
           "url": "https://github.com/mathworks/thingspeak-arduino",
@@ -4462,27 +3994,22 @@
           "notes": "Official ThingSpeak Arduino library"
         }
       ],
-
-      "auditFile": "audits/send-sensors-data-to-thingspeak-using-esp32.md"
+      "auditFile": "audits/send-sensors-data-to-thingspeak-using-esp32.md",
+      "makerEsp32PublishDate": "2026-09-14"
     },
     {
       "id": "how-to-start-up-and-get-auth-token-from-blynk",
       "title": "How to Start Up and Get Auth Token from Blynk",
       "url": "https://my.cytron.io/tutorial/how-to-start-up-and-get-auth-token-from-blynk",
-
       "category": "IoT",
       "subcategory": "Platform Setup",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32"
       ],
-
       "technologies": [
         "Blynk Legacy"
       ],
-
       "keywords": [
         "Blynk",
         "Auth Token",
@@ -4491,26 +4018,17 @@
         "Legacy",
         "Deprecated"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "E",
         "label": "Invalid"
       },
-
       "decision": "Major Revamp",
-
       "revampScope": "Large",
-
       "revampStatus": "Reviewed",
-
       "priority": "P0",
-
       "technicalScore": 1,
-
       "scores": {
         "technicalAccuracy": 2,
         "currentValidity": 1,
@@ -4519,15 +4037,12 @@
         "beginnerFriendliness": 2,
         "reproducibility": 1
       },
-
       "mainRecommendation": "CRITICAL: Blynk Legacy servers were permanently shut down on December 31, 2022. Tutorial must be completely rewritten for Blynk 2.0/Blynk IoT platform.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Hardware compatible, but tutorial content is broken (Blynk Legacy shutdown). Once rewritten for Blynk IoT, Maker ESP32 works identically.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P0",
@@ -4558,11 +4073,8 @@
           "recommendation": "Use blynk.cloud"
         }
       ],
-
       "keep": [],
-
       "update": [],
-
       "remove": [
         {
           "section": "Entire Tutorial",
@@ -4570,7 +4082,6 @@
           "action": "Complete rewrite for Blynk 2.0"
         }
       ],
-
       "evidence": [
         {
           "claim": "Legacy platform works",
@@ -4589,7 +4100,6 @@
           "recommendedChange": "Update to 3-parameter system"
         }
       ],
-
       "links": [
         {
           "url": "https://blynk.cloud",
@@ -4598,27 +4108,22 @@
           "notes": "Replacement for legacy Blynk"
         }
       ],
-
-      "auditFile": "audits/how-to-start-up-and-get-auth-token-from-blynk.md"
+      "auditFile": "audits/how-to-start-up-and-get-auth-token-from-blynk.md",
+      "makerEsp32PublishDate": "2026-09-28"
     },
     {
       "id": "how-to-create-a-telegram-bot-get-the-api-key-and-chat-id",
       "title": "How to Create a Telegram Bot, Get the API Key and Chat ID",
       "url": "https://my.cytron.io/tutorial/how-to-create-a-telegram-bot-get-the-api-key-and-chat-id",
-
       "category": "IoT",
       "subcategory": "Messaging",
-
       "targetLevel": "Beginner",
-
       "products": [],
-
       "technologies": [
         "Telegram",
         "Bot API",
         "BotFather"
       ],
-
       "keywords": [
         "Telegram",
         "Bot",
@@ -4628,26 +4133,17 @@
         "Messaging",
         "Beginner"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "A",
         "label": "Valid"
       },
-
       "decision": "Keep",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "None",
-
       "technicalScore": 9,
-
       "scores": {
         "technicalAccuracy": 9,
         "currentValidity": 9,
@@ -4656,15 +4152,12 @@
         "beginnerFriendliness": 9,
         "reproducibility": 9
       },
-
       "mainRecommendation": "Telegram Bot API and BotFather process remain unchanged. Tutorial is valid. Hardware-independent setup guide.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Hardware-independent tutorial (Telegram setup only). Bot credentials work with any ESP32 including Maker ESP32.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P3",
@@ -4681,7 +4174,6 @@
           "recommendation": "Add alternative method"
         }
       ],
-
       "keep": [
         {
           "section": "BotFather Process",
@@ -4696,7 +4188,6 @@
           "reason": "Chat ID usage is unchanged"
         }
       ],
-
       "update": [
         {
           "section": "Screenshots",
@@ -4709,9 +4200,7 @@
           "action": "Mention @userinfobot"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "BotFather process",
@@ -4722,7 +4211,6 @@
           "recommendedChange": "Keep as-is"
         }
       ],
-
       "links": [
         {
           "url": "https://t.me/BotFather",
@@ -4731,31 +4219,26 @@
           "notes": "Official bot creation interface"
         }
       ],
-
-      "auditFile": "audits/how-to-create-a-telegram-bot-get-the-api-key-and-chat-id.md"
+      "auditFile": "audits/how-to-create-a-telegram-bot-get-the-api-key-and-chat-id.md",
+      "makerEsp32PublishDate": "2026-09-02"
     },
     {
       "id": "interface-water-flow-sensor-using-esp32-board-2",
       "title": "Interface Water Flow Sensor Using ESP32 Board (Part 2)",
       "url": "https://my.cytron.io/tutorial/interface-water-flow-sensor-using-esp32-board-2",
-
       "category": "IoT",
       "subcategory": "Sensors",
-
       "targetLevel": "Intermediate",
-
       "products": [
         "ESP32",
         "YF-S201"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
         "Water Flow Sensor",
         "Hall Effect"
       ],
-
       "keywords": [
         "ESP32",
         "Water Flow",
@@ -4764,26 +4247,17 @@
         "Pulse Counting",
         "Intermediate"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 7,
-
       "scores": {
         "technicalAccuracy": 7,
         "currentValidity": 7,
@@ -4793,15 +4267,12 @@
         "beginnerFriendliness": 6,
         "reproducibility": 6
       },
-
       "mainRecommendation": "IMPORTANT: YF-S201 outputs 5V pulses which can damage ESP32's 3.3V GPIO pins. Maker ESP32 compatible with voltage divider.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Compatible with voltage divider. YF-S201 5V output needs level shifting to protect Maker ESP32 GPIO pins (same as any ESP32).",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P2",
@@ -4825,7 +4296,6 @@
           "recommendation": "Use attachInterrupt with IRAM_ATTR"
         }
       ],
-
       "keep": [
         {
           "section": "Sensor Concept",
@@ -4836,7 +4306,6 @@
           "reason": "Mathematical approach is sound"
         }
       ],
-
       "update": [
         {
           "section": "Voltage Protection",
@@ -4849,9 +4318,7 @@
           "action": "Show level shifting components"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "Direct connection works",
@@ -4862,7 +4329,6 @@
           "recommendedChange": "Add level shifting"
         }
       ],
-
       "links": [
         {
           "url": "https://github.com/galihru/YFS201",
@@ -4871,30 +4337,25 @@
           "notes": "Arduino library for YF-S201"
         }
       ],
-
-      "auditFile": "audits/interface-water-flow-sensor-using-esp32-board-2.md"
+      "auditFile": "audits/interface-water-flow-sensor-using-esp32-board-2.md",
+      "makerEsp32PublishDate": "2026-09-20"
     },
     {
       "id": "water-notification-for-plants-using-blynk-and-moisture-sensor-on-esp32",
       "title": "Water Notification for Plants Using Blynk and Moisture Sensor on ESP32",
       "url": "https://my.cytron.io/tutorial/water-notification-for-plants-using-blynk-and-moisture-sensor-on-esp32",
-
       "category": "IoT",
       "subcategory": "Smart Garden",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32",
         "Soil Moisture Sensor"
       ],
-
       "technologies": [
         "ESP32",
         "Blynk Legacy",
         "Soil Moisture Sensor"
       ],
-
       "keywords": [
         "ESP32",
         "Blynk",
@@ -4904,26 +4365,17 @@
         "BROKEN",
         "Legacy"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "E",
         "label": "Invalid"
       },
-
       "decision": "Major Revamp",
-
       "revampScope": "Large",
-
       "revampStatus": "Reviewed",
-
       "priority": "P0",
-
       "technicalScore": 2,
-
       "scores": {
         "technicalAccuracy": 3,
         "currentValidity": 1,
@@ -4933,15 +4385,12 @@
         "beginnerFriendliness": 3,
         "reproducibility": 1
       },
-
       "mainRecommendation": "CRITICAL: Blynk Legacy servers shut down December 31, 2022. Moisture sensor code is valid but Blynk integration must be rewritten for Blynk 2.0.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Hardware compatible (moisture sensor on ADC pins). Blynk Legacy is broken but once rewritten for Blynk IoT, Maker ESP32 works identically.",
         "requiredChanges": []
       },
-
       "topIssues": [
         {
           "priority": "P0",
@@ -4972,7 +4421,6 @@
           "recommendation": "Add calibration procedure"
         }
       ],
-
       "keep": [
         {
           "section": "Moisture Sensor Wiring",
@@ -4983,9 +4431,7 @@
           "reason": "Reading moisture via analogRead() is correct"
         }
       ],
-
       "update": [],
-
       "remove": [
         {
           "section": "All Blynk Code",
@@ -4993,7 +4439,6 @@
           "action": "Complete rewrite for Blynk 2.0"
         }
       ],
-
       "evidence": [
         {
           "claim": "Blynk works",
@@ -5012,32 +4457,26 @@
           "recommendedChange": "Keep sensor code"
         }
       ],
-
       "links": [],
-
-      "auditFile": "audits/water-notification-for-plants-using-blynk-and-moisture-sensor-on-esp32.md"
+      "auditFile": "audits/water-notification-for-plants-using-blynk-and-moisture-sensor-on-esp32.md",
+      "makerEsp32PublishDate": "2026-09-29"
     },
     {
       "id": "gas-detector-using-mq2-on-esp32-and-blynk-app",
       "title": "Gas Detector Using MQ2 on ESP32 and Blynk App",
       "url": "https://my.cytron.io/tutorial/gas-detector-using-mq2-on-esp32-and-blynk-app",
-
       "category": "IoT",
       "subcategory": "Safety",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32",
         "MQ2"
       ],
-
       "technologies": [
         "ESP32",
         "Blynk Legacy",
         "MQ2 Gas Sensor"
       ],
-
       "keywords": [
         "ESP32",
         "MQ2",
@@ -5047,26 +4486,17 @@
         "BROKEN",
         "Legacy"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "E",
         "label": "Invalid"
       },
-
       "decision": "Major Revamp",
-
       "revampScope": "Large",
-
       "revampStatus": "Reviewed",
-
       "priority": "P0",
-
       "technicalScore": 2,
-
       "scores": {
         "technicalAccuracy": 3,
         "currentValidity": 1,
@@ -5076,9 +4506,7 @@
         "beginnerFriendliness": 3,
         "reproducibility": 1
       },
-
       "mainRecommendation": "CRITICAL: Blynk Legacy servers shut down December 31, 2022. MQ2 sensor code is valid but all Blynk integration must be completely rewritten for Blynk 2.0.",
-
       "topIssues": [
         {
           "priority": "P0",
@@ -5109,7 +4537,6 @@
           "recommendation": "Add preheating delay"
         }
       ],
-
       "keep": [
         {
           "section": "MQ2 Wiring",
@@ -5120,9 +4547,7 @@
           "reason": "Reading gas levels via analogRead() is correct"
         }
       ],
-
       "update": [],
-
       "remove": [
         {
           "section": "All Blynk Code",
@@ -5130,7 +4555,6 @@
           "action": "Complete rewrite for Blynk 2.0"
         }
       ],
-
       "evidence": [
         {
           "claim": "Blynk works",
@@ -5149,40 +4573,33 @@
           "recommendedChange": "Add preheating delay"
         }
       ],
-
       "links": [],
-
       "auditFile": "audits/gas-detector-using-mq2-on-esp32-and-blynk-app.md",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "MQ2 gas sensor uses analog input which works on any Maker ESP32 ADC pin. The Blynk Legacy issue is software-related (platform shutdown), not board-specific. Hardware connections are fully compatible.",
         "requiredChanges": []
-      }
+      },
+      "makerEsp32PublishDate": "2026-09-30"
     },
     {
       "id": "home-security-system-with-esp32",
       "title": "Home Security System with ESP32",
       "url": "https://my.cytron.io/tutorial/home-security-system-with-esp32",
-
       "category": "IoT",
       "subcategory": "Security",
-
       "targetLevel": "Intermediate",
-
       "products": [
         "ESP32",
         "HC-SR501",
         "Reed Switch"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
         "PIR Sensor",
         "Door Sensor"
       ],
-
       "keywords": [
         "ESP32",
         "Security",
@@ -5192,26 +4609,17 @@
         "Alert",
         "Intermediate"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "C",
         "label": "Partially Outdated"
       },
-
       "decision": "Major Revamp",
-
       "revampScope": "Medium",
-
       "revampStatus": "Reviewed",
-
       "priority": "P1",
-
       "technicalScore": 5,
-
       "scores": {
         "technicalAccuracy": 6,
         "currentValidity": 5,
@@ -5221,9 +4629,7 @@
         "beginnerFriendliness": 6,
         "reproducibility": 4
       },
-
       "mainRecommendation": "Sensor technology (PIR, door sensors) remains valid. Verify notification platform - if using Blynk Legacy, it's completely broken and needs replacing.",
-
       "topIssues": [
         {
           "priority": "P1",
@@ -5247,7 +4653,6 @@
           "recommendation": "Clarify VIN connection"
         }
       ],
-
       "keep": [
         {
           "section": "PIR Sensor Wiring",
@@ -5262,7 +4667,6 @@
           "reason": "Basic alarm triggering is correct"
         }
       ],
-
       "update": [
         {
           "section": "Notification System",
@@ -5275,9 +4679,7 @@
           "action": "Add 30-second delay"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "PIR sensors work",
@@ -5288,41 +4690,34 @@
           "recommendedChange": "Add 30-second delay"
         }
       ],
-
       "links": [],
-
       "auditFile": "audits/home-security-system-with-esp32.md",
-
       "makerEsp32": {
         "compatibility": "minor",
         "notes": "PIR sensor and reed switch use standard digital GPIOs which are compatible. If tutorial uses buzzer, avoid GPIO26 (Maker ESP32 built-in buzzer). May need to relocate alarm buzzer to different pin.",
         "requiredChanges": [
           "Verify buzzer pin - if using GPIO26, change to another GPIO (e.g., GPIO25 or GPIO27)"
         ]
-      }
+      },
+      "makerEsp32PublishDate": "2026-09-23"
     },
     {
       "id": "interface-water-flow-sensor-using-esp32-board",
       "title": "Interface Water Flow Sensor Using ESP32 Board",
       "url": "https://my.cytron.io/tutorial/interface-water-flow-sensor-using-esp32-board",
-
       "category": "IoT",
       "subcategory": "Sensors",
-
       "targetLevel": "Beginner",
-
       "products": [
         "ESP32",
         "YF-S201"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
         "Water Flow Sensor",
         "Hall Effect"
       ],
-
       "keywords": [
         "ESP32",
         "Water Flow",
@@ -5331,26 +4726,17 @@
         "Pulse Counting",
         "Beginner"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-13",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 7,
-
       "scores": {
         "technicalAccuracy": 7,
         "currentValidity": 7,
@@ -5360,9 +4746,7 @@
         "beginnerFriendliness": 7,
         "reproducibility": 6
       },
-
       "mainRecommendation": "IMPORTANT: YF-S201 outputs 5V pulses which can damage ESP32's 3.3V GPIO pins. Add voltage divider or level shifter requirement.",
-
       "topIssues": [
         {
           "priority": "P2",
@@ -5386,7 +4770,6 @@
           "recommendation": "Use attachInterrupt with IRAM_ATTR"
         }
       ],
-
       "keep": [
         {
           "section": "Sensor Concept",
@@ -5397,7 +4780,6 @@
           "reason": "Mathematical formulas are correct"
         }
       ],
-
       "update": [
         {
           "section": "Signal Line Wiring",
@@ -5410,9 +4792,7 @@
           "action": "Add clear warning about voltage mismatch"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "Direct connection works",
@@ -5431,7 +4811,6 @@
           "recommendedChange": "Use attachInterrupt"
         }
       ],
-
       "links": [
         {
           "url": "https://github.com/galihru/YFS201",
@@ -5440,29 +4819,24 @@
           "notes": "Arduino library for YF-S201"
         }
       ],
-
       "auditFile": "audits/interface-water-flow-sensor-using-esp32-board.md",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "YF-S201 water flow sensor uses interrupt-capable GPIO which is available on Maker ESP32. The 5V voltage level issue applies to all ESP32 boards, not Maker-specific. Voltage divider recommendation remains the same.",
         "requiredChanges": []
-      }
+      },
+      "makerEsp32PublishDate": "2026-09-13"
     },
     {
       "id": "esp32-smart-home-dashboard-with-real-time-sensor-data",
       "title": "ESP32 Smart Home Dashboard with Real-Time Sensor Data",
       "url": "https://my.cytron.io/tutorial/esp32-smart-home-dashboard-with-real-time-sensor-data",
-
       "category": "IoT",
       "subcategory": "Smart Home",
-
       "targetLevel": "Intermediate",
-
       "products": [
         "Robo ESP32"
       ],
-
       "technologies": [
         "ESP32",
         "Arduino IDE",
@@ -5472,7 +4846,6 @@
         "WiFi",
         "HTML/CSS/JavaScript"
       ],
-
       "keywords": [
         "Smart Home",
         "Dashboard",
@@ -5484,26 +4857,17 @@
         "Environmental Monitoring",
         "IoT"
       ],
-
       "reviewed": true,
-
       "lastReviewed": "2026-08-16",
-
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
       },
-
       "decision": "Minor Update",
-
       "revampScope": "Small",
-
       "revampStatus": "Reviewed",
-
       "priority": "P2",
-
       "technicalScore": 7,
-
       "scores": {
         "technicalAccuracy": 7,
         "currentValidity": 8,
@@ -5513,15 +4877,14 @@
         "beginnerFriendliness": 6,
         "reproducibility": 7
       },
-
       "mainRecommendation": "Add critical warning about MQ-135 voltage divider requirement (5V output can damage ESP32's 3.3V GPIO) and document the 24-48 hour sensor warmup period. Maker ESP32 compatible - avoid GPIO4/GPIO26 for sensors.",
-
       "makerEsp32": {
         "compatibility": "compatible",
         "notes": "Fully compatible with Maker ESP32. Use ADC pins (GPIO32/33) for MQ-135. Avoid GPIO4 (user button) and GPIO26 (buzzer) for DHT sensor.",
-        "requiredChanges": ["Use GPIO16 or GPIO13 for DHT data instead of GPIO4"]
+        "requiredChanges": [
+          "Use GPIO16 or GPIO13 for DHT data instead of GPIO4"
+        ]
       },
-
       "topIssues": [
         {
           "priority": "P1",
@@ -5559,7 +4922,6 @@
           "recommendation": "Document power requirements and recommend quality USB power supply"
         }
       ],
-
       "keep": [
         {
           "section": "Project Concept",
@@ -5578,7 +4940,6 @@
           "reason": "Ideal for WiFi-enabled sensor projects"
         }
       ],
-
       "update": [
         {
           "section": "Hardware Setup",
@@ -5601,9 +4962,7 @@
           "action": "List DHT library v1.4.7 and Adafruit Unified Sensor dependency"
         }
       ],
-
       "remove": [],
-
       "evidence": [
         {
           "claim": "MQ-135 voltage safe for ESP32",
@@ -5638,7 +4997,6 @@
           "recommendedChange": "Add warmup period documentation"
         }
       ],
-
       "links": [
         {
           "url": "https://github.com/adafruit/DHT-sensor-library",
@@ -5665,11 +5023,10 @@
           "notes": "Advanced calibration support"
         }
       ],
-
-      "auditFile": "audits/esp32-smart-home-dashboard-with-real-time-sensor-data.md"
+      "auditFile": "audits/esp32-smart-home-dashboard-with-real-time-sensor-data.md",
+      "makerEsp32PublishDate": "2026-09-16"
     }
   ],
-
   "metadata": {
     "version": "1.0.0",
     "lastUpdated": "2026-08-17",
