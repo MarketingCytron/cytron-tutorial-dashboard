@@ -15,8 +15,13 @@ const TutorialsList = {
         decision: '',
         status: '',
         priority: '',
-        category: ''
+        category: '',
+        prepwindow: '',
+        publishwindow: ''
     },
+
+    // Launch date: September 16, 2026
+    LAUNCH_DATE: '2026-09-16',
 
     async init() {
         const data = await Utils.loadData();
@@ -57,7 +62,7 @@ const TutorialsList = {
         }
 
         // Select filters
-        const filterIds = ['filterLevel', 'filterValidity', 'filterDecision', 'filterStatus', 'filterPriority', 'filterCategory'];
+        const filterIds = ['filterLevel', 'filterValidity', 'filterDecision', 'filterStatus', 'filterPriority', 'filterCategory', 'filterPrepWindow', 'filterPublishWindow'];
         filterIds.forEach(id => {
             const select = document.getElementById(id);
             if (select) {
@@ -141,6 +146,18 @@ const TutorialsList = {
             const input = document.getElementById('searchInput');
             if (input) input.value = params.get('search');
         }
+
+        if (params.get('prepwindow')) {
+            this.filters.prepwindow = params.get('prepwindow');
+            const select = document.getElementById('filterPrepWindow');
+            if (select) select.value = this.filters.prepwindow;
+        }
+
+        if (params.get('publishwindow')) {
+            this.filters.publishwindow = params.get('publishwindow');
+            const select = document.getElementById('filterPublishWindow');
+            if (select) select.value = this.filters.publishwindow;
+        }
     },
 
     updateUrlParams() {
@@ -152,9 +169,69 @@ const TutorialsList = {
         if (this.filters.status) params.set('status', this.filters.status);
         if (this.filters.priority) params.set('priority', this.filters.priority);
         if (this.filters.category) params.set('category', this.filters.category);
+        if (this.filters.prepwindow) params.set('prepwindow', this.filters.prepwindow);
+        if (this.filters.publishwindow) params.set('publishwindow', this.filters.publishwindow);
 
         const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
         window.history.replaceState({}, '', newUrl);
+    },
+
+    // Helper: Get week boundaries
+    getWeekBounds(weeksFromNow = 0) {
+        const today = new Date();
+        const dayOfWeek = today.getDay();
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - dayOfWeek + (weeksFromNow * 7));
+        startOfWeek.setHours(0, 0, 0, 0);
+
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        endOfWeek.setHours(23, 59, 59, 999);
+
+        return { start: startOfWeek, end: endOfWeek };
+    },
+
+    // Helper: Check prep window filter
+    matchesPrepWindow(tutorial, filter) {
+        if (!filter || !tutorial.preparationDate) return true;
+
+        const prepDate = new Date(tutorial.preparationDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        switch (filter) {
+            case 'overdue':
+                return prepDate < today && tutorial.revampStatus !== 'Completed';
+            case 'thisWeek':
+                const thisWeek = this.getWeekBounds(0);
+                return prepDate >= thisWeek.start && prepDate <= thisWeek.end;
+            case 'nextWeek':
+                const nextWeek = this.getWeekBounds(1);
+                return prepDate >= nextWeek.start && prepDate <= nextWeek.end;
+            case 'later':
+                const afterNextWeek = this.getWeekBounds(2);
+                return prepDate >= afterNextWeek.start;
+            default:
+                return true;
+        }
+    },
+
+    // Helper: Check publish window filter
+    matchesPublishWindow(tutorial, filter) {
+        if (!filter || !tutorial.publishDate) return true;
+
+        const pubDate = tutorial.publishDate;
+
+        switch (filter) {
+            case 'beforeLaunch':
+                return pubDate >= '2026-09-01' && pubDate <= '2026-09-15';
+            case 'launchDay':
+                return pubDate === '2026-09-16';
+            case 'afterLaunch':
+                return pubDate >= '2026-09-17' && pubDate <= '2026-09-30';
+            default:
+                return true;
+        }
     },
 
     applyFilters() {
@@ -205,6 +282,12 @@ const TutorialsList = {
 
             // Category filter
             if (this.filters.category && t.category !== this.filters.category) return false;
+
+            // Prep window filter
+            if (this.filters.prepwindow && !this.matchesPrepWindow(t, this.filters.prepwindow)) return false;
+
+            // Publish window filter
+            if (this.filters.publishwindow && !this.matchesPublishWindow(t, this.filters.publishwindow)) return false;
 
             return true;
         });
@@ -259,6 +342,14 @@ const TutorialsList = {
                     aVal = a.lastReviewed || '1900-01-01';
                     bVal = b.lastReviewed || '1900-01-01';
                     break;
+                case 'preparationDate':
+                    aVal = a.preparationDate || '9999-12-31';
+                    bVal = b.preparationDate || '9999-12-31';
+                    break;
+                case 'publishDate':
+                    aVal = a.publishDate || '9999-12-31';
+                    bVal = b.publishDate || '9999-12-31';
+                    break;
                 default:
                     aVal = '';
                     bVal = '';
@@ -301,23 +392,45 @@ const TutorialsList = {
             decision: '',
             status: '',
             priority: '',
-            category: ''
+            category: '',
+            prepwindow: '',
+            publishwindow: ''
         };
 
         // Reset form elements
-        document.getElementById('searchInput').value = '';
-        document.getElementById('filterLevel').value = '';
-        document.getElementById('filterValidity').value = '';
-        document.getElementById('filterDecision').value = '';
-        document.getElementById('filterStatus').value = '';
-        document.getElementById('filterPriority').value = '';
-        document.getElementById('filterCategory').value = '';
+        const resetIds = ['searchInput', 'filterLevel', 'filterValidity', 'filterDecision', 'filterStatus', 'filterPriority', 'filterCategory', 'filterPrepWindow', 'filterPublishWindow'];
+        resetIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
 
         // Clear URL params
         window.history.replaceState({}, '', window.location.pathname);
 
         this.applyFilters();
         this.render();
+    },
+
+    // Helper: Check if date is overdue
+    isOverdue(dateStr, status) {
+        if (!dateStr || status === 'Completed') return false;
+        const date = new Date(dateStr);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return date < today;
+    },
+
+    // Helper: Format date with overdue indicator
+    formatDateWithStatus(dateStr, status, type) {
+        if (!dateStr) return '-';
+
+        const isOverdueDate = this.isOverdue(dateStr, status);
+        const formattedDate = Utils.formatDate(dateStr);
+
+        if (isOverdueDate) {
+            return `<span class="date-overdue" title="${type} date has passed">${formattedDate}</span>`;
+        }
+        return formattedDate;
     },
 
     render() {
@@ -342,7 +455,6 @@ const TutorialsList = {
             const priorityClass = Utils.getPriorityClass(t.priority);
             const statusClass = Utils.getStatusClass(t.revampStatus);
             const levelClass = Utils.getLevelClass(t.targetLevel);
-            const scoreClass = Utils.getScoreClass(t.technicalScore);
 
             // Hardware info
             const hw = t.hardwareUsed;
@@ -350,6 +462,10 @@ const TutorialsList = {
             const components = hw?.components?.length > 0 ? hw.components.join(', ') : 'None';
             const hardwareDisplay = board === 'None' ? 'Software only' :
                 (components === 'None' ? board : `${board}<br><small class="text-muted">${Utils.escapeHtml(components)}</small>`);
+
+            // Date formatting with overdue indicators
+            const prepDateDisplay = this.formatDateWithStatus(t.preparationDate, t.revampStatus, 'Preparation');
+            const pubDateDisplay = this.formatDateWithStatus(t.publishDate, t.revampStatus, 'Publish');
 
             return `
                 <tr>
@@ -381,13 +497,8 @@ const TutorialsList = {
                     <td>
                         <span class="status-badge ${statusClass}">${Utils.escapeHtml(t.revampStatus || 'Not Reviewed')}</span>
                     </td>
-                    <td>
-                        ${t.technicalScore
-                    ? `<span class="score-cell ${scoreClass}">${t.technicalScore}/10</span>`
-                    : '-'
-                }
-                    </td>
-                    <td>${Utils.formatDate(t.lastReviewed)}</td>
+                    <td>${prepDateDisplay}</td>
+                    <td>${pubDateDisplay}</td>
                     <td>
                         <a href="tutorial.html?id=${Utils.escapeHtml(t.id)}" class="btn btn-secondary btn-sm">View</a>
                     </td>

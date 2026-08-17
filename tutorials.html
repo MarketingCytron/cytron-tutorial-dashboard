@@ -151,6 +151,25 @@
                             <!-- Populated dynamically -->
                         </select>
                     </div>
+                    <div class="filter-group">
+                        <label for="filterPrepWindow">Prep Window</label>
+                        <select id="filterPrepWindow">
+                            <option value="">All</option>
+                            <option value="overdue">Overdue</option>
+                            <option value="thisWeek">This Week</option>
+                            <option value="nextWeek">Next Week</option>
+                            <option value="later">Later</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filterPublishWindow">Publish Window</label>
+                        <select id="filterPublishWindow">
+                            <option value="">All</option>
+                            <option value="beforeLaunch">Before Launch (1-15 Sep)</option>
+                            <option value="launchDay">Launch Day (16 Sep)</option>
+                            <option value="afterLaunch">After Launch (17-30 Sep)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="filter-summary">
@@ -173,8 +192,8 @@
                                 <th class="sortable" data-sort="decision">Decision <span class="sort-icon"></span></th>
                                 <th class="sortable" data-sort="priority">Priority <span class="sort-icon"></span></th>
                                 <th class="sortable" data-sort="revampStatus">Status <span class="sort-icon"></span></th>
-                                <th class="sortable" data-sort="technicalScore">Score <span class="sort-icon"></span></th>
-                                <th class="sortable" data-sort="lastReviewed">Reviewed <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="preparationDate">Prep Date <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="publishDate">Publish Date <span class="sort-icon"></span></th>
                                 <th>Actions</th>
                             </tr>
                         </thead>

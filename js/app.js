@@ -217,6 +217,7 @@ const Dashboard = {
         }
 
         this.updateKPIs(data.tutorials);
+        this.updateScheduleStats(data.tutorials);
         this.updateDistributions(data.tutorials);
         this.updateHealthSummary(data.tutorials);
         this.updatePriorityList(data.tutorials);
@@ -262,6 +263,76 @@ const Dashboard = {
         document.getElementById('majorRevampCount').textContent = decisions.major;
         document.getElementById('replaceCount').textContent = decisions.replace;
         document.getElementById('beginnerActionCount').textContent = beginnerAction;
+    },
+
+    updateScheduleStats(tutorials) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayStr = today.toISOString().split('T')[0];
+
+        // Filter tutorials with dates
+        const withPrepDate = tutorials.filter(t => t.preparationDate);
+        const withPubDate = tutorials.filter(t => t.publishDate);
+
+        // Prep stats
+        const preppedCount = withPrepDate.filter(t => t.revampStatus === 'Completed').length;
+        const overduePrepCount = withPrepDate.filter(t =>
+            t.preparationDate < todayStr && t.revampStatus !== 'Completed'
+        ).length;
+        const pendingPrepCount = withPrepDate.filter(t =>
+            t.preparationDate >= todayStr && t.revampStatus !== 'Completed'
+        ).length;
+
+        // Publish stats
+        const publishedCount = withPubDate.filter(t =>
+            t.publishDate <= todayStr && t.revampStatus === 'Completed'
+        ).length;
+        const overduePublishCount = withPubDate.filter(t =>
+            t.publishDate < todayStr && t.revampStatus !== 'Completed'
+        ).length;
+        const upcomingPublishCount = withPubDate.filter(t =>
+            t.publishDate >= todayStr
+        ).length;
+
+        // Publish window stats
+        const beforeLaunchCount = withPubDate.filter(t =>
+            t.publishDate >= '2026-09-01' && t.publishDate <= '2026-09-15'
+        ).length;
+        const launchDayCount = withPubDate.filter(t =>
+            t.publishDate === '2026-09-16'
+        ).length;
+        const afterLaunchCount = withPubDate.filter(t =>
+            t.publishDate >= '2026-09-17' && t.publishDate <= '2026-09-30'
+        ).length;
+
+        // Update DOM elements (with null checks)
+        const updateElement = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        };
+
+        updateElement('preppedCount', preppedCount);
+        updateElement('pendingPrepCount', pendingPrepCount);
+        updateElement('overduePrepCount', overduePrepCount);
+        updateElement('publishedCount', publishedCount);
+        updateElement('upcomingPublishCount', upcomingPublishCount);
+        updateElement('overduePublishCount', overduePublishCount);
+        updateElement('beforeLaunchCount', beforeLaunchCount);
+        updateElement('launchDayCount', launchDayCount);
+        updateElement('afterLaunchCount', afterLaunchCount);
+
+        // Update progress bars
+        const prepProgressBar = document.getElementById('prepProgressBar');
+        if (prepProgressBar && withPrepDate.length > 0) {
+            const prepPercent = (preppedCount / withPrepDate.length) * 100;
+            prepProgressBar.style.width = `${prepPercent}%`;
+        }
+
+        const publishProgressBar = document.getElementById('publishProgressBar');
+        if (publishProgressBar && withPubDate.length > 0) {
+            const pubPercent = (publishedCount / withPubDate.length) * 100;
+            publishProgressBar.style.width = `${pubPercent}%`;
+        }
     },
 
     updateDistributions(tutorials) {

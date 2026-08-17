@@ -98,6 +98,26 @@ const RevampQueue = {
         grid.innerHTML = tutorials.map(t => this.renderCard(t)).join('');
     },
 
+    // Helper: Check if date is overdue
+    isOverdue(dateStr, status) {
+        if (!dateStr || status === 'Completed') return false;
+        const date = new Date(dateStr);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return date < today;
+    },
+
+    // Helper: Format date with overdue indicator
+    formatDateWithStatus(dateStr, status, label) {
+        if (!dateStr) return '';
+        const isOverdueDate = this.isOverdue(dateStr, status);
+        const formattedDate = Utils.formatDate(dateStr);
+        if (isOverdueDate) {
+            return `<span class="date-overdue" title="${label} date has passed">${label}: ${formattedDate}</span>`;
+        }
+        return `<span>${label}: ${formattedDate}</span>`;
+    },
+
     renderCard(t) {
         const validityClass = Utils.getValidityClass(t.validity?.grade);
         const decisionClass = Utils.getDecisionClass(t.decision);
@@ -106,6 +126,10 @@ const RevampQueue = {
         const levelClass = Utils.getLevelClass(t.targetLevel);
 
         const topIssue = t.topIssues?.[0];
+
+        // Date displays
+        const prepDateDisplay = this.formatDateWithStatus(t.preparationDate, t.revampStatus, 'Prep');
+        const pubDateDisplay = this.formatDateWithStatus(t.publishDate, t.revampStatus, 'Publish');
 
         return `
             <div class="queue-card">
@@ -127,6 +151,10 @@ const RevampQueue = {
                         ${topIssue.description ? `<p>${Utils.escapeHtml(topIssue.description.substring(0, 100))}${topIssue.description.length > 100 ? '...' : ''}</p>` : ''}
                     </div>
                 ` : ''}
+                <div class="queue-card-dates">
+                    ${prepDateDisplay}
+                    ${pubDateDisplay}
+                </div>
                 <div class="queue-card-footer">
                     <span>Reviewed: ${Utils.formatDate(t.lastReviewed)}</span>
                     <a href="tutorial.html?id=${Utils.escapeHtml(t.id)}" class="btn btn-secondary btn-sm">View Audit</a>

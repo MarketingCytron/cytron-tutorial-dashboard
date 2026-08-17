@@ -184,6 +184,71 @@
                 </div>
             </section>
 
+            <!-- Schedule Stats -->
+            <section class="schedule-section">
+                <h2 class="section-title">Maker ESP32 Launch Schedule</h2>
+                <p class="section-subtitle">Launch Date: September 16, 2026</p>
+                <div class="schedule-grid">
+                    <div class="schedule-card prep">
+                        <h3>Preparation Status</h3>
+                        <div class="schedule-stats">
+                            <div class="stat-row">
+                                <span class="stat-label">Prepped (Completed)</span>
+                                <span class="stat-value" id="preppedCount">0</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Pending Prep</span>
+                                <span class="stat-value" id="pendingPrepCount">0</span>
+                            </div>
+                            <div class="stat-row overdue">
+                                <span class="stat-label">Overdue Prep</span>
+                                <span class="stat-value" id="overduePrepCount">0</span>
+                            </div>
+                        </div>
+                        <div class="schedule-progress">
+                            <div class="progress-bar" id="prepProgressBar"></div>
+                        </div>
+                    </div>
+                    <div class="schedule-card publish">
+                        <h3>Publish Status</h3>
+                        <div class="schedule-stats">
+                            <div class="stat-row">
+                                <span class="stat-label">Published</span>
+                                <span class="stat-value" id="publishedCount">0</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Upcoming</span>
+                                <span class="stat-value" id="upcomingPublishCount">0</span>
+                            </div>
+                            <div class="stat-row overdue">
+                                <span class="stat-label">Overdue Publish</span>
+                                <span class="stat-value" id="overduePublishCount">0</span>
+                            </div>
+                        </div>
+                        <div class="schedule-progress">
+                            <div class="progress-bar" id="publishProgressBar"></div>
+                        </div>
+                    </div>
+                    <div class="schedule-card window">
+                        <h3>Publish Windows</h3>
+                        <div class="schedule-stats">
+                            <div class="stat-row">
+                                <span class="stat-label">Before Launch (Sep 1-15)</span>
+                                <span class="stat-value" id="beforeLaunchCount">0</span>
+                            </div>
+                            <div class="stat-row highlight">
+                                <span class="stat-label">Launch Day (Sep 16)</span>
+                                <span class="stat-value" id="launchDayCount">0</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">After Launch (Sep 17-30)</span>
+                                <span class="stat-value" id="afterLaunchCount">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Validity Distribution -->
             <section class="dashboard-section">
                 <h2 class="section-title">Validation Distribution</h2>
