@@ -880,6 +880,23 @@ a:hover {
 .score-cell.medium { color: var(--partial); }
 .score-cell.low { color: var(--invalid); }
 
+/* Hardware Cell */
+.hardware-cell {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    max-width: 200px;
+}
+
+.hardware-cell small {
+    display: block;
+    margin-top: 2px;
+}
+
+.text-muted {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
 /* Empty State */
 .empty-state {
     text-align: center;

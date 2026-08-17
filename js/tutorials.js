@@ -344,6 +344,13 @@ const TutorialsList = {
             const levelClass = Utils.getLevelClass(t.targetLevel);
             const scoreClass = Utils.getScoreClass(t.technicalScore);
 
+            // Hardware info
+            const hw = t.hardwareUsed;
+            const board = hw?.board || '-';
+            const components = hw?.components?.length > 0 ? hw.components.join(', ') : 'None';
+            const hardwareDisplay = board === 'None' ? 'Software only' :
+                (components === 'None' ? board : `${board}<br><small class="text-muted">${Utils.escapeHtml(components)}</small>`);
+
             return `
                 <tr>
                     <td>
@@ -352,6 +359,7 @@ const TutorialsList = {
                         </a>
                     </td>
                     <td>${Utils.escapeHtml(t.category || '-')}</td>
+                    <td class="hardware-cell">${hardwareDisplay}</td>
                     <td>
                         <span class="level-badge ${levelClass}">${Utils.escapeHtml(t.targetLevel || '-')}</span>
                     </td>
