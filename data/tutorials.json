@@ -209,7 +209,12 @@
         }
       ],
       "auditFile": "audits/getting-started-esp32-and-nodered.md",
-      "makerEsp32PublishDate": "2026-09-27"
+      "makerEsp32PublishDate": "2026-09-27",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [],
+        "notes": "ESP32 only, no additional hardware required"
+      }
     },
     {
       "id": "getting-started-thingspeak",
@@ -406,7 +411,14 @@
         }
       ],
       "auditFile": "audits/getting-started-thingspeak.md",
-      "makerEsp32PublishDate": "2026-09-08"
+      "makerEsp32PublishDate": "2026-09-08",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "DHT11 Temperature & Humidity Sensor"
+        ],
+        "notes": "Basic IoT sensor setup"
+      }
     },
     {
       "id": "getting-started-with-esp32-ota",
@@ -590,7 +602,12 @@
         }
       ],
       "auditFile": "audits/getting-started-with-esp32-ota.md",
-      "makerEsp32PublishDate": "2026-09-06"
+      "makerEsp32PublishDate": "2026-09-06",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [],
+        "notes": "ESP32 only, uses onboard LED for demo"
+      }
     },
     {
       "id": "getting-started-freertos-esp32",
@@ -788,7 +805,12 @@
         }
       ],
       "auditFile": "audits/getting-started-freertos-esp32.md",
-      "makerEsp32PublishDate": "2026-09-15"
+      "makerEsp32PublishDate": "2026-09-15",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [],
+        "notes": "ESP32 only, uses onboard LEDs for multitasking demo"
+      }
     },
     {
       "id": "control-esp32-outputs-with-telegram",
@@ -984,7 +1006,12 @@
         }
       ],
       "auditFile": "audits/control-esp32-outputs-with-telegram.md",
-      "makerEsp32PublishDate": "2026-09-07"
+      "makerEsp32PublishDate": "2026-09-07",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [],
+        "notes": "ESP32 only, uses onboard LED. Can add relay for external control"
+      }
     },
     {
       "id": "esp32-led-pattern-generator",
@@ -1190,7 +1217,12 @@
         }
       ],
       "auditFile": "audits/esp32-led-pattern-generator.md",
-      "makerEsp32PublishDate": "2026-09-22"
+      "makerEsp32PublishDate": "2026-09-22",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [],
+        "notes": "Uses Maker ESP32 onboard 14 GPIO status LEDs"
+      }
     },
     {
       "id": "esp32-smart-light-control-with-app",
@@ -1392,7 +1424,14 @@
         }
       ],
       "auditFile": "audits/esp32-smart-light-control-with-app.md",
-      "makerEsp32PublishDate": "2026-09-10"
+      "makerEsp32PublishDate": "2026-09-10",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "Relay Module"
+        ],
+        "notes": "Optional: Add relay for controlling AC lights"
+      }
     },
     {
       "id": "turn-on-led-finger-esp32-mediapipe",
@@ -1597,7 +1636,15 @@
         }
       ],
       "auditFile": "audits/turn-on-led-finger-esp32-mediapipe.md",
-      "makerEsp32PublishDate": "2026-09-17"
+      "makerEsp32PublishDate": "2026-09-17",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "USB Webcam",
+          "Computer with Python"
+        ],
+        "notes": "Requires PC with webcam for hand tracking"
+      }
     },
     {
       "id": "getting-started-esp32-and-blynk",
@@ -1806,7 +1853,14 @@
         }
       ],
       "auditFile": "audits/getting-started-esp32-and-blynk.md",
-      "makerEsp32PublishDate": "2026-09-09"
+      "makerEsp32PublishDate": "2026-09-09",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "DHT11 Temperature & Humidity Sensor"
+        ],
+        "notes": "Basic Blynk IoT setup with sensor"
+      }
     },
     {
       "id": "esp32-digital-clock",
@@ -2004,7 +2058,14 @@
         }
       ],
       "auditFile": "audits/esp32-digital-clock.md",
-      "makerEsp32PublishDate": "2026-09-03"
+      "makerEsp32PublishDate": "2026-09-03",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "OLED Display SSD1306 (I2C)"
+        ],
+        "notes": "Connect via Maker Port (I2C)"
+      }
     },
     {
       "id": "dot-matrix-clock-ntp-esp32",
@@ -2224,7 +2285,14 @@
         }
       ],
       "auditFile": "audits/dot-matrix-clock-ntp-esp32.md",
-      "makerEsp32PublishDate": "2026-09-25"
+      "makerEsp32PublishDate": "2026-09-25",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "MAX7219 Dot Matrix Display (SPI)"
+        ],
+        "notes": "SPI connection - change CS from GPIO26 to GPIO17"
+      }
     },
     {
       "id": "esp32-air-quality-monitoring",
@@ -2427,7 +2495,14 @@
         }
       ],
       "auditFile": "audits/esp32-air-quality-monitoring.md",
-      "makerEsp32PublishDate": "2026-09-12"
+      "makerEsp32PublishDate": "2026-09-12",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "MQ-135 Air Quality Sensor"
+        ],
+        "notes": "Requires voltage divider for 5V sensor output"
+      }
     },
     {
       "id": "esp32-smoke-detection-alarm",
@@ -2642,7 +2717,15 @@
         }
       ],
       "auditFile": "audits/esp32-smoke-detection-alarm.md",
-      "makerEsp32PublishDate": "2026-09-26"
+      "makerEsp32PublishDate": "2026-09-26",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "MQ-2 Gas/Smoke Sensor",
+          "Buzzer"
+        ],
+        "notes": "Use onboard buzzer (GPIO26) or external. Replace NeoPixel with GPIO LEDs"
+      }
     },
     {
       "id": "farm-automation-system-roboesp32",
@@ -2851,7 +2934,18 @@
         }
       ],
       "auditFile": "audits/farm-automation-system-roboesp32.md",
-      "makerEsp32PublishDate": "2026-09-19"
+      "makerEsp32PublishDate": "2026-09-19",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "Maker Soil Moisture Sensor",
+          "DHT11 Temperature & Humidity Sensor",
+          "HC-SR04 Ultrasonic Sensor",
+          "Relay Module",
+          "Water Pump"
+        ],
+        "notes": "Comprehensive automation project"
+      }
     },
     {
       "id": "esp32-water-tank-monitoring",
@@ -3070,7 +3164,15 @@
         }
       ],
       "auditFile": "audits/esp32-water-tank-monitoring.md",
-      "makerEsp32PublishDate": "2026-09-21"
+      "makerEsp32PublishDate": "2026-09-21",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "Ultrasonic Sensor SR04P",
+          "Grove LCD RGB Backlight (I2C)"
+        ],
+        "notes": "Replace NeoPixel indicators with GPIO LEDs"
+      }
     },
     {
       "id": "wifi-weather-station-esp32",
@@ -3274,7 +3376,14 @@
         }
       ],
       "auditFile": "audits/wifi-weather-station-esp32.md",
-      "makerEsp32PublishDate": "2026-09-11"
+      "makerEsp32PublishDate": "2026-09-11",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "OLED Display SSD1306 (I2C)"
+        ],
+        "notes": "Connect via Maker Port (I2C). Uses OpenWeatherMap API"
+      }
     },
     {
       "id": "esp32-high-temperature-alert-system-with-dht22-sensor",
@@ -3413,7 +3522,15 @@
         }
       ],
       "auditFile": "audits/esp32-high-temperature-alert-system-with-dht22-sensor.md",
-      "makerEsp32PublishDate": "2026-09-24"
+      "makerEsp32PublishDate": "2026-09-24",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "DHT22 Temperature & Humidity Sensor",
+          "Buzzer"
+        ],
+        "notes": "Change DHT pin from GPIO4 to GPIO16. Can use onboard buzzer"
+      }
     },
     {
       "id": "esp32-clap-switch",
@@ -3513,7 +3630,14 @@
       ],
       "links": [],
       "auditFile": "audits/esp32-clap-switch.md",
-      "makerEsp32PublishDate": "2026-09-04"
+      "makerEsp32PublishDate": "2026-09-04",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "Sound Sensor Module"
+        ],
+        "notes": "Digital sound sensor, controls onboard LED"
+      }
     },
     {
       "id": "esp32-motion-detector-alert",
@@ -3622,7 +3746,14 @@
       ],
       "links": [],
       "auditFile": "audits/esp32-motion-detector-alert.md",
-      "makerEsp32PublishDate": "2026-09-05"
+      "makerEsp32PublishDate": "2026-09-05",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "HC-SR501 PIR Motion Sensor"
+        ],
+        "notes": "Simple motion detection with alert"
+      }
     },
     {
       "id": "ws2812-ring-led-clock-with-ntp-server-using-esp32",
@@ -3756,7 +3887,14 @@
         }
       ],
       "auditFile": "audits/ws2812-ring-led-clock-with-ntp-server-using-esp32.md",
-      "makerEsp32PublishDate": "2026-09-18"
+      "makerEsp32PublishDate": "2026-09-18",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "WS2812 NeoPixel LED Ring (60 LEDs)"
+        ],
+        "notes": "External NeoPixel ring for clock display"
+      }
     },
     {
       "id": "getting-started-espnow",
@@ -3865,7 +4003,12 @@
       ],
       "links": [],
       "auditFile": "audits/getting-started-espnow.md",
-      "makerEsp32PublishDate": "2026-09-01"
+      "makerEsp32PublishDate": "2026-09-01",
+      "hardwareUsed": {
+        "board": "Maker ESP32 (x2)",
+        "components": [],
+        "notes": "Requires TWO Maker ESP32 boards for peer-to-peer communication"
+      }
     },
     {
       "id": "send-sensors-data-to-thingspeak-using-esp32",
@@ -3995,7 +4138,14 @@
         }
       ],
       "auditFile": "audits/send-sensors-data-to-thingspeak-using-esp32.md",
-      "makerEsp32PublishDate": "2026-09-14"
+      "makerEsp32PublishDate": "2026-09-14",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "Any analog/digital sensor"
+        ],
+        "notes": "Generic sensor data logging tutorial"
+      }
     },
     {
       "id": "how-to-start-up-and-get-auth-token-from-blynk",
@@ -4109,7 +4259,12 @@
         }
       ],
       "auditFile": "audits/how-to-start-up-and-get-auth-token-from-blynk.md",
-      "makerEsp32PublishDate": "2026-09-28"
+      "makerEsp32PublishDate": "2026-09-28",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [],
+        "notes": "Setup guide only - no additional hardware"
+      }
     },
     {
       "id": "how-to-create-a-telegram-bot-get-the-api-key-and-chat-id",
@@ -4220,7 +4375,12 @@
         }
       ],
       "auditFile": "audits/how-to-create-a-telegram-bot-get-the-api-key-and-chat-id.md",
-      "makerEsp32PublishDate": "2026-09-02"
+      "makerEsp32PublishDate": "2026-09-02",
+      "hardwareUsed": {
+        "board": "None",
+        "components": [],
+        "notes": "Software setup only - no hardware required"
+      }
     },
     {
       "id": "interface-water-flow-sensor-using-esp32-board-2",
@@ -4338,7 +4498,14 @@
         }
       ],
       "auditFile": "audits/interface-water-flow-sensor-using-esp32-board-2.md",
-      "makerEsp32PublishDate": "2026-09-20"
+      "makerEsp32PublishDate": "2026-09-20",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "YF-S201 Water Flow Sensor"
+        ],
+        "notes": "Requires voltage divider (5V to 3.3V)"
+      }
     },
     {
       "id": "water-notification-for-plants-using-blynk-and-moisture-sensor-on-esp32",
@@ -4459,7 +4626,14 @@
       ],
       "links": [],
       "auditFile": "audits/water-notification-for-plants-using-blynk-and-moisture-sensor-on-esp32.md",
-      "makerEsp32PublishDate": "2026-09-29"
+      "makerEsp32PublishDate": "2026-09-29",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "Soil Moisture Sensor"
+        ],
+        "notes": "Plant watering alert system"
+      }
     },
     {
       "id": "gas-detector-using-mq2-on-esp32-and-blynk-app",
@@ -4580,7 +4754,14 @@
         "notes": "MQ2 gas sensor uses analog input which works on any Maker ESP32 ADC pin. The Blynk Legacy issue is software-related (platform shutdown), not board-specific. Hardware connections are fully compatible.",
         "requiredChanges": []
       },
-      "makerEsp32PublishDate": "2026-09-30"
+      "makerEsp32PublishDate": "2026-09-30",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "MQ-2 Gas/Smoke Sensor"
+        ],
+        "notes": "Gas leak detection with mobile alerts"
+      }
     },
     {
       "id": "home-security-system-with-esp32",
@@ -4699,7 +4880,16 @@
           "Verify buzzer pin - if using GPIO26, change to another GPIO (e.g., GPIO25 or GPIO27)"
         ]
       },
-      "makerEsp32PublishDate": "2026-09-23"
+      "makerEsp32PublishDate": "2026-09-23",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "HC-SR501 PIR Motion Sensor",
+          "Reed Switch (Door Sensor)",
+          "Buzzer"
+        ],
+        "notes": "Can use onboard buzzer. Verify GPIO pins"
+      }
     },
     {
       "id": "interface-water-flow-sensor-using-esp32-board",
@@ -4825,7 +5015,14 @@
         "notes": "YF-S201 water flow sensor uses interrupt-capable GPIO which is available on Maker ESP32. The 5V voltage level issue applies to all ESP32 boards, not Maker-specific. Voltage divider recommendation remains the same.",
         "requiredChanges": []
       },
-      "makerEsp32PublishDate": "2026-09-13"
+      "makerEsp32PublishDate": "2026-09-13",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "YF-S201 Water Flow Sensor"
+        ],
+        "notes": "Requires voltage divider (5V to 3.3V)"
+      }
     },
     {
       "id": "esp32-smart-home-dashboard-with-real-time-sensor-data",
@@ -5024,7 +5221,15 @@
         }
       ],
       "auditFile": "audits/esp32-smart-home-dashboard-with-real-time-sensor-data.md",
-      "makerEsp32PublishDate": "2026-09-16"
+      "makerEsp32PublishDate": "2026-09-16",
+      "hardwareUsed": {
+        "board": "Maker ESP32",
+        "components": [
+          "DHT11 Temperature & Humidity Sensor",
+          "MQ-135 Air Quality Sensor"
+        ],
+        "notes": "MQ-135 requires voltage divider"
+      }
     }
   ],
   "metadata": {
