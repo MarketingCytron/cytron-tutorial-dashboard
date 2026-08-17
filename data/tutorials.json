@@ -515,7 +515,13 @@
         "reproducibility": 8
       },
 
-      "mainRecommendation": "Add security best practices section covering password protection, network isolation, and the risks of default credentials. The core OTA functionality is valid but security guidance is essential for beginners.",
+      "mainRecommendation": "Add security best practices section covering password protection, network isolation, and the risks of default credentials. Maker ESP32 fully compatible.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible. OTA functionality works identically on Maker ESP32. WiFi and web server features unchanged.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -715,7 +721,13 @@
         "reproducibility": 9
       },
 
-      "mainRecommendation": "Tutorial is technically sound. Consider adding notes about single-core ESP32 variants (ESP32-C3) compatibility and stack size best practices for beginners transitioning from the basic level.",
+      "mainRecommendation": "Tutorial is technically sound. Maker ESP32 fully compatible - FreeRTOS works identically on dual-core ESP32-WROOM-32E.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible. Maker ESP32 uses dual-core ESP32-WROOM-32E, FreeRTOS task pinning works identically.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -1375,7 +1387,13 @@
         "reproducibility": 7
       },
 
-      "mainRecommendation": "Add WiFi/MQTT reconnection handling code, document MQTT broker limitations, and include security considerations for production use. The core functionality is valid but robustness improvements are needed.",
+      "mainRecommendation": "Add WiFi/MQTT reconnection handling code, document MQTT broker limitations, and include security considerations. Maker ESP32 fully compatible.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible. MQTT and WiFi work identically. Use any GPIO for light control (avoid GPIO4/GPIO26).",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -1596,7 +1614,13 @@
         "reproducibility": 6
       },
 
-      "mainRecommendation": "Update Python version requirements to reflect current MediaPipe compatibility (3.9-3.12), add virtual environment setup instructions, and include cross-platform serial port guidance. Consider relabeling as Intermediate level due to multi-technology complexity.",
+      "mainRecommendation": "Update Python version requirements to reflect current MediaPipe compatibility (3.9-3.12), add virtual environment setup instructions. Maker ESP32 fully compatible via serial.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible. Serial communication via USB-C works identically. LED control on any GPIO (avoid GPIO4/GPIO26).",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -2046,7 +2070,13 @@
         "reproducibility": 8
       },
 
-      "mainRecommendation": "Tutorial is technically sound. Consider adding timezone configuration guidance with POSIX timezone strings for accurate daylight saving time handling, and document the OLED I2C address difference between module manufacturers.",
+      "mainRecommendation": "Tutorial is technically sound. Maker ESP32 fully compatible - use Maker Port (GPIO21/22) for I2C OLED.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible. Use Maker Port (GPIO21 SDA, GPIO22 SCL) for I2C OLED connection. Qwiic/STEMMA QT adapters work directly.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -3426,7 +3456,13 @@
         "reproducibility": 7
       },
 
-      "mainRecommendation": "Verify ArduinoJson version compatibility (v6 vs v7 syntax differs), document OpenWeatherMap API free tier limitations (60 calls/min), ensure HTTPS is used with proper certificate handling, and add guidance for API key security.",
+      "mainRecommendation": "Verify ArduinoJson version compatibility (v6 vs v7 syntax differs), document OpenWeatherMap API rate limits. Maker ESP32 fully compatible - use Maker Port for I2C OLED.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible. Use Maker Port (GPIO21/22) for I2C OLED. WiFi and HTTPS API calls work identically.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -3794,7 +3830,13 @@
         "reproducibility": 8
       },
 
-      "mainRecommendation": "Tutorial uses standard sound sensor technology that remains fully valid. Consider adding debounce timing recommendations.",
+      "mainRecommendation": "Tutorial uses standard sound sensor technology that remains fully valid. Maker ESP32 fully compatible.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible. Use any GPIO for digital input or ADC1 pins (GPIO32-33) for analog. Sound sensor works identically.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -3914,7 +3956,13 @@
         "reproducibility": 9
       },
 
-      "mainRecommendation": "Tutorial uses standard PIR sensor technology that remains fully valid. Add warm-up time and 5V power requirements.",
+      "mainRecommendation": "Tutorial uses standard PIR sensor technology that remains fully valid. Maker ESP32 fully compatible.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible. PIR digital output (3.3V) works with any GPIO. Power sensor from 5V (VIN), not 3.3V.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -4042,7 +4090,13 @@
         "reproducibility": 7
       },
 
-      "mainRecommendation": "Address ESP32 WiFi timing conflicts with NeoPixel libraries. Recommend using RMT driver for reliable LED control.",
+      "mainRecommendation": "Address ESP32 WiFi timing conflicts with NeoPixel libraries. Maker ESP32 compatible with external WS2812 ring.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Compatible with external WS2812 LED ring. Use any GPIO for data (avoid GPIO26 buzzer). RMT driver recommended.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -4319,7 +4373,13 @@
         "reproducibility": 8
       },
 
-      "mainRecommendation": "ThingSpeak platform remains valid. Update to use official ThingSpeak library and mention 15-second rate limit.",
+      "mainRecommendation": "ThingSpeak platform remains valid. Maker ESP32 fully compatible - WiFi and HTTP functionality identical.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Fully compatible. WiFi and ThingSpeak API work identically on Maker ESP32.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -4457,10 +4517,16 @@
         "codeQuality": 2,
         "completeness": 2,
         "beginnerFriendliness": 2,
-        "reproducibility": 0
+        "reproducibility": 1
       },
 
       "mainRecommendation": "CRITICAL: Blynk Legacy servers were permanently shut down on December 31, 2022. Tutorial must be completely rewritten for Blynk 2.0/Blynk IoT platform.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Hardware compatible, but tutorial content is broken (Blynk Legacy shutdown). Once rewritten for Blynk IoT, Maker ESP32 works identically.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -4591,7 +4657,13 @@
         "reproducibility": 9
       },
 
-      "mainRecommendation": "Telegram Bot API and BotFather process remain unchanged. Tutorial is valid with minor screenshot updates if needed.",
+      "mainRecommendation": "Telegram Bot API and BotFather process remain unchanged. Tutorial is valid. Hardware-independent setup guide.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Hardware-independent tutorial (Telegram setup only). Bot credentials work with any ESP32 including Maker ESP32.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -4722,7 +4794,13 @@
         "reproducibility": 6
       },
 
-      "mainRecommendation": "IMPORTANT: YF-S201 outputs 5V pulses which can damage ESP32's 3.3V GPIO pins. Add voltage divider or level shifter requirement.",
+      "mainRecommendation": "IMPORTANT: YF-S201 outputs 5V pulses which can damage ESP32's 3.3V GPIO pins. Maker ESP32 compatible with voltage divider.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Compatible with voltage divider. YF-S201 5V output needs level shifting to protect Maker ESP32 GPIO pins (same as any ESP32).",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -4853,10 +4931,16 @@
         "codeQuality": 3,
         "completeness": 3,
         "beginnerFriendliness": 3,
-        "reproducibility": 0
+        "reproducibility": 1
       },
 
-      "mainRecommendation": "CRITICAL: Blynk Legacy servers shut down December 31, 2022. Moisture sensor code is valid but all Blynk integration must be completely rewritten for Blynk 2.0.",
+      "mainRecommendation": "CRITICAL: Blynk Legacy servers shut down December 31, 2022. Moisture sensor code is valid but Blynk integration must be rewritten for Blynk 2.0.",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "Hardware compatible (moisture sensor on ADC pins). Blynk Legacy is broken but once rewritten for Blynk IoT, Maker ESP32 works identically.",
+        "requiredChanges": []
+      },
 
       "topIssues": [
         {
@@ -4990,7 +5074,7 @@
         "codeQuality": 3,
         "completeness": 3,
         "beginnerFriendliness": 3,
-        "reproducibility": 0
+        "reproducibility": 1
       },
 
       "mainRecommendation": "CRITICAL: Blynk Legacy servers shut down December 31, 2022. MQ2 sensor code is valid but all Blynk integration must be completely rewritten for Blynk 2.0.",
@@ -5068,7 +5152,13 @@
 
       "links": [],
 
-      "auditFile": "audits/gas-detector-using-mq2-on-esp32-and-blynk-app.md"
+      "auditFile": "audits/gas-detector-using-mq2-on-esp32-and-blynk-app.md",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "MQ2 gas sensor uses analog input which works on any Maker ESP32 ADC pin. The Blynk Legacy issue is software-related (platform shutdown), not board-specific. Hardware connections are fully compatible.",
+        "requiredChanges": []
+      }
     },
     {
       "id": "home-security-system-with-esp32",
@@ -5201,7 +5291,15 @@
 
       "links": [],
 
-      "auditFile": "audits/home-security-system-with-esp32.md"
+      "auditFile": "audits/home-security-system-with-esp32.md",
+
+      "makerEsp32": {
+        "compatibility": "minor",
+        "notes": "PIR sensor and reed switch use standard digital GPIOs which are compatible. If tutorial uses buzzer, avoid GPIO26 (Maker ESP32 built-in buzzer). May need to relocate alarm buzzer to different pin.",
+        "requiredChanges": [
+          "Verify buzzer pin - if using GPIO26, change to another GPIO (e.g., GPIO25 or GPIO27)"
+        ]
+      }
     },
     {
       "id": "interface-water-flow-sensor-using-esp32-board",
@@ -5343,7 +5441,13 @@
         }
       ],
 
-      "auditFile": "audits/interface-water-flow-sensor-using-esp32-board.md"
+      "auditFile": "audits/interface-water-flow-sensor-using-esp32-board.md",
+
+      "makerEsp32": {
+        "compatibility": "compatible",
+        "notes": "YF-S201 water flow sensor uses interrupt-capable GPIO which is available on Maker ESP32. The 5V voltage level issue applies to all ESP32 boards, not Maker-specific. Voltage divider recommendation remains the same.",
+        "requiredChanges": []
+      }
     },
     {
       "id": "esp32-smart-home-dashboard-with-real-time-sensor-data",
