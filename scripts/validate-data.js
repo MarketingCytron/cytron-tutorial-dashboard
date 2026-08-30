@@ -167,6 +167,14 @@ function validateTutorial(tutorial, index) {
         logWarning(`${prefix}: Marked as reviewed but missing 'auditFile'`);
     }
 
+    // Revamped Output file
+    if (tutorial.revampedOutputFile) {
+        const revampedPath = path.join(__dirname, '..', tutorial.revampedOutputFile);
+        if (!fs.existsSync(revampedPath)) {
+            logError(`${prefix}: Revamped output file not found: ${tutorial.revampedOutputFile}`);
+        }
+    }
+
     // External links
     if (tutorial.links && Array.isArray(tutorial.links)) {
         tutorial.links.forEach((link, i) => {

@@ -44,6 +44,18 @@ const TutorialDetail = {
         document.getElementById('tutorialTitle').textContent = t.title;
         document.getElementById('originalLink').href = t.url || '#';
 
+        if (t.revampedOutputFile) {
+            const actionsDiv = document.querySelector('.tutorial-actions');
+            if (actionsDiv && !document.getElementById('finalOutputBtn')) {
+                const finalBtn = document.createElement('a');
+                finalBtn.id = 'finalOutputBtn';
+                finalBtn.href = `final-output.html?id=${encodeURIComponent(t.id)}`;
+                finalBtn.className = 'btn btn-primary';
+                finalBtn.textContent = 'View Final Output';
+                actionsDiv.insertBefore(finalBtn, document.getElementById('originalLink'));
+            }
+        }
+
         // Meta information
         const metaHtml = `
             <div class="meta-item"><strong>Category:</strong> ${Utils.escapeHtml(t.category || '-')}</div>
@@ -303,109 +315,7 @@ const TutorialDetail = {
     },
 
     renderMarkdown(text) {
-        // Simple markdown renderer
-        // For production, consider using a library like marked.js
-
-        let html = Utils.escapeHtml(text);
-
-        // Headers
-        html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-        html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-        html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-
-        // Bold
-        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-        // Italic
-        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-
-        // Code blocks
-        html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-
-        // Inline code
-        html = html.replace(/`(.*?)`/g, '<code>$1</code>');
-
-        // Links
-        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-
-        // Horizontal rules
-        html = html.replace(/^---$/gm, '<hr>');
-
-        // Tables
-        html = this.renderTables(html);
-
-        // Lists
-        html = html.replace(/^\* (.*$)/gm, '<li>$1</li>');
-        html = html.replace(/^- (.*$)/gm, '<li>$1</li>');
-        html = html.replace(/(<li>.*<\/li>)\n(?!<li>)/g, '$1</ul>\n');
-        html = html.replace(/(?<!<\/ul>\n)(<li>)/g, '<ul>$1');
-
-        // Numbered lists
-        html = html.replace(/^\d+\. (.*$)/gm, '<li>$1</li>');
-
-        // Paragraphs
-        html = html.replace(/\n\n/g, '</p><p>');
-        html = '<p>' + html + '</p>';
-
-        // Clean up
-        html = html.replace(/<p><h/g, '<h');
-        html = html.replace(/<\/h(\d)><\/p>/g, '</h$1>');
-        html = html.replace(/<p><pre>/g, '<pre>');
-        html = html.replace(/<\/pre><\/p>/g, '</pre>');
-        html = html.replace(/<p><ul>/g, '<ul>');
-        html = html.replace(/<\/ul><\/p>/g, '</ul>');
-        html = html.replace(/<p><hr><\/p>/g, '<hr>');
-        html = html.replace(/<p><\/p>/g, '');
-
-        return html;
-    },
-
-    renderTables(html) {
-        // Simple table rendering
-        const lines = html.split('\n');
-        let inTable = false;
-        let result = [];
-
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-
-            if (line.startsWith('|') && line.endsWith('|')) {
-                if (!inTable) {
-                    result.push('<table>');
-                    inTable = true;
-                }
-
-                // Skip separator line
-                if (line.match(/^\|[\s-:|]+\|$/)) {
-                    continue;
-                }
-
-                const cells = line.slice(1, -1).split('|').map(c => c.trim());
-                const isHeader = i + 1 < lines.length && lines[i + 1].match(/^\|[\s-:|]+\|$/);
-
-                if (isHeader) {
-                    result.push('<thead><tr>');
-                    cells.forEach(cell => result.push(`<th>${cell}</th>`));
-                    result.push('</tr></thead><tbody>');
-                } else {
-                    result.push('<tr>');
-                    cells.forEach(cell => result.push(`<td>${cell}</td>`));
-                    result.push('</tr>');
-                }
-            } else {
-                if (inTable) {
-                    result.push('</tbody></table>');
-                    inTable = false;
-                }
-                result.push(line);
-            }
-        }
-
-        if (inTable) {
-            result.push('</tbody></table>');
-        }
-
-        return result.join('\n');
+        return Utils.renderMarkdown(text);
     }
 };
 

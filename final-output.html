@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Output - Cytron Tutorial Validation Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">C</span>
+                    <span class="logo-text">Cytron Tutorials</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                </button>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="tutorials.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <span>All Tutorials</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="revamp.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                        <span>Revamp Queue</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="methodology.html" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span>Methodology</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <p>Tutorial Validation v1.0</p>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href="index.html">Dashboard</a>
+                <span class="separator">/</span>
+                <a href="tutorials.html">All Tutorials</a>
+                <span class="separator">/</span>
+                <a href="tutorials.html?tab=final-output">Final Output</a>
+                <span class="separator">/</span>
+                <span class="current" id="breadcrumbTitle">Final Output</span>
+            </nav>
+
+            <!-- Not Found State -->
+            <div class="not-found-state" id="notFoundState" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <h2>Revamped Output Not Found</h2>
+                <p>No revamped tutorial Markdown output is available for this tutorial yet.</p>
+                <a href="tutorials.html?tab=final-output" class="btn btn-primary">Back to Final Output</a>
+            </div>
+
+            <!-- Content Area -->
+            <div id="finalOutputView">
+                <!-- Header -->
+                <header class="tutorial-header" id="finalOutputHeader">
+                    <div class="tutorial-title-section">
+                        <h1 id="tutorialTitle">Loading...</h1>
+                        <div class="tutorial-meta" id="tutorialMeta">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    <div class="tutorial-actions">
+                        <a href="tutorials.html?tab=final-output" class="btn btn-secondary" id="backToFinalBtn">
+                            &larr; Back to Final Output
+                        </a>
+                        <a href="#" id="originalLink" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                            Open Original Tutorial
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
+                        </a>
+                    </div>
+                </header>
+
+                <!-- Rendered Markdown Output -->
+                <section class="final-output-card">
+                    <div class="markdown-content" id="markdownContainer">
+                        <div class="empty-state">
+                            <p>Loading revamped tutorial output...</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/final-output.js"></script>
+</body>
+</html>

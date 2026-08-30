@@ -8,6 +8,7 @@ const TutorialsList = {
     filteredTutorials: [],
     sortColumn: 'title',
     sortDirection: 'asc',
+    currentTab: 'all',
     filters: {
         search: '',
         level: '',
@@ -29,11 +30,66 @@ const TutorialsList = {
         this.filteredTutorials = [...this.tutorials];
 
         this.populateCategoryFilter();
+        this.initTabs();
         this.initFilters();
         this.initSorting();
         this.loadUrlParams();
         this.applyFilters();
         this.render();
+        this.renderFinalOutput();
+    },
+
+    initTabs() {
+        const tabAll = document.getElementById('tabAll');
+        const tabFinal = document.getElementById('tabFinal');
+
+        if (tabAll) {
+            tabAll.addEventListener('click', () => {
+                this.switchTab('all');
+            });
+        }
+
+        if (tabFinal) {
+            tabFinal.addEventListener('click', () => {
+                this.switchTab('final-output');
+            });
+        }
+    },
+
+    switchTab(tabName, updateUrl = true) {
+        this.currentTab = tabName;
+        const tabAll = document.getElementById('tabAll');
+        const tabFinal = document.getElementById('tabFinal');
+        const contentAll = document.getElementById('tabContentAll');
+        const contentFinal = document.getElementById('tabContentFinal');
+
+        if (tabName === 'final-output') {
+            if (tabAll) {
+                tabAll.classList.remove('active');
+                tabAll.setAttribute('aria-selected', 'false');
+            }
+            if (tabFinal) {
+                tabFinal.classList.add('active');
+                tabFinal.setAttribute('aria-selected', 'true');
+            }
+            if (contentAll) contentAll.style.display = 'none';
+            if (contentFinal) contentFinal.style.display = 'block';
+        } else {
+            if (tabFinal) {
+                tabFinal.classList.remove('active');
+                tabFinal.setAttribute('aria-selected', 'false');
+            }
+            if (tabAll) {
+                tabAll.classList.add('active');
+                tabAll.setAttribute('aria-selected', 'true');
+            }
+            if (contentFinal) contentFinal.style.display = 'none';
+            if (contentAll) contentAll.style.display = 'block';
+        }
+
+        if (updateUrl) {
+            this.updateUrlParams();
+        }
     },
 
     populateCategoryFilter() {
@@ -105,6 +161,10 @@ const TutorialsList = {
     loadUrlParams() {
         const params = new URLSearchParams(window.location.search);
 
+        if (params.get('tab') === 'final-output') {
+            this.switchTab('final-output', false);
+        }
+
         if (params.get('level')) {
             this.filters.level = params.get('level');
             const select = document.getElementById('filterLevel');
@@ -163,6 +223,10 @@ const TutorialsList = {
     updateUrlParams() {
         const params = new URLSearchParams();
 
+        if (this.currentTab === 'final-output') {
+            params.set('tab', 'final-output');
+        }
+
         if (this.filters.level) params.set('level', this.filters.level);
         if (this.filters.validity) params.set('validity', this.filters.validity);
         if (this.filters.decision) params.set('decision', this.filters.decision);
@@ -171,6 +235,7 @@ const TutorialsList = {
         if (this.filters.category) params.set('category', this.filters.category);
         if (this.filters.prepwindow) params.set('prepwindow', this.filters.prepwindow);
         if (this.filters.publishwindow) params.set('publishwindow', this.filters.publishwindow);
+        if (this.filters.search) params.set('search', this.filters.search);
 
         const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
         window.history.replaceState({}, '', newUrl);
@@ -501,6 +566,73 @@ const TutorialsList = {
                     <td>${pubDateDisplay}</td>
                     <td>
                         <a href="tutorial.html?id=${Utils.escapeHtml(t.id)}" class="btn btn-secondary btn-sm">View</a>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    },
+
+    renderFinalOutput() {
+        const finalTutorials = this.tutorials.filter(t => t.revampedOutputFile);
+        const countBadge = document.getElementById('finalOutputBadge');
+        const summaryEl = document.getElementById('finalOutputSummary');
+        const tableContainer = document.getElementById('finalOutputTableContainer');
+        const emptyState = document.getElementById('finalEmptyState');
+        const tbody = document.getElementById('finalOutputBody');
+
+        if (countBadge) {
+            countBadge.textContent = finalTutorials.length;
+        }
+
+        if (summaryEl) {
+            const count = finalTutorials.length;
+            summaryEl.textContent = `Showing ${count} revamped tutorial${count === 1 ? '' : 's'}`;
+        }
+
+        if (!tbody) return;
+
+        if (finalTutorials.length === 0) {
+            if (tableContainer) tableContainer.style.display = 'none';
+            if (emptyState) emptyState.style.display = 'block';
+            tbody.innerHTML = '';
+            return;
+        }
+
+        if (tableContainer) tableContainer.style.display = 'block';
+        if (emptyState) emptyState.style.display = 'none';
+
+        tbody.innerHTML = finalTutorials.map(t => {
+            const validityClass = Utils.getValidityClass(t.validity?.grade);
+            const decisionClass = Utils.getDecisionClass(t.decision);
+            const statusClass = Utils.getStatusClass(t.revampStatus);
+            const levelClass = Utils.getLevelClass(t.targetLevel);
+            const pubDateDisplay = Utils.formatDate(t.publishDate);
+
+            return `
+                <tr>
+                    <td>
+                        <a href="tutorial.html?id=${Utils.escapeHtml(t.id)}" class="tutorial-link">
+                            ${Utils.escapeHtml(t.title)}
+                        </a>
+                    </td>
+                    <td>
+                        <span class="level-badge ${levelClass}">${Utils.escapeHtml(t.targetLevel || '-')}</span>
+                    </td>
+                    <td>
+                        ${t.validity?.grade
+                            ? `<span class="validity-badge ${validityClass}">${t.validity.grade} - ${Utils.escapeHtml(t.validity.label)}</span>`
+                            : '<span class="validity-badge not-reviewed">Not Reviewed</span>'
+                        }
+                    </td>
+                    <td>
+                        <span class="decision-badge ${decisionClass}">${Utils.escapeHtml(t.decision || 'Not Decided')}</span>
+                    </td>
+                    <td>
+                        <span class="status-badge ${statusClass}">${Utils.escapeHtml(t.revampStatus || 'Not Reviewed')}</span>
+                    </td>
+                    <td>${pubDateDisplay}</td>
+                    <td>
+                        <a href="final-output.html?id=${Utils.escapeHtml(t.id)}" class="btn btn-primary btn-sm">View Final Output</a>
                     </td>
                 </tr>
             `;

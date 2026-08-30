@@ -3596,7 +3596,7 @@
       },
       "decision": "Keep",
       "revampScope": "Small",
-      "revampStatus": "Reviewed",
+      "revampStatus": "Revamping",
       "priority": "None",
       "technicalScore": 8,
       "scores": {
@@ -3664,6 +3664,7 @@
       ],
       "links": [],
       "auditFile": "audits/esp32-clap-switch.md",
+      "revampedOutputFile": "revamped-tutorials/esp32-clap-switch.md",
       "makerEsp32PublishDate": "2026-09-04",
       "hardwareUsed": {
         "board": "Maker ESP32",

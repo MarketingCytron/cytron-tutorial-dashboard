@@ -171,6 +171,135 @@ const Utils = {
         }
         const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
         window.history.replaceState({}, '', newUrl);
+    },
+
+    // Render Markdown to HTML
+    renderMarkdown(text) {
+        if (!text) return '';
+
+        // Preserve fenced code blocks by replacing them with placeholders
+        const codeBlocks = [];
+        let processedText = text.replace(/```([a-zA-Z0-9_-]*)\n?([\s\S]*?)```/g, (match, lang, code) => {
+            const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
+            codeBlocks.push({ lang, code: this.escapeHtml(code.replace(/\r\n/g, '\n').trim()) });
+            return placeholder;
+        });
+
+        let html = this.escapeHtml(processedText);
+
+        // Headers
+        html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
+        html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+        html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+        html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+
+        // Bold & Italic
+        html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+        // Inline code
+        html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+        // Links
+        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+        // Horizontal rules
+        html = html.replace(/^---$/gm, '<hr>');
+
+        // Blockquotes
+        html = html.replace(/^>\s?(.*$)/gm, '<blockquote>$1</blockquote>');
+        html = html.replace(/(<\/blockquote>\n<blockquote>)/g, '<br>');
+
+        // Tables
+        html = this.renderTables(html);
+
+        // Lists (unordered)
+        html = html.replace(/^\* (.*$)/gm, '<li>$1</li>');
+        html = html.replace(/^- (.*$)/gm, '<li>$1</li>');
+        html = html.replace(/(<li>.*<\/li>)\n(?!<li>)/g, '$1</ul>\n');
+        html = html.replace(/(?<!<\/ul>\n)(<li>)/g, '<ul>$1');
+
+        // Numbered lists
+        html = html.replace(/^\d+\. (.*$)/gm, '<oli>$1</oli>');
+        html = html.replace(/(<oli>.*<\/oli>)\n(?!<oli>)/g, '$1</ol>\n');
+        html = html.replace(/(?<!<\/ol>\n)(<oli>)/g, '<ol>$1');
+        html = html.replace(/<oli>/g, '<li>').replace(/<\/oli>/g, '</li>');
+
+        // Paragraphs
+        html = html.replace(/\n\n+/g, '</p><p>');
+        html = '<p>' + html + '</p>';
+
+        // Cleanup HTML tags wrapped in paragraphs
+        html = html.replace(/<p><h(\d)>/g, '<h$1>');
+        html = html.replace(/<\/h(\d)><\/p>/g, '</h$1>');
+        html = html.replace(/<p><hr><\/p>/g, '<hr>');
+        html = html.replace(/<p><ul>/g, '<ul>');
+        html = html.replace(/<\/ul><\/p>/g, '</ul>');
+        html = html.replace(/<p><ol>/g, '<ol>');
+        html = html.replace(/<\/ol><\/p>/g, '</ol>');
+        html = html.replace(/<p><blockquote>/g, '<blockquote>');
+        html = html.replace(/<\/blockquote><\/p>/g, '</blockquote>');
+        html = html.replace(/<p><div class="table-container">/g, '<div class="table-container">');
+        html = html.replace(/<\/table><\/div><\/p>/g, '</table></div>');
+        html = html.replace(/<p><\/p>/g, '');
+
+        // Restore code blocks
+        codeBlocks.forEach((item, index) => {
+            const langClass = item.lang ? ` class="language-${item.lang}"` : '';
+            const blockHtml = `<pre><code${langClass}>${item.code}</code></pre>`;
+            html = html.replace(new RegExp(`__CODE_BLOCK_${index}__`, 'g'), blockHtml);
+        });
+
+        return html;
+    },
+
+    // Render markdown tables to HTML table
+    renderTables(html) {
+        const lines = html.split('\n');
+        let inTable = false;
+        let result = [];
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+
+            if (line.startsWith('|') && line.endsWith('|')) {
+                if (!inTable) {
+                    result.push('<div class="table-container"><table class="data-table">');
+                    inTable = true;
+                }
+
+                // Skip separator line
+                if (line.match(/^\|[\s-:|]+\|$/)) {
+                    continue;
+                }
+
+                const cells = line.slice(1, -1).split('|').map(c => c.trim());
+                const isHeader = i + 1 < lines.length && lines[i + 1].trim().match(/^\|[\s-:|]+\|$/);
+
+                if (isHeader) {
+                    result.push('<thead><tr>');
+                    cells.forEach(cell => result.push(`<th>${cell}</th>`));
+                    result.push('</tr></thead><tbody>');
+                } else {
+                    result.push('<tr>');
+                    cells.forEach(cell => result.push(`<td>${cell}</td>`));
+                    result.push('</tr>');
+                }
+            } else {
+                if (inTable) {
+                    result.push('</tbody></table></div>');
+                    inTable = false;
+                }
+                result.push(lines[i]);
+            }
+        }
+
+        if (inTable) {
+            result.push('</tbody></table></div>');
+        }
+
+        return result.join('\n');
     }
 };
 
