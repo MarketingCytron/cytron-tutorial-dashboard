@@ -1717,11 +1717,15 @@ a:hover {
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border);
     margin-bottom: var(--space-xl);
+    max-width: 1040px;
+    width: 100%;
 }
 
 .markdown-content {
     line-height: 1.7;
     color: var(--text);
+    text-align: left;
+    word-wrap: break-word;
 }
 
 .markdown-content h1,
@@ -1732,6 +1736,7 @@ a:hover {
     margin-bottom: var(--space-md);
     color: var(--text);
     font-weight: 700;
+    text-align: left;
 }
 
 .markdown-content h1 {
@@ -1744,24 +1749,53 @@ a:hover {
     font-size: 1.25rem;
     border-bottom: 1px solid var(--border-light);
     padding-bottom: var(--space-xs);
+    margin-top: var(--space-2xl);
 }
 
 .markdown-content h3 {
     font-size: 1.05rem;
+    margin-top: var(--space-lg);
 }
 
 .markdown-content p {
     margin-bottom: var(--space-md);
+    text-align: left;
 }
 
 .markdown-content ul,
 .markdown-content ol {
+    margin-top: 0;
     margin-bottom: var(--space-md);
-    padding-left: var(--space-xl);
+    padding-left: 1.6rem;
+    text-align: left;
+}
+
+.markdown-content ul {
+    list-style-type: disc;
+}
+
+.markdown-content ol {
+    list-style-type: decimal;
+}
+
+.markdown-content ul ul,
+.markdown-content ol ol,
+.markdown-content ul ol,
+.markdown-content ol ul {
+    margin-top: var(--space-xs);
+    margin-bottom: var(--space-xs);
+    padding-left: 1.4rem;
 }
 
 .markdown-content li {
-    margin-bottom: var(--space-xs);
+    margin-bottom: 0.35rem;
+    line-height: 1.65;
+    text-align: left;
+}
+
+.markdown-content li::marker {
+    color: var(--primary);
+    font-weight: 600;
 }
 
 .markdown-content pre {
@@ -1770,11 +1804,14 @@ a:hover {
     padding: var(--space-md);
     border-radius: var(--border-radius);
     overflow-x: auto;
-    margin-bottom: var(--space-md);
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-lg);
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     font-size: 0.875rem;
     line-height: 1.5;
     border: 1px solid var(--border);
+    max-width: 100%;
+    text-align: left;
 }
 
 .markdown-content code {
@@ -1796,7 +1833,8 @@ a:hover {
 .markdown-content table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-lg);
+    text-align: left;
 }
 
 .markdown-content th,
@@ -1817,6 +1855,7 @@ a:hover {
     padding: var(--space-md);
     border-radius: 0 var(--border-radius) var(--border-radius) 0;
     margin-bottom: var(--space-md);
+    text-align: left;
 }
 
 .markdown-content hr {

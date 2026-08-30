@@ -177,72 +177,211 @@ const Utils = {
     renderMarkdown(text) {
         if (!text) return '';
 
-        // Preserve fenced code blocks by replacing them with placeholders
+        // 1. Preserve fenced code blocks by replacing them with placeholders
         const codeBlocks = [];
         let processedText = text.replace(/```([a-zA-Z0-9_-]*)\n?([\s\S]*?)```/g, (match, lang, code) => {
             const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
-            codeBlocks.push({ lang, code: this.escapeHtml(code.replace(/\r\n/g, '\n').trim()) });
+            codeBlocks.push({
+                lang,
+                code: this.escapeHtml(code.replace(/\r\n/g, '\n').trim())
+            });
             return placeholder;
         });
 
-        let html = this.escapeHtml(processedText);
+        // Helper: format inline markdown (bold, italic, inline code, links)
+        const formatInline = (str) => {
+            if (!str) return '';
+            let s = this.escapeHtml(str);
 
-        // Headers
-        html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
-        html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-        html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-        html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+            // Bold & Italic
+            s = s.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+            s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            s = s.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
-        // Bold & Italic
-        html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
-        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            // Inline code
+            s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
 
-        // Inline code
-        html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+            // Links [text](url)
+            s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 
-        // Links
-        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+            return s;
+        };
 
-        // Horizontal rules
-        html = html.replace(/^---$/gm, '<hr>');
+        const lines = processedText.replace(/\r\n/g, '\n').split('\n');
+        const output = [];
 
-        // Blockquotes
-        html = html.replace(/^>\s?(.*$)/gm, '<blockquote>$1</blockquote>');
-        html = html.replace(/(<\/blockquote>\n<blockquote>)/g, '<br>');
+        // State trackers
+        const listStack = []; // [{ type: 'ul'|'ol', indent: number }]
+        let tableLines = [];
+        let quoteLines = [];
+        let paragraphLines = [];
 
-        // Tables
-        html = this.renderTables(html);
+        const flushParagraph = () => {
+            if (paragraphLines.length > 0) {
+                const pText = paragraphLines.map(l => formatInline(l)).join('<br>');
+                output.push(`<p>${pText}</p>`);
+                paragraphLines = [];
+            }
+        };
 
-        // Lists (unordered)
-        html = html.replace(/^\* (.*$)/gm, '<li>$1</li>');
-        html = html.replace(/^- (.*$)/gm, '<li>$1</li>');
-        html = html.replace(/(<li>.*<\/li>)\n(?!<li>)/g, '$1</ul>\n');
-        html = html.replace(/(?<!<\/ul>\n)(<li>)/g, '<ul>$1');
+        const flushQuotes = () => {
+            if (quoteLines.length > 0) {
+                const qText = quoteLines.map(l => formatInline(l)).join('<br>');
+                output.push(`<blockquote>${qText}</blockquote>`);
+                quoteLines = [];
+            }
+        };
 
-        // Numbered lists
-        html = html.replace(/^\d+\. (.*$)/gm, '<oli>$1</oli>');
-        html = html.replace(/(<oli>.*<\/oli>)\n(?!<oli>)/g, '$1</ol>\n');
-        html = html.replace(/(?<!<\/ol>\n)(<oli>)/g, '<ol>$1');
-        html = html.replace(/<oli>/g, '<li>').replace(/<\/oli>/g, '</li>');
+        const flushTable = () => {
+            if (tableLines.length > 0) {
+                output.push(this.renderTableBlock(tableLines, formatInline));
+                tableLines = [];
+            }
+        };
 
-        // Paragraphs
-        html = html.replace(/\n\n+/g, '</p><p>');
-        html = '<p>' + html + '</p>';
+        const closeListToLevel = (targetLevel) => {
+            while (listStack.length > targetLevel) {
+                const top = listStack.pop();
+                output.push(`</li></${top.type}>`);
+            }
+        };
 
-        // Cleanup HTML tags wrapped in paragraphs
-        html = html.replace(/<p><h(\d)>/g, '<h$1>');
-        html = html.replace(/<\/h(\d)><\/p>/g, '</h$1>');
-        html = html.replace(/<p><hr><\/p>/g, '<hr>');
-        html = html.replace(/<p><ul>/g, '<ul>');
-        html = html.replace(/<\/ul><\/p>/g, '</ul>');
-        html = html.replace(/<p><ol>/g, '<ol>');
-        html = html.replace(/<\/ol><\/p>/g, '</ol>');
-        html = html.replace(/<p><blockquote>/g, '<blockquote>');
-        html = html.replace(/<\/blockquote><\/p>/g, '</blockquote>');
-        html = html.replace(/<p><div class="table-container">/g, '<div class="table-container">');
-        html = html.replace(/<\/table><\/div><\/p>/g, '</table></div>');
-        html = html.replace(/<p><\/p>/g, '');
+        const flushLists = () => {
+            closeListToLevel(0);
+        };
+
+        const flushAll = () => {
+            flushParagraph();
+            flushQuotes();
+            flushTable();
+            flushLists();
+        };
+
+        for (let i = 0; i < lines.length; i++) {
+            const rawLine = lines[i];
+            const trimmed = rawLine.trim();
+
+            // 1. Check Code Block placeholder
+            const codePlaceholderMatch = trimmed.match(/^__CODE_BLOCK_(\d+)__$/);
+            if (codePlaceholderMatch) {
+                flushAll();
+                output.push(trimmed);
+                continue;
+            }
+
+            // 2. Empty line
+            if (!trimmed) {
+                flushParagraph();
+                flushQuotes();
+                flushTable();
+                flushLists();
+                continue;
+            }
+
+            // 3. Table row (starts and ends with '|')
+            if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+                flushParagraph();
+                flushQuotes();
+                flushLists();
+                tableLines.push(trimmed);
+                continue;
+            } else if (tableLines.length > 0) {
+                flushTable();
+            }
+
+            // 4. Blockquote (starts with '>')
+            if (trimmed.startsWith('>')) {
+                flushParagraph();
+                flushLists();
+                flushTable();
+                const quoteText = trimmed.replace(/^>\s?/, '');
+                quoteLines.push(quoteText);
+                continue;
+            } else if (quoteLines.length > 0) {
+                flushQuotes();
+            }
+
+            // 5. Headings (# H1, ## H2, etc.)
+            const headingMatch = trimmed.match(/^(#{1,6})\s+(.*)$/);
+            if (headingMatch) {
+                flushAll();
+                const level = headingMatch[1].length;
+                const title = formatInline(headingMatch[2]);
+                output.push(`<h${level}>${title}</h${level}>`);
+                continue;
+            }
+
+            // 6. Horizontal Rule (---, ***, ___)
+            if (/^(\-{3,}|\*{3,}|_{3,})$/.test(trimmed)) {
+                flushAll();
+                output.push('<hr>');
+                continue;
+            }
+
+            // 7. List Items (unordered: - or *, ordered: 1., 2., etc.)
+            const unorderedMatch = rawLine.match(/^(\s*)[\*\-]\s+(.*)$/);
+            const orderedMatch = rawLine.match(/^(\s*)\d+\.\s+(.*)$/);
+
+            if (unorderedMatch || orderedMatch) {
+                flushParagraph();
+                flushQuotes();
+                flushTable();
+
+                const isOrdered = !!orderedMatch;
+                const match = isOrdered ? orderedMatch : unorderedMatch;
+                const indentSpaces = match[1].length;
+                const itemContent = formatInline(match[2]);
+                const listType = isOrdered ? 'ol' : 'ul';
+
+                if (listStack.length === 0) {
+                    listStack.push({ type: listType, indent: indentSpaces });
+                    output.push(`<${listType}><li>${itemContent}`);
+                } else {
+                    const currentTop = listStack[listStack.length - 1];
+
+                    if (indentSpaces > currentTop.indent) {
+                        listStack.push({ type: listType, indent: indentSpaces });
+                        output.push(`<${listType}><li>${itemContent}`);
+                    } else if (indentSpaces < currentTop.indent) {
+                        while (listStack.length > 0 && indentSpaces < listStack[listStack.length - 1].indent) {
+                            const popped = listStack.pop();
+                            output.push(`</li></${popped.type}>`);
+                        }
+
+                        if (listStack.length > 0 && listStack[listStack.length - 1].type === listType) {
+                            output.push(`</li><li>${itemContent}`);
+                        } else {
+                            listStack.push({ type: listType, indent: indentSpaces });
+                            output.push(`<${listType}><li>${itemContent}`);
+                        }
+                    } else {
+                        if (currentTop.type === listType) {
+                            output.push(`</li><li>${itemContent}`);
+                        } else {
+                            const popped = listStack.pop();
+                            output.push(`</li></${popped.type}><${listType}><li>${itemContent}`);
+                            listStack.push({ type: listType, indent: indentSpaces });
+                        }
+                    }
+                }
+                continue;
+            } else if (listStack.length > 0) {
+                if (/^\s{2,}/.test(rawLine)) {
+                    output.push(` ${formatInline(trimmed)}`);
+                    continue;
+                } else {
+                    flushLists();
+                }
+            }
+
+            // 8. Regular text paragraph
+            paragraphLines.push(rawLine);
+        }
+
+        // Final flush
+        flushAll();
+
+        let html = output.join('\n');
 
         // Restore code blocks
         codeBlocks.forEach((item, index) => {
@@ -254,53 +393,62 @@ const Utils = {
         return html;
     },
 
-    // Render markdown tables to HTML table
-    renderTables(html) {
-        const lines = html.split('\n');
-        let inTable = false;
-        let result = [];
+    // Render a block of markdown table lines to HTML table
+    renderTableBlock(tableLines, formatInline) {
+        if (!tableLines || tableLines.length === 0) return '';
 
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
+        const rows = [];
+        let hasHeader = false;
 
-            if (line.startsWith('|') && line.endsWith('|')) {
-                if (!inTable) {
-                    result.push('<div class="table-container"><table class="data-table">');
-                    inTable = true;
+        for (let i = 0; i < tableLines.length; i++) {
+            const line = tableLines[i].trim();
+
+            if (/^\|[\s-:|]+\|$/.test(line)) {
+                if (rows.length === 1) {
+                    hasHeader = true;
                 }
-
-                // Skip separator line
-                if (line.match(/^\|[\s-:|]+\|$/)) {
-                    continue;
-                }
-
-                const cells = line.slice(1, -1).split('|').map(c => c.trim());
-                const isHeader = i + 1 < lines.length && lines[i + 1].trim().match(/^\|[\s-:|]+\|$/);
-
-                if (isHeader) {
-                    result.push('<thead><tr>');
-                    cells.forEach(cell => result.push(`<th>${cell}</th>`));
-                    result.push('</tr></thead><tbody>');
-                } else {
-                    result.push('<tr>');
-                    cells.forEach(cell => result.push(`<td>${cell}</td>`));
-                    result.push('</tr>');
-                }
-            } else {
-                if (inTable) {
-                    result.push('</tbody></table></div>');
-                    inTable = false;
-                }
-                result.push(lines[i]);
+                continue;
             }
+
+            const cells = line.slice(1, -1).split('|').map(c => formatInline ? formatInline(c.trim()) : this.escapeHtml(c.trim()));
+            rows.push(cells);
         }
 
-        if (inTable) {
-            result.push('</tbody></table></div>');
+        if (rows.length === 0) return '';
+
+        let tableHtml = '<div class="table-container"><table class="data-table">';
+
+        if (hasHeader) {
+            const headerCells = rows[0];
+            tableHtml += '<thead><tr>';
+            headerCells.forEach(cell => {
+                tableHtml += `<th>${cell}</th>`;
+            });
+            tableHtml += '</tr></thead><tbody>';
+
+            for (let r = 1; r < rows.length; r++) {
+                tableHtml += '<tr>';
+                rows[r].forEach(cell => {
+                    tableHtml += `<td>${cell}</td>`;
+                });
+                tableHtml += '</tr>';
+            }
+            tableHtml += '</tbody>';
+        } else {
+            tableHtml += '<tbody>';
+            for (let r = 0; r < rows.length; r++) {
+                tableHtml += '<tr>';
+                rows[r].forEach(cell => {
+                    tableHtml += `<td>${cell}</td>`;
+                });
+                tableHtml += '</tr>';
+            }
+            tableHtml += '</tbody>';
         }
 
-        return result.join('\n');
-    }
+        tableHtml += '</table></div>';
+        return tableHtml;
+    },
 };
 
 // Sidebar functionality
