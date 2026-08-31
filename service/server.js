@@ -1,25 +1,25 @@
 'use strict';
 
 /**
- * Cytron Tutorial Revamp Bridge — Milestone 1
+ * Cytron Tutorial Revamp Bridge — Milestone 2
  *
- * Connectivity proof-of-concept ONLY.
+ * Adds the real Revamp UI's backend: job creation, job polling, and job
+ * cancellation, backed by a StubWriter that simulates the future
+ * Antigravity-driven writer. This milestone intentionally does NOT:
  *
- * This service proves that the live GitHub Pages dashboard can securely
- * reach a local Node.js service on the user's Windows PC. It intentionally
- * does nothing else:
- *
- *   - no Antigravity invocation
- *   - no OpenAI/QA calls
- *   - no tutorial generation
- *   - no writes to data/tutorials.json, audits/, or revamped-tutorials/
- *   - no git operations
- *   - no shell-execution endpoint, no arbitrary-path endpoint, no
- *     browser-supplied "command" field of any kind
+ *   - invoke Antigravity or any AI tool
+ *   - invoke OpenAI/QA
+ *   - write to data/tutorials.json, audits/, or revamped-tutorials/
+ *   - accept a shell command, arbitrary filesystem path, or "command"
+ *     field of any kind from the browser
+ *   - perform any git operation
  *
  * Endpoints:
- *   GET  /health     — unauthenticated liveness check, no sensitive data
- *   POST /api/test    — authenticated, read-only tutorial ID lookup
+ *   GET  /health                    — unauthenticated liveness check
+ *   POST /api/test                   — authenticated, read-only tutorial ID lookup (Milestone 1)
+ *   POST /api/revamp/start            — authenticated, creates a job
+ *   GET  /api/revamp/:jobId            — authenticated, returns safe job status
+ *   POST /api/revamp/:jobId/cancel      — authenticated, cancels an active job
  *
  * Run with: node service/server.js
  * (Zero external dependencies — Node's built-in http/crypto/fs only.)
@@ -28,10 +28,12 @@
 const http = require('http');
 const crypto = require('crypto');
 const fs = require('fs');
-const path = require('path');
 const { URL } = require('url');
 
 const config = require('./config');
+const jobStore = require('./jobStore');
+const stubWriter = require('./stubWriter');
+const logger = require('./logger');
 
 // ---------------------------------------------------------------------------
 // Pairing token: generated locally, persisted outside git, never hard-coded.
@@ -67,8 +69,6 @@ function timingSafeTokenMatch(candidate, expected) {
   const a = Buffer.from(candidate, 'utf8');
   const b = Buffer.from(expected, 'utf8');
   if (a.length !== b.length) {
-    // Still perform a constant-time comparison to avoid an early-exit timing
-    // signal, then report failure.
     crypto.timingSafeEqual(b, b);
     return false;
   }
@@ -156,6 +156,11 @@ function readJsonBody(req, maxBytes) {
   });
 }
 
+function hasJsonContentType(req) {
+  const contentType = (req.headers['content-type'] || '').split(';')[0].trim();
+  return contentType === 'application/json';
+}
+
 // ---------------------------------------------------------------------------
 // data/tutorials.json access (read-only, in-memory lookup only)
 // ---------------------------------------------------------------------------
@@ -170,7 +175,35 @@ function findTutorialById(tutorialId) {
 }
 
 // ---------------------------------------------------------------------------
-// Route handlers
+// Instructions validation — treated strictly as opaque editorial text.
+// Never interpreted as a shell command, filename, path, or argument.
+// ---------------------------------------------------------------------------
+
+// Disallow C0 control characters other than tab/newline/carriage return, and DEL.
+const DISALLOWED_CONTROL_CHARS = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/;
+
+function validateInstructions(instructions) {
+  if (instructions === undefined || instructions === null || instructions === '') {
+    return { ok: true, value: '' };
+  }
+  if (typeof instructions !== 'string') {
+    return { ok: false, code: 'invalid_instructions', message: 'instructions must be a string.' };
+  }
+  if (instructions.length > config.maxInstructionsLength) {
+    return {
+      ok: false,
+      code: 'instructions_too_long',
+      message: `instructions must be ${config.maxInstructionsLength} characters or fewer.`,
+    };
+  }
+  if (DISALLOWED_CONTROL_CHARS.test(instructions)) {
+    return { ok: false, code: 'invalid_instructions', message: 'instructions contains unsupported control characters.' };
+  }
+  return { ok: true, value: instructions };
+}
+
+// ---------------------------------------------------------------------------
+// Route handlers — Milestone 1
 // ---------------------------------------------------------------------------
 
 function handleHealth(req, res, cors) {
@@ -183,18 +216,13 @@ function handleHealth(req, res, cors) {
 
 async function handleApiTest(req, res, cors) {
   if (!isAuthorized(req)) {
-    sendJson(res, 401, {
-      error: { code: 'unauthorized', message: 'Missing or invalid pairing token.' },
-    }, cors);
+    sendJson(res, 401, { error: { code: 'unauthorized', message: 'Missing or invalid pairing token.' } }, cors);
     return;
   }
 
-  const contentType = (req.headers['content-type'] || '').split(';')[0].trim();
-  if (contentType !== 'application/json') {
-    req.resume(); // drain the request so the socket can close cleanly
-    sendJson(res, 415, {
-      error: { code: 'unsupported_media_type', message: 'Content-Type must be application/json.' },
-    }, cors);
+  if (!hasJsonContentType(req)) {
+    req.resume();
+    sendJson(res, 415, { error: { code: 'unsupported_media_type', message: 'Content-Type must be application/json.' } }, cors);
     return;
   }
 
@@ -203,18 +231,14 @@ async function handleApiTest(req, res, cors) {
     body = await readJsonBody(req, config.maxBodyBytes);
   } catch (err) {
     const status = err.code === 'payload_too_large' ? 413 : 400;
-    sendJson(res, status, {
-      error: { code: err.code || 'invalid_json', message: err.message },
-    }, cors);
+    sendJson(res, status, { error: { code: err.code || 'invalid_json', message: err.message } }, cors);
     return;
   }
 
   const tutorialId = body && typeof body.tutorialId === 'string' ? body.tutorialId : null;
 
   if (!tutorialId || !TUTORIAL_ID_PATTERN.test(tutorialId)) {
-    sendJson(res, 400, {
-      error: { code: 'invalid_tutorial_id', message: 'tutorialId must be a lowercase alphanumeric-hyphen slug.' },
-    }, cors);
+    sendJson(res, 400, { error: { code: 'invalid_tutorial_id', message: 'tutorialId must be a lowercase alphanumeric-hyphen slug.' } }, cors);
     return;
   }
 
@@ -223,16 +247,12 @@ async function handleApiTest(req, res, cors) {
     tutorial = findTutorialById(tutorialId);
   } catch (err) {
     console.error('[bridge] Failed to read data/tutorials.json:', err.message);
-    sendJson(res, 500, {
-      error: { code: 'internal_error', message: 'Could not read tutorial data.' },
-    }, cors);
+    sendJson(res, 500, { error: { code: 'internal_error', message: 'Could not read tutorial data.' } }, cors);
     return;
   }
 
   if (!tutorial) {
-    sendJson(res, 404, {
-      error: { code: 'tutorial_not_found', message: `No tutorial with id "${tutorialId}" was found.` },
-    }, cors);
+    sendJson(res, 404, { error: { code: 'tutorial_not_found', message: `No tutorial with id "${tutorialId}" was found.` } }, cors);
     return;
   }
 
@@ -245,6 +265,117 @@ async function handleApiTest(req, res, cors) {
 }
 
 // ---------------------------------------------------------------------------
+// Route handlers — Milestone 2 (revamp job lifecycle)
+// ---------------------------------------------------------------------------
+
+async function handleRevampStart(req, res, cors) {
+  if (!isAuthorized(req)) {
+    sendJson(res, 401, { error: { code: 'unauthorized', message: 'Missing or invalid pairing token.' } }, cors);
+    return;
+  }
+
+  if (!hasJsonContentType(req)) {
+    req.resume();
+    sendJson(res, 415, { error: { code: 'unsupported_media_type', message: 'Content-Type must be application/json.' } }, cors);
+    return;
+  }
+
+  let body;
+  try {
+    body = await readJsonBody(req, config.maxBodyBytes);
+  } catch (err) {
+    const status = err.code === 'payload_too_large' ? 413 : 400;
+    sendJson(res, status, { error: { code: err.code || 'invalid_json', message: err.message } }, cors);
+    return;
+  }
+
+  const tutorialId = body && typeof body.tutorialId === 'string' ? body.tutorialId : null;
+  if (!tutorialId || !TUTORIAL_ID_PATTERN.test(tutorialId)) {
+    sendJson(res, 400, { error: { code: 'invalid_tutorial_id', message: 'tutorialId must be a lowercase alphanumeric-hyphen slug.' } }, cors);
+    return;
+  }
+
+  let tutorial;
+  try {
+    tutorial = findTutorialById(tutorialId);
+  } catch (err) {
+    console.error('[bridge] Failed to read data/tutorials.json:', err.message);
+    sendJson(res, 500, { error: { code: 'internal_error', message: 'Could not read tutorial data.' } }, cors);
+    return;
+  }
+
+  if (!tutorial) {
+    sendJson(res, 404, { error: { code: 'tutorial_not_found', message: `No tutorial with id "${tutorialId}" was found.` } }, cors);
+    return;
+  }
+
+  const instructionsCheck = validateInstructions(body && body.instructions);
+  if (!instructionsCheck.ok) {
+    sendJson(res, 400, { error: { code: instructionsCheck.code, message: instructionsCheck.message } }, cors);
+    return;
+  }
+
+  const existing = jobStore.getActiveJobForTutorial(tutorialId);
+  if (existing) {
+    logger.log('job_start_conflict', { tutorialId, existingJobId: existing.jobId, existingState: existing.state });
+    sendJson(res, 409, {
+      ok: false,
+      error: { code: 'job_already_active', message: 'A revamp job is already active for this tutorial.' },
+      job: jobStore.toSafeJson(existing),
+    }, cors);
+    return;
+  }
+
+  const job = jobStore.createJob(tutorialId, tutorial.title, instructionsCheck.value);
+  logger.log('job_created', { jobId: job.jobId, tutorialId, instructionsLength: instructionsCheck.value.length });
+
+  stubWriter.runStub(job.jobId).catch((err) => {
+    jobStore.updateJobState(job.jobId, 'Failed', { error: 'Unexpected stub writer error.' });
+    logger.log('job_failed', { jobId: job.jobId, reason: err.message });
+  });
+
+  sendJson(res, 200, { ok: true, jobId: job.jobId, state: job.state }, cors);
+}
+
+function handleRevampGet(req, res, cors, jobId) {
+  if (!isAuthorized(req)) {
+    sendJson(res, 401, { error: { code: 'unauthorized', message: 'Missing or invalid pairing token.' } }, cors);
+    return;
+  }
+
+  const job = jobStore.getJob(jobId);
+  if (!job) {
+    sendJson(res, 404, { error: { code: 'job_not_found', message: 'No job with that ID was found.' } }, cors);
+    return;
+  }
+
+  sendJson(res, 200, { ok: true, job: jobStore.toSafeJson(job) }, cors);
+}
+
+function handleRevampCancel(req, res, cors, jobId) {
+  if (!isAuthorized(req)) {
+    sendJson(res, 401, { error: { code: 'unauthorized', message: 'Missing or invalid pairing token.' } }, cors);
+    return;
+  }
+
+  const job = jobStore.getJob(jobId);
+  if (!job) {
+    sendJson(res, 404, { error: { code: 'job_not_found', message: 'No job with that ID was found.' } }, cors);
+    return;
+  }
+
+  if (!jobStore.isActive(job)) {
+    sendJson(res, 409, { error: { code: 'job_not_active', message: `Job is already ${job.state} and cannot be cancelled.` } }, cors);
+    return;
+  }
+
+  jobStore.updateJobState(jobId, 'Cancelled');
+  logger.log('job_cancelled', { jobId, tutorialId: job.tutorialId });
+
+  sendJson(res, 200, { ok: true, jobId, state: 'Cancelled' }, cors);
+}
+
+// ---------------------------------------------------------------------------
 // Server
 // ---------------------------------------------------------------------------
 
@@ -253,16 +384,14 @@ const server = http.createServer((req, res) => {
 
   if (origin && !isOriginAllowed(origin)) {
     console.warn(`[bridge] Rejected request from disallowed Origin: ${origin}`);
-    sendJson(res, 403, {
-      error: { code: 'origin_not_allowed', message: 'This origin is not permitted to use the bridge.' },
-    });
+    sendJson(res, 403, { error: { code: 'origin_not_allowed', message: 'This origin is not permitted to use the bridge.' } });
     return;
   }
 
   const cors = origin ? corsHeadersFor(origin) : {};
 
-  // CORS preflight (also covers Chromium Private Network Access preflights,
-  // which are sent even for otherwise-"simple" GET requests).
+  // CORS preflight (also covers Chromium Private Network / Local Network
+  // Access preflights, sent even for otherwise-"simple" GET requests).
   if (req.method === 'OPTIONS') {
     const preflightHeaders = {
       ...baseSecurityHeaders(),
@@ -310,6 +439,38 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (pathname === '/api/revamp/start') {
+    if (req.method !== 'POST') {
+      sendJson(res, 405, { error: { code: 'method_not_allowed', message: 'Use POST.' } }, { ...cors, Allow: 'POST, OPTIONS' });
+      return;
+    }
+    handleRevampStart(req, res, cors).catch((err) => {
+      console.error('[bridge] Unhandled error in /api/revamp/start:', err);
+      sendJson(res, 500, { error: { code: 'internal_error', message: 'Unexpected server error.' } }, cors);
+    });
+    return;
+  }
+
+  const cancelMatch = pathname.match(/^\/api\/revamp\/([A-Za-z0-9-]+)\/cancel$/);
+  if (cancelMatch) {
+    if (req.method !== 'POST') {
+      sendJson(res, 405, { error: { code: 'method_not_allowed', message: 'Use POST.' } }, { ...cors, Allow: 'POST, OPTIONS' });
+      return;
+    }
+    handleRevampCancel(req, res, cors, cancelMatch[1]);
+    return;
+  }
+
+  const jobMatch = pathname.match(/^\/api\/revamp\/([A-Za-z0-9-]+)$/);
+  if (jobMatch) {
+    if (req.method !== 'GET') {
+      sendJson(res, 405, { error: { code: 'method_not_allowed', message: 'Use GET.' } }, { ...cors, Allow: 'GET, OPTIONS' });
+      return;
+    }
+    handleRevampGet(req, res, cors, jobMatch[1]);
+    return;
+  }
+
   sendJson(res, 404, { error: { code: 'not_found', message: 'Unknown endpoint.' } }, cors);
 });
 
@@ -320,7 +481,7 @@ server.listen(config.port, config.host, () => {
   console.log(`Listening on ${base} (loopback only)`);
   console.log(`Allowed origin(s): ${config.allowedOrigins.join(', ')}`);
   console.log('');
-  console.log('Pairing token (paste this once into the dashboard\'s "Local Revamp Bridge" panel):');
+  console.log('Pairing token (paste this once into the dashboard\'s "Revamp Tutorial" panel):');
   console.log('');
   console.log(`  ${PAIRING_TOKEN}`);
   console.log('');
@@ -328,6 +489,7 @@ server.listen(config.port, config.host, () => {
   console.log('Delete that file and restart the bridge to rotate the token.');
   console.log('');
   console.log(`Health check: ${base}/health`);
+  console.log(`Job runtime directory: ${config.jobsDir}`);
   console.log('Press Ctrl+C to stop.');
   console.log('');
 });

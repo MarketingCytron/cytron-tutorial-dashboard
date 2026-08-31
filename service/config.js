@@ -3,9 +3,9 @@
 /**
  * Cytron Tutorial Revamp Bridge — configuration
  *
- * Milestone 1 (connectivity proof-of-concept) config only.
- * No secrets live in this file — the pairing token is generated at runtime
- * and stored outside git (see tokenFilePath).
+ * Milestone 2 adds the local job store/runtime directory and instruction
+ * limits. No secrets live in this file — the pairing token is generated at
+ * runtime and stored outside git (see tokenFilePath).
  */
 
 const path = require('path');
@@ -15,7 +15,7 @@ module.exports = {
   port: 47821,
 
   serviceName: 'Cytron Tutorial Revamp Bridge',
-  version: '0.1.0',
+  version: '0.2.0',
 
   // Exact browser origins allowed to call this bridge.
   // Do NOT add '*'. Add a local static-server origin here temporarily if you
@@ -33,5 +33,11 @@ module.exports = {
   // Delete this file and restart the bridge to rotate the token.
   tokenFilePath: path.resolve(__dirname, '.pairing-token.json'),
 
+  // Local-only runtime job store. Gitignored in full — never committed.
+  // Each job gets its own subdirectory: service/jobs/<jobId>/job.json (+
+  // any stub/writer artifacts). A single service.log lives alongside them.
+  jobsDir: path.resolve(__dirname, 'jobs'),
+
   maxBodyBytes: 10 * 1024, // 10 KB — generous for this milestone's tiny payloads
+  maxInstructionsLength: 4000,
 };

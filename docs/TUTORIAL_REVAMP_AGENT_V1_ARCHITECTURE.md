@@ -1,6 +1,6 @@
 # Cytron Tutorial Revamp Agent V1 — Architecture
 
-Status: **Design only. Nothing in this document has been implemented.**
+Status: **Design document.** Milestone 1 (browser-to-localhost connectivity) and Milestone 2 (Revamp UI + local job lifecycle, stub writer) have since been implemented and tested, including a live human-verified PASS from the real GitHub Pages origin — see `docs/TUTORIAL_REVAMP_AGENT_MILESTONE_1.md` and `docs/TUTORIAL_REVAMP_AGENT_MILESTONE_2.md`. The architecture below remains the reference design for the remaining phases (real Antigravity invocation, real validation, QA integration) and has not been rewritten to match implementation details already superseded by those milestone docs.
 Scope: turn the static Cytron Tutorial Validation Dashboard into a control center that can trigger, track, and surface AI-assisted tutorial revamps, using a local Windows bridge service the GitHub Pages dashboard talks to over `localhost`.
 
 ---

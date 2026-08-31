@@ -1,2 +1,6 @@
 # Local Revamp Bridge pairing token — generated per machine, never commit.
 service/.pairing-token.json
+
+# Local Revamp Bridge job runtime store (job records, stub/writer artifacts,
+# service log) — local-only, never commit.
+service/jobs/

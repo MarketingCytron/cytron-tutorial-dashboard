@@ -89,6 +89,7 @@
                     </div>
                 </div>
                 <div class="tutorial-actions">
+                    <button type="button" id="revampTutorialBtn" class="btn btn-primary">Revamp Tutorial</button>
                     <a href="#" id="originalLink" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
                         Open Original Tutorial
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -265,40 +266,40 @@
                     </div>
                 </section>
 
-                <!-- DEV/PROTOTYPE ONLY: Milestone 1 local bridge connectivity test.
-                     Not the final Revamp UI — safe to delete once superseded. -->
-                <section class="dashboard-section" id="devBridgePanel" style="border: 2px dashed #c53030; border-radius: 8px; padding: 1rem 1.25rem; margin-top: 2rem;">
-                    <h2 class="section-title" style="display:flex; align-items:center; gap:0.5rem; font-size:1rem;">
-                        Local Revamp Bridge
-                        <span style="font-size:0.7rem; font-weight:700; letter-spacing:0.05em; color:#c53030; border:1px solid #c53030; border-radius:4px; padding:0.1rem 0.4rem;">DEV / PROTOTYPE</span>
-                    </h2>
-                    <p style="font-size:0.85rem; color:#666; margin:0.25rem 0 0.75rem;">
-                        Milestone 1 connectivity test only. Does not start a revamp or change any tutorial data.
-                    </p>
-
-                    <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; margin-bottom:0.75rem;">
-                        <button type="button" id="devBridgeCheckBtn" class="btn btn-secondary btn-sm">Check Bridge</button>
-                        <span id="devBridgeStatus" style="font-size:0.85rem;">Status: Unknown</span>
+                <!-- Bridge troubleshooting — secondary/advanced, collapsed by default.
+                     Talks only to GET /health and POST /api/test; does not start a revamp. -->
+                <details class="revamp-debug-details">
+                    <summary>Bridge Debug (advanced)</summary>
+                    <div class="revamp-debug-body">
+                        <p class="hint">Connectivity troubleshooting only. Use the "Revamp Tutorial" button above for the real workflow.</p>
+                        <div class="revamp-debug-row">
+                            <button type="button" id="devBridgeCheckBtn" class="btn btn-secondary btn-sm">Check Bridge</button>
+                            <span id="devBridgeStatus">Status: Unknown</span>
+                        </div>
+                        <div class="revamp-debug-row">
+                            <label for="devBridgeTokenInput">Pairing Token</label>
+                            <input type="password" id="devBridgeTokenInput" placeholder="Paste token from bridge console" style="min-width:260px;">
+                            <button type="button" id="devBridgeSaveTokenBtn" class="btn btn-secondary btn-sm">Save Token</button>
+                        </div>
+                        <div class="revamp-debug-row">
+                            <button type="button" id="devBridgeTestBtn" class="btn btn-secondary btn-sm">Test Tutorial Connection</button>
+                        </div>
+                        <pre id="devBridgeLog" class="revamp-debug-log"></pre>
                     </div>
-
-                    <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.75rem;">
-                        <label for="devBridgeTokenInput" style="font-size:0.85rem;">Pairing Token</label>
-                        <input type="password" id="devBridgeTokenInput" placeholder="Paste token from bridge console" style="min-width:260px; padding:0.35rem 0.5rem; font-size:0.85rem;">
-                        <button type="button" id="devBridgeSaveTokenBtn" class="btn btn-secondary btn-sm">Save Token</button>
-                    </div>
-
-                    <div style="margin-bottom:0.75rem;">
-                        <button type="button" id="devBridgeTestBtn" class="btn btn-secondary btn-sm">Test Tutorial Connection</button>
-                    </div>
-
-                    <pre id="devBridgeLog" style="background:#111; color:#0f0; font-size:0.75rem; padding:0.75rem; border-radius:6px; max-height:180px; overflow:auto; white-space:pre-wrap; margin:0;"></pre>
-                </section>
+                </details>
             </div>
         </main>
     </div>
 
+    <!-- Revamp Tutorial modal (Milestone 2) -->
+    <div id="revampModalOverlay" class="revamp-modal-overlay" style="display:none;">
+        <div class="revamp-modal" role="dialog" aria-modal="true" aria-labelledby="revampModalTitle">
+            <div id="revampModalBody"></div>
+        </div>
+    </div>
+
     <script src="js/app.js"></script>
     <script src="js/tutorial.js"></script>
-    <script src="js/dev-bridge.js"></script>
+    <script src="js/revamp-agent.js"></script>
 </body>
 </html>
