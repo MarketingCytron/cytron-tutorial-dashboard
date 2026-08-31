@@ -17,7 +17,7 @@ Revamp Date: 2026-08-30
 | Pitch | Build a WiFi-synchronized digital clock that automatically displays the current time and date on an OLED. | Application-focused beginner pitch |
 | Slug | esp32-digital-clock | Matches original tutorial slug |
 | Tags | ESP32, Maker ESP32, Digital Clock, NTP, OLED Display, SSD1306, I2C, WiFi | Keyword tags for search indexing |
-| Meta Title | ESP32 Digital Clock with NTP and OLED Display \| Cytron Tutorial | SEO-optimized title (<60 chars) |
+| Meta Title | ESP32 Digital Clock with NTP and OLED Display - Cytron Tutorial | SEO-optimized title (<60 chars) |
 | Meta Description | Build an internet-synchronized digital clock with Maker ESP32 and an I2C OLED display. Sync time automatically using WiFi and NTP without an RTC module. | SEO summary (<160 chars) |
 | Target Audience | Beginners, students, IoT hobbyists, STEM educators | Clear audience definition |
 | Content Type | Project Tutorial | Standard project guide |
@@ -75,8 +75,7 @@ The 0.96-inch OLED display communicates with Maker ESP32 via the I2C bus (SDA on
 | **SDA** | **GPIO21** | I2C Data | Maker Port SDA / GPIO21 |
 | **SCL** | **GPIO22** | I2C Clock | Maker Port SCL / GPIO22 |
 
-> [!NOTE]
-> You can connect the OLED using standard female-to-female jumper wires to the Maker ESP32 header pins, or plug a STEMMA QT / Qwiic JST-SH 4-pin female socket cable directly into the onboard **Maker Port** (Pin 1: GND, Pin 2: 3.3V, Pin 3: SDA/GPIO21, Pin 4: SCL/GPIO22).
+**Note:** You can connect the OLED using standard female-to-female jumper wires to the Maker ESP32 header pins, or plug a STEMMA QT / Qwiic JST-SH 4-pin female socket cable directly into the onboard **Maker Port** (Pin 1: GND, Pin 2: 3.3V, Pin 3: SDA/GPIO21, Pin 4: SCL/GPIO22).
 
 ---
 
@@ -98,16 +97,15 @@ To control the OLED screen, install the official **Adafruit SSD1306** driver in 
 
 The ESP32 connects to your local Wi-Fi to reach internet time servers:
 
-1. Locate the Wi-Fi credentials in the sample code:
-   ```cpp
-   const char* ssid = "YOUR_WIFI_SSID";
-   const char* password = "YOUR_WIFI_PASSWORD";
-   ```
-2. Replace `YOUR_WIFI_SSID` with your 2.4 GHz Wi-Fi network name.
-3. Replace `YOUR_WIFI_PASSWORD` with your Wi-Fi password.
+- Find these Wi-Fi credentials in the sample code:
+  ```cpp
+  const char* ssid = "YOUR_WIFI_SSID";
+  const char* password = "YOUR_WIFI_PASSWORD";
+  ```
+- Replace `YOUR_WIFI_SSID` with your 2.4 GHz Wi-Fi network name.
+- Replace `YOUR_WIFI_PASSWORD` with your Wi-Fi password.
 
-> [!IMPORTANT]
-> The ESP32 supports **2.4 GHz** Wi-Fi networks. Make sure your router provides a 2.4 GHz band.
+**Important:** The ESP32 supports **2.4 GHz** Wi-Fi networks. Make sure your router provides a 2.4 GHz band.
 
 ### Timezone Configuration
 
