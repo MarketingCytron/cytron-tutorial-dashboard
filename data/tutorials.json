@@ -1919,7 +1919,7 @@
       },
       "decision": "Keep",
       "revampScope": "Small",
-      "revampStatus": "Reviewed",
+      "revampStatus": "Revamping",
       "priority": "P3",
       "technicalScore": 9,
       "scores": {
@@ -2076,6 +2076,7 @@
         }
       ],
       "auditFile": "audits/esp32-digital-clock.md",
+      "revampedOutputFile": "revamped-tutorials/esp32-digital-clock.md",
       "makerEsp32PublishDate": "2026-09-03",
       "hardwareUsed": {
         "board": "Maker ESP32",
