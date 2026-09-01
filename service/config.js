@@ -15,7 +15,7 @@ module.exports = {
   port: 47821,
 
   serviceName: 'Cytron Tutorial Revamp Bridge',
-  version: '0.2.0',
+  version: '0.4.0',
 
   // Exact browser origins allowed to call this bridge.
   // Do NOT add '*'. Add a local static-server origin here temporarily if you
@@ -40,4 +40,24 @@ module.exports = {
 
   maxBodyBytes: 10 * 1024, // 10 KB — generous for this milestone's tiny payloads
   maxInstructionsLength: 4000,
+
+  // Milestone 3A — Antigravity integration harness (dev-only, no tutorial
+  // content). Uses the official headless `agy` CLI (verified 2026-09-01 —
+  // see docs/TUTORIAL_REVAMP_AGENT_MILESTONE_3A.md). The earlier GUI-based
+  // `antigravity-ide.exe chat` approach was tested and abandoned: it never
+  // produced a working chat/agent session when launched programmatically
+  // (confirmed via direct manual comparison, not just our own bridge code),
+  // regardless of shell:true/.cmd or direct shell:false/.exe invocation.
+  //
+  // exePath is a fixed, bridge-owned constant; the browser has no way to
+  // influence it, the CLI flags, or the prompt.
+  agy: {
+    exePath: 'C:\\Users\\user\\AppData\\Local\\agy\\bin\\agy.exe',
+    printTimeoutArg: '60s', // agy's own internal --print-timeout
+    watchdogTimeoutMs: 80 * 1000, // bridge-side watchdog, deliberately longer than printTimeoutArg
+    expectedOutput: 'AGY_HARNESS_OK',
+    // Fixed harness prompt — no browser input, no file/tool requests, no
+    // repo context. Deliberately the simplest possible real round trip.
+    harnessPrompt: 'Reply with exactly: AGY_HARNESS_OK',
+  },
 };

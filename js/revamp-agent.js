@@ -509,6 +509,111 @@
           writeLog(`Request failed: ${err.message}`);
         }
       });
+
+      // ---------------------------------------------------------------
+      // DEV/TEST ONLY: Antigravity integration harness (Milestone 3A).
+      // No tutorial content is involved; never shown as a real revamp.
+      // ---------------------------------------------------------------
+
+      const harnessRunBtn = document.getElementById('devHarnessRunBtn');
+      const harnessStatus = document.getElementById('devHarnessStatus');
+      let harnessPollHandle = null;
+
+      const setHarnessStatus = (text, ok) => {
+        if (!harnessStatus) return;
+        harnessStatus.textContent = `Status: ${text}`;
+        harnessStatus.style.color = ok === true ? '#1a7f37' : ok === false ? '#c53030' : '';
+      };
+
+      const stopHarnessPolling = () => {
+        if (harnessPollHandle) {
+          clearInterval(harnessPollHandle);
+          harnessPollHandle = null;
+        }
+        if (harnessRunBtn) harnessRunBtn.disabled = false;
+      };
+
+      const pollHarnessJob = async (jobId) => {
+        let result;
+        try {
+          result = await bridgeFetch(`/api/revamp/${jobId}`, { method: 'GET' });
+        } catch (err) {
+          stopHarnessPolling();
+          setHarnessStatus('Lost connection to bridge', false);
+          writeLog(`Harness poll failed: ${err.message}`);
+          return;
+        }
+
+        const { res, data } = result;
+        if (!res.ok || !data || !data.ok) {
+          stopHarnessPolling();
+          setHarnessStatus(`Error (HTTP ${res.status})`, false);
+          return;
+        }
+
+        const job = data.job;
+        setHarnessStatus(job.state, null);
+
+        if (job.state === 'Ready for Review') {
+          stopHarnessPolling();
+          setHarnessStatus('Ready for Review', true);
+          writeLog('Antigravity harness completed successfully.');
+          writeLog('Verified output: ANTIGRAVITY_HARNESS_OK');
+          writeLog('No tutorial files were modified.');
+        } else if (job.state === 'Failed') {
+          stopHarnessPolling();
+          setHarnessStatus('Failed', false);
+          writeLog(`Antigravity harness failed: ${job.error || 'Unknown error'}`);
+        } else if (job.state === 'Cancelled') {
+          stopHarnessPolling();
+          setHarnessStatus('Cancelled', false);
+          writeLog('Antigravity harness job was cancelled.');
+        }
+      };
+
+      if (harnessRunBtn) {
+        harnessRunBtn.addEventListener('click', async () => {
+          const token = getToken();
+          if (!token) {
+            writeLog('No pairing token saved yet. Paste the token from the bridge console and click "Save Token" first.');
+            return;
+          }
+
+          harnessRunBtn.disabled = true;
+          setHarnessStatus('Starting...', null);
+          writeLog('Starting Antigravity harness (dev/test only — no tutorial content).');
+
+          let result;
+          try {
+            result = await bridgeFetch('/api/dev/antigravity-harness/start', { method: 'POST' });
+          } catch (err) {
+            harnessRunBtn.disabled = false;
+            setHarnessStatus('Could not reach bridge', false);
+            writeLog(`Harness start failed: ${err.message}`);
+            return;
+          }
+
+          const { res, data } = result;
+
+          if (res.status === 409 && data && data.job) {
+            writeLog('An Antigravity harness job is already active — showing its progress.');
+            harnessPollHandle = setInterval(() => pollHarnessJob(data.job.jobId), 1500);
+            pollHarnessJob(data.job.jobId);
+            return;
+          }
+
+          if (!res.ok || !data || !data.ok) {
+            harnessRunBtn.disabled = false;
+            setHarnessStatus('Failed to start', false);
+            writeLog(`Harness start failed: HTTP ${res.status}`);
+            return;
+          }
+
+          writeLog('Antigravity harness job created.');
+          harnessPollHandle = setInterval(() => pollHarnessJob(data.jobId), 1500);
+          pollHarnessJob(data.jobId);
+        });
+      }
     },
   };
 

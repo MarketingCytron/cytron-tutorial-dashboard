@@ -2209,6 +2209,23 @@ a:hover {
     margin-bottom: var(--space-sm);
 }
 
+.revamp-debug-divider {
+    border: none;
+    border-top: 1px dashed var(--border);
+    margin: var(--space-md) 0;
+}
+
+.revamp-dev-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--invalid);
+    border: 1px solid var(--invalid);
+    border-radius: var(--border-radius-sm);
+    padding: 0.1rem 0.4rem;
+    margin: 0 var(--space-xs);
+}
+
 .revamp-debug-log {
     background: #111;
     color: #0f0;

@@ -1,6 +1,6 @@
 # Cytron Tutorial Revamp Agent V1 — Architecture
 
-Status: **Design document.** Milestone 1 (browser-to-localhost connectivity) and Milestone 2 (Revamp UI + local job lifecycle, stub writer) have since been implemented and tested, including a live human-verified PASS from the real GitHub Pages origin — see `docs/TUTORIAL_REVAMP_AGENT_MILESTONE_1.md` and `docs/TUTORIAL_REVAMP_AGENT_MILESTONE_2.md`. The architecture below remains the reference design for the remaining phases (real Antigravity invocation, real validation, QA integration) and has not been rewritten to match implementation details already superseded by those milestone docs. **Update (2026-09-01):** the Antigravity CLI has since been located and probe-tested on the target Windows machine; §7, §12, and §18.1 have been revised to reflect verified behavior — in particular, the original assumption that the bridge could `spawn()` Antigravity and capture its Markdown output from stdout has been **disproven by testing** and replaced with a file-watch model.
+Status: **Design document.** Milestone 1 (browser-to-localhost connectivity) and Milestone 2 (Revamp UI + local job lifecycle, stub writer) have since been implemented and tested, including a live human-verified PASS from the real GitHub Pages origin — see `docs/TUTORIAL_REVAMP_AGENT_MILESTONE_1.md` and `docs/TUTORIAL_REVAMP_AGENT_MILESTONE_2.md`. The architecture below remains the reference design for the remaining phases (real Antigravity invocation, real validation, QA integration) and has not been rewritten to match implementation details already superseded by those milestone docs. **Update (2026-09-01, superseding the note below):** Milestone 3A first attempted, then fully abandoned, a GUI-based invocation (`antigravity-ide.exe chat`) after confirmed testing showed it never produced a working agent session when launched programmatically. The official **headless `agy` CLI** (`agy -p "<prompt>" --output-format text`) was then discovered and verified instead: a real end-to-end call returned exact stdout, exit code `0`, no GUI, no auth prompt, in ~8s. **stdout is now the writer's result channel** — there is no output-file/completion-marker/nonce/file-watch model at all. §7, §12, and §18.1 below have been rewritten accordingly; see `docs/TUTORIAL_REVAMP_AGENT_MILESTONE_3A.md` for the full investigation and both real and simulated test evidence.
 Scope: turn the static Cytron Tutorial Validation Dashboard into a control center that can trigger, track, and surface AI-assisted tutorial revamps, using a local Windows bridge service the GitHub Pages dashboard talks to over `localhost`.
 
 ---
@@ -62,9 +62,8 @@ Local Bridge Service (Node.js, http://127.0.0.1:<port>, loopback-only)
         │
         ├─ tutorialRepo   → reads/validates data/tutorials.json, audits/, original URL
         ├─ promptBuilder  → assembles AGENTS.md + record + audit + references + instructions
-        ├─ antigravityRunner → launches Antigravity CLI chat/agent mode (argv array, no shell);
-        │                      does NOT capture stdout for the draft (verified — see §7)
-        ├─ outputWatcher  → polls the bridge-controlled job output path until it exists and is stable
+        ├─ agyRunner      → spawns the official headless `agy -p` CLI (argv array, shell:false);
+        │                      stdout IS the draft (verified — see §7)
         ├─ validator      → structural + safety checks on the generated Markdown
         ├─ qaProvider     → pluggable interface; V1 ships a no-op "always pass" implementation
         ├─ jobStore       → persists job state/log to jobs/<jobId>.json + .log
@@ -113,8 +112,7 @@ service/
     pathSafety.js         # slug validation + path-containment guard
     tutorialRepo.js        # read-only access to data/tutorials.json, audits/, original URL fetch
     promptBuilder.js       # assembles the Antigravity prompt
-    antigravityRunner.js    # safe child_process launch of `antigravity-ide chat`/`agent` mode (fire-and-forget; no stdout capture — see §7)
-    outputWatcher.js        # polls the job's bridge-controlled output path for existence + write-stability
+    agyRunner.js            # safe child_process spawn of the official headless `agy -p` CLI, shell:false, stdout/stderr redirected to job files
     validator.js           # structural + secret-leak checks (wraps/extends scripts/validate-data.js)
     qaProvider.js           # QAProvider interface + NoopQAProvider
     jobStore.js             # job persistence + state machine
@@ -139,38 +137,36 @@ service/
 
 ## 7. Antigravity Integration Design
 
-### Verified CLI findings (tested 2026-09-01, Windows)
+### GUI approach abandoned, headless `agy` CLI adopted (2026-09-01)
 
-- **Install location**: `C:\Users\user\AppData\Local\Programs\Antigravity IDE\` — the active install (an older, unused install also exists at `...\Programs\Antigravity\`; ignore it). Not on `PATH`.
-- **CLI shim**: `C:\Users\user\AppData\Local\Programs\Antigravity IDE\bin\antigravity-ide.cmd` — same pattern as VS Code's `code.cmd` (`ELECTRON_RUN_AS_NODE=1` + `Antigravity IDE.exe` running `resources/app/out/cli.js`).
-- **Version**: 1.107.0.
-- **Relevant CLI surface**: `antigravity-ide.exe chat [options] [prompt]`, with `--mode ask|edit|agent` (default `agent`), `-a/--add-file <path>` to attach context files, `--new-window`/`--reuse-window`, and stdin input via a trailing `-`.
-- **Verified behavior**:
-  1. `chat` successfully injects a prompt into a real Antigravity IDE chat session and the agent genuinely processes it (confirmed: asked it to reply with an exact literal string in `ask` mode, and it did, visibly, inside the opened window).
-  2. **The CLI is NOT a normal headless request/response process.** It launches or reuses the Electron IDE and the shell command **returns immediately with no model output on stdout** — the response only ever appears inside the GUI window.
-  3. A controlled file-write test in `agent` mode succeeded: Antigravity was instructed (via the prompt) to create a specific file (`probe-output.txt`) with specific contents, and Windows independently verified afterward that the file existed on disk with the exact expected contents.
-- **Conclusion**: the bridge **must not** depend on stdout capture to retrieve tutorial content. It **can** rely on Antigravity performing a directed file write, provided the prompt tells it exactly where to write and the bridge then watches for that file.
+A GUI-based invocation (`antigravity-ide.exe chat --mode agent`, writing a directed output file the bridge would watch for) was designed, fully implemented, and tested — including fixing two real Windows invocation bugs along the way (unquoted executable path under `shell:true`; Node's `DEP0190`-flagged unsafe `shell:true` argument escaping). Even after bypassing the `.cmd` shim entirely and invoking `Antigravity IDE.exe` + `cli.js` directly with `shell:false`, **the launched window opened only to the normal welcome screen** — confirmed by direct human inspection, not just inferred from process counts. **This entire approach is abandoned**; none of its code (`antigravityRunner.js`, `outputWatcher.js`, the old `antigravityHarness.js`) survived into the implementation.
 
-### Corrected integration model
+Instead, the **official headless `agy` CLI** was discovered already installed (`C:\Users\user\AppData\Local\agy\bin\agy.exe`, v1.1.22, already on `PATH`) and verified with a real call:
+
+```
+agy.exe -p "Reply with exactly: AGY_HEADLESS_OK" --output-format text --print-timeout 60s
+→ stdout: "AGY_HEADLESS_OK", stderr: empty, exit code 0, ~8.3s, zero GUI windows, no auth prompt
+```
+
+**stdout is the writer's result channel.** There is no output-file/completion-marker/nonce/file-stability-watch model — the model's response is read directly from the child process's own stdout, and process exit is the completion signal. Full investigation, both abandoned and adopted paths, and all test evidence: `docs/TUTORIAL_REVAMP_AGENT_MILESTONE_3A.md`.
+
+### Integration model (as implemented in Milestone 3A, for the harness; same shape Milestone 3 will reuse for real tutorials)
 
 ```
 Local Bridge
-  → generates the job directory and the exact expected output file path itself
-    (never supplied or influenced by the browser)
-  → composes a prompt that explicitly instructs Antigravity to write its
-    result ONLY to that exact path (and nowhere else)
-  → launches `antigravity-ide chat --mode agent <prompt>` (fire-and-forget;
-    does not wait on or parse stdout for the result)
-  → outputWatcher polls the expected output file: waits for it to exist,
-    then waits for it to stop changing (e.g. unchanged mtime/size across
-    N consecutive poll intervals) before treating the write as complete
-  → validator checks the completed file's content
+  → generates the job/attempt directory itself (never supplied by the browser)
+  → composes the prompt (Milestone 3A: one fixed constant; Milestone 3:
+    promptBuilder.js's full assembled tutorial prompt)
+  → spawns `agy -p <prompt> --output-format text --print-timeout 60s`
+    (shell:false, plain argv array), redirecting stdout/stderr to
+    bridge-owned files from the moment the process starts
+  → awaits the real process `exit` event, raced against a bridge-side
+    watchdog timeout (independent of agy's own --print-timeout)
+  → validator checks exit code + stdout content
   → job state advances (Writing → Validating → Ready for Review / Failed)
 ```
 
-This replaces the previous "spawn and capture stdout" assumption end-to-end. The exact stability heuristic (poll interval, how many unchanged reads count as "done", and a maximum wait timeout) is not yet chosen — flagged as an open design detail in §18.1.
-
-**Prompt construction (deterministic, no LLM involved) — `promptBuilder.js`:**
+**Prompt construction (deterministic, no LLM involved) — `promptBuilder.js`, for Milestone 3 (not built yet):**
 
 1. Load `AGENTS.md` verbatim (it is already the authoritative workflow spec: source hierarchy, draft structure, safety rules, required trailing sections).
 2. Load the matching `data/tutorials.json` record (validity, decision, priority, `hardwareUsed`, `makerEsp32`, dates).
@@ -179,14 +175,13 @@ This replaces the previous "spawn and capture stdout" assumption end-to-end. The
 5. Attach the Maker ESP32 AI Coding Pack files relevant to the target hardware (`pin-map.md`, `board-features.md`, `product-context.md`, `electrical-and-safety-rules.md`, applicable `sample-code/*.ino`) when the instructions or dashboard record indicate Maker ESP32 is the target — mirrors the "Required source hierarchy" step 3 in `AGENTS.md` exactly.
 6. Attach the Cytron Tutorial Template content. Since PDFs are expensive/unreliable to re-parse per job, **cache a one-time text/Markdown extraction** (the existing `tmp/pdf-template-review/` and `tmp/maker-esp32-datasheet/` directories suggest this was already done manually — reuse or formalize that extraction rather than re-parsing the PDF on every run).
 7. Append the user's optional special instructions verbatim, as **inert text only** — length-capped (e.g. 2000 chars) and never interpreted as shell/file-path input.
-8. **Append an explicit, bridge-generated output instruction**: the exact absolute path (inside that job's own directory) Antigravity must write its Markdown result to, and only there. This is a hard security requirement, not a suggestion — see §12.
-9. Hand the assembled prompt to `antigravityRunner.js`.
+8. Hand the assembled prompt to `agyRunner.js` as the `-p` argument value. **Open question (§18.1)**: whether a prompt this large works as a single CLI argument, needs a different delivery mechanism, or needs `agy`'s own context/file-attachment options instead — untested, since Milestone 3A's harness prompt is a short fixed string.
 
-**Safe invocation**: use `child_process.spawn(antigravityCliPath, ['chat', '--mode', 'agent', '--new-window', prompt], { shell: false, cwd: repoRoot, timeout })`, never `exec`/`shell: true`, so instruction text can never be interpreted as shell metacharacters. Because the CLI is fire-and-forget (verified above), `antigravityRunner.js` does not wait on this child process for the result — it only confirms the launch itself succeeded (correct exit code), then hands off to `outputWatcher.js`. Whatever the launched process prints to stdout/stderr is still captured into the job log for debugging, but is **not** parsed for the draft content.
+**Safe invocation**: `child_process.spawn(agyExePath, ['-p', prompt, '--output-format', 'text', '--print-timeout', '60s'], { shell: false, cwd: jobWorkspaceDir })` — no shell, no cmd.exe, no raw command-line string, plain argv array. `agyExePath` is a fixed constant; the browser never influences it, any flag, or the prompt path.
 
-**Output contract**: Antigravity writes the Markdown body itself, directly to the bridge-generated path — the bridge does not need a separate "place the file" step for the draft's initial write. `tutorialWriter.js`'s role narrows accordingly: once `outputWatcher.js` + `validator.js` confirm a good file at the job-owned path, `tutorialWriter.js` is what **copies/promotes** it into `revamped-tutorials/<tutorial-id>.md` and patches `tutorials.json` — this is still the only code path allowed to touch those two locations, per the brief's responsibility split. Antigravity itself is never given `revamped-tutorials/` or `data/tutorials.json` as a target path.
+**Output contract**: `agy`'s stdout, once the process exits with code `0`, **is** the draft — no separate "Antigravity writes a file, bridge reads it back" step exists. `tutorialWriter.js` (not `agy`) is what then writes the validated draft to `revamped-tutorials/<tutorial-id>.md` and patches `tutorials.json` — still the only code path allowed to touch those two locations, per the brief's responsibility split. `agy` is never given a path inside the repository to write to at all in this design.
 
-**Revision loop**: if QA returns `needs_revision`, `promptBuilder.js` re-assembles the same context plus the QA `issues[]` and the previous draft, generates a **new** job-owned output path for the revision, and re-invokes Antigravity the same way. Counter capped by `MAX_AUTO_REVISIONS = 2` (config constant); exceeding it moves the job to `Failed` with reason `qa_revision_limit_exceeded`, leaving the last draft on disk for human inspection rather than discarding it.
+**Revision loop**: if QA returns `needs_revision`, `promptBuilder.js` re-assembles the same context plus the QA `issues[]` and the previous draft, and re-invokes `agyRunner.launch()` the same way (a fresh job/attempt directory, fresh stdout/stderr capture files). Counter capped by `MAX_AUTO_REVISIONS = 2` (config constant); exceeding it moves the job to `Failed` with reason `qa_revision_limit_exceeded`, leaving the last draft's stdout capture on disk for human inspection rather than discarding it.
 
 ---
 
@@ -289,9 +284,9 @@ The dashboard is a **public** GitHub Pages site. The threat model is not "a mali
 3. **Pairing token required on every mutating endpoint** (`X-Revamp-Token`), generated fresh per bridge process start and shown once in the console. This is defense-in-depth beyond CORS: it also stops any local non-browser client (e.g. `curl`, another local app) from hitting the API without the user's explicit one-time pairing step.
 4. **Tutorial ID allow-listed against `data/tutorials.json`** read fresh from disk server-side, using the same `^[a-z0-9-]+$` slug rule already enforced by `scripts/validate-data.js` — rejects anything not already a known tutorial ID before it touches any path logic.
 5. **Path containment guard** (`pathSafety.js`): every filesystem path the bridge touches is built from the validated slug and `path.resolve()`d, then checked to still start with the repo root before any read/write. No path is ever taken directly from client input.
-6. **No shell interpolation, ever.** Antigravity is invoked via `spawn(cmd, argv, {shell:false})`; user "special instructions" are passed only as inert prompt text (temp file or stdin), never concatenated into a command string or a file path.
-7. **The browser must never provide, or influence, an output file path.** Verified testing (§7) showed Antigravity itself performs the actual file write when instructed to in the prompt — this makes path control the critical safety boundary for the writer integration, not merely a filesystem-permissions detail. Concretely: the bridge alone generates the job directory and the exact expected output path (derived only from the server-generated `jobId`, never from `tutorialId`, `instructions`, or any other client-suppliable value); that exact path is the only one ever written into the prompt Antigravity receives; `outputWatcher.js`/`validator.js` only ever look at that one bridge-known path; and nothing in the browser-facing API (`tutorialId`, `instructions`) is capable of naming, overriding, or redirecting where Antigravity writes.
-8. **No blind overwrite into published locations**: `tutorialWriter.js` only *promotes* an already-validated, job-owned file into `revamped-tutorials/<validated-id>.md` (a fresh file per job, or an explicit re-run of the *same* tutorial's own file — never another tutorial's) and only patches the matching record in `tutorials.json` (never bulk-rewrites the file). Antigravity is never given `revamped-tutorials/` or `data/tutorials.json` as a write target.
+6. **No shell interpolation, ever.** `agy` is invoked via `spawn(exePath, argv, {shell:false})` with a plain argument array; user "special instructions" are passed only as inert prompt text within the `-p` argument, never concatenated into a command string or a file path.
+7. **`agy` is never given a repository or workspace path to write to.** Unlike the abandoned GUI design (where Antigravity performed the actual file write, making output-path control the critical boundary), the adopted `agy -p` design never asks the model to write any file at all — its only output is stdout, captured by the bridge's own `spawn()` redirection. There is therefore no "output path" for the browser to influence in the first place; the only bridge-generated values in play are the job/attempt directory (used as `cwd` and for the stdout/stderr capture files) and the prompt itself, both derived only from the server-generated `jobId`, never from `tutorialId`, `instructions`, or any other client-suppliable value.
+8. **No blind overwrite into published locations**: `tutorialWriter.js` only *promotes* an already-validated draft (read from the job's own captured stdout) into `revamped-tutorials/<validated-id>.md` (a fresh file per job, or an explicit re-run of the *same* tutorial's own file — never another tutorial's) and only patches the matching record in `tutorials.json` (never bulk-rewrites the file). `agy` is never given `revamped-tutorials/` or `data/tutorials.json` as a write target — it has no reason to write anything, ever, in this design.
 9. **Manual git only** — the bridge never runs `git commit`/`git push`; this is enforced by simply never invoking git at all, not by a checked flag that could be bypassed.
 10. **Single active job** (see §5) avoids concurrent writers racing on `tutorials.json`.
 11. **Secret-leak safety net**: `validator.js` scans generated Markdown for suspicious patterns (real-looking Wi-Fi passwords, API keys/tokens) as a backstop — the golden examples already show the writer is expected to sanitize to placeholders (`YOUR_WIFI_SSID`), but this is a machine-checked guard, not just a prompt instruction.
@@ -345,7 +340,7 @@ No test framework exists in the repo today; use Node's built-in `node:test` + `n
 1. **Bridge skeleton + safety plumbing** — `server.js`, `auth.js`, `pathSafety.js`, `tutorialRepo.js` (read-only), `jobStore.js`, `/health`, `/api/revamp/start` + `/api/revamp/:jobId` backed by a **stub writer** (no Antigravity yet). This is Milestone 1 (§19).
 2. **Dashboard integration** — modal, pairing UI, `js/revamp-agent.js`, button on `tutorial.html`, polling, cache invalidation, Final Output tie-in. Fully testable against the stub bridge from Phase 1.
 3. **Real prompt construction** — `promptBuilder.js` assembling `AGENTS.md` + tutorial record + audit + original tutorial + Maker ESP32 pack + template, once the answers to §18's open questions (especially original-tutorial fetching and PDF/template caching) are confirmed.
-4. **Real Antigravity invocation** — `antigravityRunner.js` (fire-and-forget launch, verified per §7/§18.1) plus the new `outputWatcher.js` (polls the bridge-owned output path for existence + write-stability). Swap the stub from Milestone 2 for the real pair behind the same job-state interface. The remaining sub-questions in §18.1 (large-prompt delivery method, stability heuristic, window-lifecycle over many jobs, auth/login) should be resolved first.
+4. **Real `agy` invocation** — `agyRunner.js` (spawns the official headless `agy -p` CLI, shell:false, stdout/stderr redirected to job files — verified working end-to-end in Milestone 3A's harness, per §7/§18.1). Swap the stub from Milestone 2 for the real writer behind the same job-state interface. The remaining sub-question in §18.1 (large-prompt delivery method) should be resolved first — Milestone 3A only proved this with a short fixed prompt.
 5. **Structural/safety validation** — `validator.js` (required sections, placeholder scan, secret-pattern scan), wired into the `Validating` state.
 6. **QA interface + no-op provider + revision loop** — `qaProvider.js`, `MAX_AUTO_REVISIONS`, exercised end-to-end even though QA always passes in V1.
 7. **`tutorials.json` schema extension** — add `Ready for Review` to `VALID_STATUSES` in `scripts/validate-data.js` and `CLAUDE.md`, plus any CSS status-badge class needed for it.
@@ -357,7 +352,7 @@ No test framework exists in the repo today; use Node's built-in `node:test` + `n
 
 These block or materially change Phases 3–4 and should be resolved with the user before writing that code:
 
-1. **Antigravity CLI contract — RESOLVED (verified 2026-09-01), with one remaining sub-question.** Located at `C:\Users\user\AppData\Local\Programs\Antigravity IDE\bin\antigravity-ide.cmd` (v1.107.0); not on `PATH`. `chat --mode agent|ask|edit <prompt>` genuinely drives the agent, but is a **fire-and-forget GUI launcher, not a headless request/response process** — it returns without printing the model's output to stdout (the original "spawn + capture stdout" assumption in §7/§12 was tested and disproven). A directed file write in `agent` mode was verified to work end-to-end (Antigravity was told to create a specific file with specific contents; the file was independently confirmed on disk afterward with exact matching content) — so the corrected integration model (§7) is launch-then-watch-a-bridge-controlled-path, not launch-then-read-stdout. **Still open**: (a) how a large prompt is best supplied (the tested probe used a short inline argument string — untested whether very large assembled prompts, e.g. `AGENTS.md` + JSON record + audit + Maker ESP32 docs + template, work as a single CLI argument, need stdin, or need `-a/--add-file` instead), (b) the exact file-write-stability heuristic `outputWatcher.js` should use (poll interval, unchanged-read count, max timeout), (c) whether `--new-window` accumulates unbounded IDE windows/processes over many jobs and needs `--reuse-window` or explicit window lifecycle management instead, and (d) auth/login requirements and behavior when the Antigravity account/session isn't already signed in.
+1. **Antigravity CLI contract — RESOLVED (verified 2026-09-01), with one remaining sub-question.** The GUI-based `antigravity-ide.exe chat` path was fully implemented and tested, then **abandoned**: even after fixing two real Windows invocation bugs and bypassing the `.cmd` shim to invoke the `.exe` directly with `shell:false`, the launched window opened only to the welcome screen — confirmed by direct human inspection. The **official headless `agy` CLI** (`C:\Users\user\AppData\Local\agy\bin\agy.exe`, v1.1.22, already on `PATH`) was discovered instead and verified end-to-end: `agy -p "<prompt>" --output-format text --print-timeout 60s` returns the exact expected stdout, exit code `0`, in ~8s, with zero GUI windows and no auth prompt — both in isolation and through Milestone 3A's actual bridge harness. **stdout is the result channel; there is no output-file/watch model.** Full evidence: `docs/TUTORIAL_REVAMP_AGENT_MILESTONE_3A.md`. **Still open**: how a large, real tutorial-writing prompt (Milestone 3's `AGENTS.md` + JSON record + audit + Maker ESP32 docs + template, potentially very large) behaves as a single `-p` CLI argument — Milestone 3A only proved this with a short fixed one-line prompt; it may need a different delivery mechanism (a prompt file + reference, or `agy`'s own context/attachment options) once real size is known.
 2. **Browser cross-origin behavior to `localhost` from a public HTTPS page** needs live testing in the actual browser the user will use — Private Network Access preflight requirements (§2.5) are evolving in Chromium and may require an extra permission step or a locally-trusted HTTPS cert for the bridge rather than plain `http://localhost`.
 3. **How is the original tutorial URL retrieved server-side?** `tutorial.url` points at `my.cytron.io`. Need to confirm the pages are plainly fetchable/scrapable (no auth/paywall), what HTML-to-text extraction is acceptable, and whether repeated fetches during development risk rate-limiting Cytron's own site.
 4. **PDF reference caching** — `references/*.pdf` are large (the Maker ESP32 datasheet is ~1.9MB); re-parsing per job is wasteful and fragile. The existing `tmp/pdf-template-review/` and `tmp/maker-esp32-datasheet/` suggest a one-time extraction was already done manually — confirm whether those can be formalized into a cached prompt fragment or need regenerating.

@@ -1,25 +1,31 @@
 'use strict';
 
 /**
- * Cytron Tutorial Revamp Bridge — Milestone 2
+ * Cytron Tutorial Revamp Bridge — Milestone 3A (agy edition)
  *
- * Adds the real Revamp UI's backend: job creation, job polling, and job
- * cancellation, backed by a StubWriter that simulates the future
- * Antigravity-driven writer. This milestone intentionally does NOT:
+ * Milestone 2's Revamp UI backend (job creation, polling, cancellation,
+ * backed by StubWriter) is unchanged. Milestone 3A adds a separate,
+ * clearly dev-only Antigravity integration harness — no tutorial content
+ * is ever involved in the harness. This uses the official headless `agy`
+ * CLI (agyRunner.js / agyHarness.js); an earlier GUI-based approach
+ * (`antigravity-ide.exe chat`) was tested and abandoned — see
+ * docs/TUTORIAL_REVAMP_AGENT_MILESTONE_3A.md. This milestone intentionally
+ * does NOT:
  *
- *   - invoke Antigravity or any AI tool
+ *   - generate a real Cytron tutorial, or use any tutorial content
  *   - invoke OpenAI/QA
- *   - write to data/tutorials.json, audits/, or revamped-tutorials/
- *   - accept a shell command, arbitrary filesystem path, or "command"
- *     field of any kind from the browser
+ *   - write to data/tutorials.json, audits/, revamped-tutorials/, or references/
+ *   - accept a shell command, arbitrary filesystem path, executable name,
+ *     or "command" field of any kind from the browser
  *   - perform any git operation
  *
  * Endpoints:
- *   GET  /health                    — unauthenticated liveness check
- *   POST /api/test                   — authenticated, read-only tutorial ID lookup (Milestone 1)
- *   POST /api/revamp/start            — authenticated, creates a job
- *   GET  /api/revamp/:jobId            — authenticated, returns safe job status
- *   POST /api/revamp/:jobId/cancel      — authenticated, cancels an active job
+ *   GET  /health                              — unauthenticated liveness check
+ *   POST /api/test                             — authenticated, read-only tutorial ID lookup (Milestone 1)
+ *   POST /api/revamp/start                      — authenticated, creates a revamp job (Milestone 2, StubWriter)
+ *   GET  /api/revamp/:jobId                      — authenticated, returns safe job status (any job type)
+ *   POST /api/revamp/:jobId/cancel                — authenticated, cancels an active job (any job type)
+ *   POST /api/dev/antigravity-harness/start        — authenticated, DEV ONLY, creates an isolated agy CLI test job
  *
  * Run with: node service/server.js
  * (Zero external dependencies — Node's built-in http/crypto/fs only.)
@@ -33,6 +39,7 @@ const { URL } = require('url');
 const config = require('./config');
 const jobStore = require('./jobStore');
 const stubWriter = require('./stubWriter');
+const agyHarness = require('./agyHarness');
 const logger = require('./logger');
 
 // ---------------------------------------------------------------------------
@@ -370,9 +377,47 @@ function handleRevampCancel(req, res, cors, jobId) {
   }
 
   jobStore.updateJobState(jobId, 'Cancelled');
-  logger.log('job_cancelled', { jobId, tutorialId: job.tutorialId });
+  logger.log('job_cancelled', { jobId, tutorialId: job.tutorialId, type: job.type });
+
+  if (job.type === jobStore.JOB_TYPES.ANTIGRAVITY_HARNESS) {
+    // Terminates ONLY this job's own tracked agy child process, if it is
+    // currently running — never a kill-by-name or global termination.
+    agyHarness.cancelChildProcess(jobId);
+  }
 
   sendJson(res, 200, { ok: true, jobId, state: 'Cancelled' }, cors);
+}
+
+// ---------------------------------------------------------------------------
+// Route handlers — Milestone 3A (dev-only Antigravity integration harness)
+//
+// No tutorialId, no instructions, no path, no filename — the browser sends
+// an empty authenticated POST and nothing else. Every value the harness
+// uses (workspace path, prompt, stdout/stderr paths) is generated entirely
+// inside agyHarness.js / jobStore.js.
+// ---------------------------------------------------------------------------
+
+function handleAntigravityHarnessStart(req, res, cors) {
+  if (!isAuthorized(req)) {
+    sendJson(res, 401, { error: { code: 'unauthorized', message: 'Missing or invalid pairing token.' } }, cors);
+    return;
+  }
+
+  req.resume(); // body (if any) is ignored entirely for this endpoint
+
+  const { conflict, job } = agyHarness.startHarnessJob();
+
+  if (conflict) {
+    logger.log('job_start_conflict', { jobId: job.jobId, type: 'antigravity-harness' });
+    sendJson(res, 409, {
+      ok: false,
+      error: { code: 'job_already_active', message: 'An Antigravity harness job is already active.' },
+      job: jobStore.toSafeJson(job),
+    }, cors);
+    return;
+  }
+
+  sendJson(res, 200, { ok: true, jobId: job.jobId, state: job.state }, cors);
 }
 
 // ---------------------------------------------------------------------------
@@ -471,8 +516,28 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (pathname === '/api/dev/antigravity-harness/start') {
+    if (req.method !== 'POST') {
+      sendJson(res, 405, { error: { code: 'method_not_allowed', message: 'Use POST.' } }, { ...cors, Allow: 'POST, OPTIONS' });
+      return;
+    }
+    handleAntigravityHarnessStart(req, res, cors);
+    return;
+  }
+
   sendJson(res, 404, { error: { code: 'not_found', message: 'Unknown endpoint.' } }, cors);
 });
+
+// ---------------------------------------------------------------------------
+// Startup: reload persisted jobs, then resume watching any still-active
+// Antigravity harness job (NEVER relaunching Antigravity itself).
+// ---------------------------------------------------------------------------
+
+const jobsToReconcile = jobStore.loadJobsFromDisk();
+if (jobsToReconcile.length > 0) {
+  console.log(`[bridge] Reconciling ${jobsToReconcile.length} in-progress Antigravity harness job(s) from a prior run (no relaunch).`);
+  agyHarness.reconcileAfterRestart(jobsToReconcile);
+}
 
 server.listen(config.port, config.host, () => {
   const base = `http://${config.host}:${config.port}`;
