@@ -4,3 +4,10 @@ service/.pairing-token.json
 # Local Revamp Bridge job runtime store (job records, stub/writer artifacts,
 # service log) — local-only, never commit.
 service/jobs/
+
+# Local Revamp Bridge npm dependencies (e.g. cheerio, added Milestone 3C-A
+# for deterministic HTML extraction). node_modules/ is never committed;
+# package.json/package-lock.json ARE meant to be committed for reproducible
+# installs, once the user approves staging this milestone's work.
+service/node_modules/
+
