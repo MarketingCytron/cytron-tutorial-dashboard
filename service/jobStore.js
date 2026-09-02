@@ -3,11 +3,16 @@
 /**
  * Local job store — persisted on disk, reloaded on bridge startup.
  *
- * Two job types share this store:
+ * Three job types share this store:
  *   - 'revamp'              (Milestone 2): a tutorial revamp job, driven by
- *                            stubWriter.js today.
+ *                            stubWriter.js today (unchanged/untouched).
  *   - 'antigravity-harness' (Milestone 3A): an isolated headless `agy` CLI
  *                            integration test job, no tutorial content.
+ *   - 'writer-pilot'        (Milestone 3): the first REAL tutorial-writing
+ *                            pilot job, driven by tutorialWriterPilot.js.
+ *                            Isolated from the production 'revamp' flow —
+ *                            StubWriter still serves the normal "Revamp
+ *                            Tutorial" button untouched.
  *
  * The in-memory `jobs` Map is rebuilt from disk at startup (see
  * `loadJobsFromDisk`), so a bridge restart no longer loses job history.
@@ -26,14 +31,19 @@ const crypto = require('crypto');
 const config = require('./config');
 
 const STATE_SEQUENCE = ['Queued', 'Preparing Context', 'Writing', 'Validating', 'Ready for Review'];
-const TERMINAL_STATES = new Set(['Ready for Review', 'Failed', 'Cancelled']);
+// 'Needs Human Review' is a writer-pilot-only alternate terminal state (see
+// tutorialWriterPilot.js): reached instead of 'Ready for Review' when the
+// deterministic validator finds a genuinely BLOCKING, unresolved hardware/
+// electrical fact — the agy call itself succeeded, this is not a failure.
+const TERMINAL_STATES = new Set(['Ready for Review', 'Failed', 'Cancelled', 'Needs Human Review']);
 const ACTIVE_STATES = new Set(STATE_SEQUENCE.filter((s) => !TERMINAL_STATES.has(s)));
 
-const JOB_TYPES = { REVAMP: 'revamp', ANTIGRAVITY_HARNESS: 'antigravity-harness' };
+const JOB_TYPES = { REVAMP: 'revamp', ANTIGRAVITY_HARNESS: 'antigravity-harness', WRITER_PILOT: 'writer-pilot' };
 
 const jobs = new Map(); // jobId -> full job record (may include internal-only fields)
 const activeJobIdByTutorial = new Map(); // tutorialId -> jobId ('revamp' jobs only)
 let activeHarnessJobId = null; // singleton — at most one active 'antigravity-harness' job
+let activeWriterPilotJobId = null; // singleton — at most one active 'writer-pilot' job
 
 // ---------------------------------------------------------------------------
 // Paths + atomic persistence
@@ -143,6 +153,52 @@ function getActiveHarnessJob() {
 }
 
 // ---------------------------------------------------------------------------
+// Writer pilot (Milestone 3) jobs — the first real tutorial-writing
+// pipeline, isolated from the production 'revamp'/StubWriter flow, singleton
+// ---------------------------------------------------------------------------
+
+function createWriterPilotJob({ tutorialId, title, userInstructions, writer, attempt, deadlineAt }) {
+  const jobId = crypto.randomUUID();
+  const now = new Date().toISOString();
+
+  const job = {
+    jobId,
+    type: JOB_TYPES.WRITER_PILOT,
+    tutorialId,
+    title,
+    userInstructions,
+    state: 'Queued',
+    createdAt: now,
+    updatedAt: now,
+    writer,
+    attempt,
+    launchStartedAt: null,
+    launchReturnedAt: null,
+    deadlineAt,
+    exitCode: null,
+    // Internal-only — never serialized by toSafeJson.
+    processId: null,
+    revisionCount: 0,
+    error: null,
+  };
+
+  jobs.set(jobId, job);
+  activeWriterPilotJobId = jobId;
+  persist(job);
+  return job;
+}
+
+function getActiveWriterPilotJob() {
+  if (!activeWriterPilotJobId) return null;
+  const job = jobs.get(activeWriterPilotJobId);
+  if (!job || TERMINAL_STATES.has(job.state)) {
+    activeWriterPilotJobId = null;
+    return null;
+  }
+  return job;
+}
+
+// ---------------------------------------------------------------------------
 // Shared job operations
 // ---------------------------------------------------------------------------
 
@@ -164,6 +220,9 @@ function updateJobState(jobId, newState, extra = {}) {
     }
     if (job.type === JOB_TYPES.ANTIGRAVITY_HARNESS && activeHarnessJobId === jobId) {
       activeHarnessJobId = null;
+    }
+    if (job.type === JOB_TYPES.WRITER_PILOT && activeWriterPilotJobId === jobId) {
+      activeWriterPilotJobId = null;
     }
   }
 
@@ -200,6 +259,21 @@ function toSafeJson(job) {
   if (job.type === JOB_TYPES.ANTIGRAVITY_HARNESS) {
     return {
       ...base,
+      writer: job.writer,
+      attempt: job.attempt,
+      launchStartedAt: job.launchStartedAt,
+      launchReturnedAt: job.launchReturnedAt,
+      deadlineAt: job.deadlineAt,
+      exitCode: job.exitCode,
+    };
+  }
+
+  if (job.type === JOB_TYPES.WRITER_PILOT) {
+    return {
+      ...base,
+      tutorialId: job.tutorialId,
+      title: job.title,
+      userInstructions: job.userInstructions,
       writer: job.writer,
       attempt: job.attempt,
       launchStartedAt: job.launchStartedAt,
@@ -281,6 +355,18 @@ function loadJobsFromDisk() {
       activeHarnessJobId = jobId;
       toReconcile.push(job);
     }
+
+    if (job.type === JOB_TYPES.WRITER_PILOT) {
+      // Milestone 3's first real writer pilot is explicitly a one-time,
+      // human-supervised run, not an unattended background job — unlike
+      // the harness, no reconciliation-from-disk path is implemented for
+      // it. A bridge restart mid-pilot is treated the same conservative
+      // way as a 'revamp' job: marked Failed, never silently resumed or
+      // relaunched.
+      updateJobState(jobId, 'Failed', {
+        error: 'Job state was lost because the bridge restarted before the writer pilot finished (not resumable in Milestone 3).',
+      });
+    }
   }
 
   return toReconcile;
@@ -295,6 +381,8 @@ module.exports = {
   getActiveJobForTutorial,
   createHarnessJob,
   getActiveHarnessJob,
+  createWriterPilotJob,
+  getActiveWriterPilotJob,
   getJob,
   updateJobState,
   isActive,

@@ -94,4 +94,77 @@ function launch({ jobId, cwd, prompt, stdoutPath, stderrPath }) {
   return { ok: true, pid: child.pid, launchStartedAt, child, donePromise };
 }
 
-module.exports = { isAvailable, launch };
+/**
+ * Launches `agy` in streaming NDJSON mode — Milestone 3, verified
+ * 2026-09-01 (see docs/TUTORIAL_REVAMP_AGENT_MILESTONE_3B.md large-prompt
+ * test): `--input-format stream-json --output-format stream-json` reliably
+ * transported an 81.6 KB real prompt with exact stdout, real token usage,
+ * and a structured `init -> step_update* -> result` event sequence.
+ *
+ * The prompt is sent as ONE NDJSON line on stdin — `{"event":"user","message":{"content":prompt}}\n`
+ * — never via `-p` (which has no size guarantee and was only ever tested
+ * with short strings). stdin is closed immediately after that one write so
+ * `agy` knows the turn is complete.
+ *
+ * Same return contract as `launch()` — `donePromise` resolves once the
+ * process exits; the caller (tutorialWriterPilot.js) reads the redirected
+ * stdout file back afterward and parses the NDJSON itself. This function
+ * never parses agy's output — it only proves the process ran and exited.
+ */
+function launchStreaming({ jobId, cwd, prompt, stdoutPath, stderrPath, printTimeoutArg }) {
+  if (!isAvailable()) {
+    logger.log('agy_launch_failed', { jobId, reason: 'AGY_NOT_FOUND' });
+    return { ok: false, code: 'AGY_NOT_FOUND', message: 'The agy CLI was not found at the configured path.' };
+  }
+
+  const args = [
+    '--input-format', 'stream-json',
+    '--output-format', 'stream-json',
+    '--print-timeout', printTimeoutArg || config.agy.printTimeoutArg,
+  ];
+  const launchStartedAt = new Date().toISOString();
+
+  let child;
+  try {
+    child = spawn(config.agy.exePath, args, { cwd, shell: false, stdio: ['pipe', 'pipe', 'pipe'] });
+  } catch (err) {
+    logger.log('agy_launch_failed', { jobId, reason: err.message });
+    return { ok: false, code: 'AGY_LAUNCH_FAILED', message: 'Failed to spawn the agy CLI.' };
+  }
+
+  logger.log('agy_launch_started', { jobId, pid: child.pid, mode: 'stream-json' });
+
+  const stdoutStream = fs.createWriteStream(stdoutPath);
+  const stderrStream = fs.createWriteStream(stderrPath);
+  child.stdout.pipe(stdoutStream);
+  child.stderr.pipe(stderrStream);
+
+  const event = { event: 'user', message: { content: prompt } };
+  const line = `${JSON.stringify(event)}\n`;
+  child.stdin.write(line, 'utf8', () => {
+    child.stdin.end();
+  });
+
+  const donePromise = new Promise((resolve) => {
+    let settled = false;
+
+    child.on('error', (err) => {
+      if (settled) return;
+      settled = true;
+      logger.log('agy_launch_failed', { jobId, reason: err.message });
+      resolve({ ok: false, code: 'AGY_LAUNCH_FAILED', message: 'agy process error.', launchReturnedAt: new Date().toISOString() });
+    });
+
+    child.on('close', (exitCode) => {
+      if (settled) return;
+      settled = true;
+      const launchReturnedAt = new Date().toISOString();
+      logger.log('agy_process_exited', { jobId, exitCode, mode: 'stream-json' });
+      resolve({ ok: true, exitCode, launchReturnedAt });
+    });
+  });
+
+  return { ok: true, pid: child.pid, launchStartedAt, child, donePromise };
+}
+
+module.exports = { isAvailable, launch, launchStreaming };

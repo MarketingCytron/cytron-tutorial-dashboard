@@ -39,14 +39,86 @@ const MAKER_ESP32_PACK_FILES = [
 // esp32-digital-clock.md). Deliberately NOT a copy of either file's text —
 // no factual claim, pin, component, or code line from either example is
 // reproduced here. This is what "STYLE_ONLY" means in practice.
+//
+// Revised after the Milestone 3 first-pilot human review (esp32-smoke-
+// detection-alarm): the pilot draft was technically sound but noticeably
+// more verbose/formal than either golden example, and it prepended a
+// process-metadata header before the tutorial content — a pattern both
+// golden example FILES happen to also carry (they are each an internal job
+// artifact whose "# Revamped Tutorial Draft / Original Tutorial / ..."
+// preamble is dashboard/editor tracking data, never meant to be pasted into
+// the live tutorial). That preamble is explicitly excluded from this
+// contract and from the writer's required output — see promptBuilder.js's
+// OUTPUT CONTRACT, which now requires the response to begin directly at
+// `## Admin & SEO`.
 const STYLE_CONTRACT = [
-  '- Public tutorial body must read like a normal, brand-new beginner tutorial — never mention audits, revamps, migrations, prior versions, AI assistance, or the validation workflow.',
-  '- Open with a short, application-focused introduction: what the reader will build and why it is useful, not what changed.',
-  '- Use direct, active-voice, short-sentence, beginner-friendly language throughout.',
-  '- Structure: Admin & SEO fields, Overview/Introduction, optional Disclaimer/Safety Notes, Prerequisites, Objectives, Components/BOM (product links on the component name, quantities kept), System Diagram & Wiring (diagram + pin table), Software Setup, Sample Code (Gist embed + brief key-block explanation), Testing & Validation (numbered steps + expected output), Demo/Results, Troubleshooting & Extra Tips, Downloads & Assets, Community/Related Tutorials.',
-  '- If a beginner does not need a paragraph to successfully build the project, remove it.',
-  '- All migration reasoning, source citations, uncertainty, and verification status belong ONLY after a `# INTERNAL EDITOR NOTES — DO NOT PUBLISH` divider, in a Revamp Change Log, Outstanding Verification, and Media Replacement Plan — never in the public body above that divider.',
+  '1. Paragraph length: 1-3 short sentences per paragraph. Never write a paragraph a beginner could skip without missing something they need to build the project.',
+  '2. Heading density: one H2 per major concept (Admin & SEO, Introduction, Disclaimer/Safety Notes if needed, Prerequisites, Objective, List of Components, System Diagram & Wiring, Software Setup, Sample Code, Testing & Validation, Troubleshooting & Extra Tips, Downloads & Assets, Community/Related Tutorials). Use H3 only to break a long H2 section into short, scannable sub-steps (e.g. "Install X Library", "Expected Result", one H3 per troubleshooting symptom).',
+  '3. Amount of explanation per section: a sentence or two of framing, then get straight to a list, table, or numbered steps. Do not pad a section with restated context.',
+  '4. Beginner instruction style: numbered, imperative, one action per step ("1. Open Arduino IDE. 2. Navigate to ..."). Bold UI labels and menu paths.',
+  '5. BOM presentation: a numbered list, one line per part — "N. [Product Name](url) xQty" — not a prose paragraph and not a heavy multi-column table.',
+  '6. Wiring explanation style: one short sentence naming the interface/bus, then a compact pin-to-pin table (component pin | board pin | function), then at most one short "Note:" line for an alternate connection option. No electrical theory.',
+  '7. Software setup style: short H3 subsections, each a tight numbered list of concrete IDE actions. No conceptual explanation of what a library "is."',
+  '8. Code explanation density: a flat bullet list, one bullet per key line/function, one sentence each (roughly 3-7 bullets even for a non-trivial sketch). Never turn this into a paragraph-by-paragraph technical reference.',
+  '9. Testing style: one numbered list of concrete physical actions ending in an observable result, optionally followed by a short "Expected Result" bullet list. Never frame ordinary testing as a formal validation/verification procedure.',
+  '10. Troubleshooting density: 3-5 of the most likely beginner symptoms, each its own short H3 or bold line with 1-3 one-line fixes. No underlying-theory explanations.',
+  '11. Conclusion / ending style: there is no separate "Conclusion" section and no summary paragraph. The tutorial ends with "Downloads & Assets" (a couple of short bullets) and then "Community/Related Tutorials" — no restating of what was built.',
+  '12. Separation between public content and internal notes: exactly one `# INTERNAL EDITOR NOTES — DO NOT PUBLISH` heading marks the boundary. Everything above it is finished, reader-facing prose with zero mention of audits, revamps, migrations, sourcing, or verification status; everything below it (Revamp Change Log, Outstanding Verification, Media Replacement Plan) is editor-only.',
+  '',
+  'Apply this test to every paragraph: "If a beginner does not need this to successfully build the project, remove it." Prefer shorter over more thorough. Avoid textbook-style background theory, exhaustive regulatory explanation, and over-detailed procedures anywhere in the public body.',
 ].join('\n');
+
+// Per-tutorial, HUMAN-APPROVED hardware/editorial architecture decisions —
+// deliberately NOT a global rule mechanism. A tutorial only gets this extra
+// prompt guidance + matching validator expectations if it has an entry
+// here; every other tutorial's behavior is completely unaffected (e.g.
+// Maker Port preference stays available globally — it is disabled only for
+// the one tutorial below, via `disallowMakerPort`).
+//
+// Source of this entry: human review of the second esp32-smoke-detection-
+// alarm writer-pilot draft (job f1328917-7f7a-4740-8b56-1e0b1866ae86, which
+// used the now-superseded GPIO36) — see docs/CYTRON_TUTORIAL_AUTHORING_
+// STANDARD.md §25 for the full recorded decision and rationale.
+const PROJECT_HARDWARE_DECISIONS = {
+  'esp32-smoke-detection-alarm': {
+    boardMigration: 'NodeMCU ESP32 -> Maker ESP32',
+    disallowRoboEsp32: true,
+    disallowMakerPort: true,
+    approvedAccessories: ['breadboard', 'jumper wire'],
+    // The full, exact human-approved BOM — a hardware line item that
+    // matches none of these (and none of allowedOptionalBomAdditions) is
+    // "unexpected," not silently accepted. Deliberately per-project: this
+    // does NOT make USB cables (or anything else) globally forbidden.
+    approvedBomItems: ['maker esp32', 'mq-2', 'breadboard', 'jumper wire'],
+    allowedOptionalBomAdditions: [],
+    sensorInputGpio: '15',
+    disallowedSensorInputGpios: ['36', '4'],
+    sensorPowerRail: '3V3',
+    ledGpio: '2',
+    buzzerGpio: '26',
+    wiring: [
+      { sensorPin: 'VCC', boardPin: '3V3' },
+      { sensorPin: 'GND', boardPin: 'GND' },
+      { sensorPin: 'AO', boardPin: 'GPIO15' },
+    ],
+    notes: [
+      'The board migration for this project is NodeMCU ESP32 -> Maker ESP32 — NOT Robo ESP32 -> Maker ESP32. Robo ESP32 is not part of this project at all, in either direction.',
+      'MQ-2 uses its Analog Output (AO) only — never the Digital Output (DO).',
+      'MQ-2 VCC is powered from the Maker ESP32 3V3 rail. This is a human-approved, project-specific decision supported by the original working Cytron tutorial (which already runs this exact MQ-2 configuration from 3.3V) — do not treat this as unresolved, and do not switch it to 5V or add a voltage divider based on generic MQ-2 datasheet assumptions.',
+      'GPIO15 is the analog input for the MQ-2 AO signal. It was chosen because it sits physically close to the Maker ESP32 3V3 and GND header pins, which keeps the breadboard wiring simple for a beginner. Use GPIO15 consistently everywhere the sensor input is mentioned (wiring, prose, Sample Code, code comments, Testing, Troubleshooting) — never GPIO36 (the historical/superseded pin) or GPIO4 (the Maker ESP32 onboard User Button — using it for the sensor would conflict with that button).',
+      'The GPIO15 pin choice itself is resolved and human-approved — it is not an open architecture question. If approved Maker ESP32 references indicate GPIO15 has boot/strapping sensitivity, record under Outstanding Verification that physical testing must confirm the MQ-2 connection on GPIO15 does not interfere with power-up, boot, reset, or sketch upload — this is a physical validation item, not an unresolved design decision, and must not become public migration discussion.',
+      'Visual alert: prefer the Maker ESP32 onboard GPIO2 indicator LED if approved references confirm it as the appropriate onboard LED for this project. No NeoPixel, no external LED, no Robo ESP32 visual indicators.',
+      'Audio alert: the Maker ESP32 onboard passive piezo buzzer on GPIO26. No external buzzer.',
+      'Approved BOM: Maker ESP32, MQ-2 Gas/Smoke Sensor Module, breadboard, jumper wires as required. Breadboard and jumper wires are approved parts of this project, not a sign of unresolved wiring — do not omit them or flag them as inconsistent. Do not add a Maker Port cable/adapter, an external buzzer, NeoPixel, or Robo ESP32 to the BOM unless a genuine new requirement emerges.',
+      'Do not use Maker Port for this tutorial at all (this is a project-specific override — Maker Port remains the generally preferred approach for other tutorials where compatibility is confirmed).',
+      'Remaining Outstanding Verification for this project should be physical/bench-level only (e.g. confirm MQ-2 AO produces usable readings on GPIO15, confirm GPIO15 does not interfere with boot/reset/upload if relevant, confirm threshold behavior, confirm LED/buzzer alerts, end-to-end bench test) — do not re-list the architecture decisions above (board, power rail, GPIO15, LED/buzzer pins) as if they were still unresolved.',
+    ].join(' '),
+  },
+};
+
+function getProjectHardwareDecision(tutorialId) {
+  return PROJECT_HARDWARE_DECISIONS[tutorialId] || null;
+}
 
 function readFileIfExists(absPath) {
   try {
@@ -92,6 +164,7 @@ function resolveContext(tutorialId, userInstructions, jobId) {
       needsMakerEsp32: false,
       styleContract: STYLE_CONTRACT,
       ownRevampFileExcluded: null,
+      projectHardwareDecision: null,
       sources,
       missingRequired: ['tutorialId must be a lowercase alphanumeric-hyphen slug matching an existing tutorial'],
     };
@@ -248,6 +321,21 @@ function resolveContext(tutorialId, userInstructions, jobId) {
       : undefined,
   });
 
+  // Project-specific, human-approved hardware/editorial decisions — only
+  // populated for tutorials explicitly listed in PROJECT_HARDWARE_DECISIONS.
+  // Absent (null) for every other tutorial, with zero effect on their prompt
+  // or validation behavior.
+  const projectHardwareDecision = getProjectHardwareDecision(tutorialId);
+  if (projectHardwareDecision) {
+    sources.push({
+      type: 'project_hardware_decision',
+      identifier: tutorialId,
+      classification: 'PROJECT_SPECIFIC',
+      status: 'included',
+      reason: 'Human-approved, tutorial-specific hardware/editorial architecture decision — see docs/CYTRON_TUTORIAL_AUTHORING_STANDARD.md §25.',
+    });
+  }
+
   return {
     tutorial,
     agentsContent: agentsRead.ok ? agentsRead.content : '',
@@ -259,9 +347,10 @@ function resolveContext(tutorialId, userInstructions, jobId) {
     needsMakerEsp32,
     styleContract: STYLE_CONTRACT,
     ownRevampFileExcluded: ownRevampFile || null,
+    projectHardwareDecision,
     sources,
     missingRequired: [...new Set(missingRequired)],
   };
 }
 
-module.exports = { resolveContext, MAKER_ESP32_PACK_DIR, MAKER_ESP32_PACK_FILES };
+module.exports = { resolveContext, MAKER_ESP32_PACK_DIR, MAKER_ESP32_PACK_FILES, getProjectHardwareDecision };
