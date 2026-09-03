@@ -11,3 +11,8 @@ service/jobs/
 # installs, once the user approves staging this milestone's work.
 service/node_modules/
 
+# Milestone 5 — local-only Final Output publication-attempt bookkeeping
+# (idempotency/retry state for /api/revamp/:jobId/publish). Never committed;
+# the actual Final Output goes to revamped-tutorials/ and IS committed.
+service/publications/
+

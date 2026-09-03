@@ -15,7 +15,7 @@ module.exports = {
   port: 47821,
 
   serviceName: 'Cytron Tutorial Revamp Bridge',
-  version: '0.5.0',
+  version: '0.6.0',
 
   // Exact browser origins allowed to call this bridge.
   // Do NOT add '*'. Add a local static-server origin here temporarily if you
@@ -37,6 +37,16 @@ module.exports = {
   // Each job gets its own subdirectory: service/jobs/<jobId>/job.json (+
   // any stub/writer artifacts). A single service.log lives alongside them.
   jobsDir: path.resolve(__dirname, 'jobs'),
+
+  // Milestone 5 — local-only, gitignored publication-attempt records (one
+  // per jobId that has gone through /api/revamp/:jobId/publish). This is
+  // NOT the permanent Final Output — it is bridge-side bookkeeping so a
+  // repeated/duplicate publish POST is idempotent and a failed `git push`
+  // can be safely retried without re-promoting or re-committing. Never
+  // written into revamped-tutorials/ or committed to git.
+  publicationsDir: path.resolve(__dirname, 'publications'),
+
+  revampedTutorialsDir: path.resolve(__dirname, '..', 'revamped-tutorials'),
 
   maxBodyBytes: 10 * 1024, // 10 KB — generous for this milestone's tiny payloads
   maxInstructionsLength: 4000,

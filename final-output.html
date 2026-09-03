@@ -124,6 +124,9 @@
                      revampedOutputFile) -->
                 <div id="draftReviewBanner" class="draft-review-banner" style="display: none;"></div>
 
+                <!-- Milestone 5 — human approval / publish action area (draft mode only) -->
+                <div id="publishActionArea" class="publish-action-area" style="display: none;"></div>
+
                 <!-- Rendered Markdown Output -->
                 <section class="final-output-card">
                     <div class="markdown-content" id="markdownContainer">
@@ -134,6 +137,13 @@
                 </section>
             </div>
         </main>
+    </div>
+
+    <!-- Milestone 5 — Approve & Publish confirmation modal -->
+    <div id="publishModalOverlay" class="revamp-modal-overlay" style="display:none;">
+        <div class="revamp-modal" role="dialog" aria-modal="true" aria-labelledby="publishModalTitle">
+            <div id="publishModalBody"></div>
+        </div>
     </div>
 
     <script src="js/app.js"></script>

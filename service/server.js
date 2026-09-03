@@ -28,6 +28,9 @@
  *   GET  /api/revamp/:jobId                      — authenticated, returns safe job status (any job type)
  *   GET  /api/revamp/:jobId/output                — authenticated, returns the candidate tutorial Markdown for that exact job
  *   POST /api/revamp/:jobId/cancel                — authenticated, cancels an active job (any job type)
+ *   POST /api/revamp/:jobId/publish                — authenticated, Milestone 5: human-approved Final Output publish
+ *                                                     (candidate -> revamped-tutorials/, dataset update, validate,
+ *                                                     commit, push — see service/tutorialPublisher.js)
  *   POST /api/dev/antigravity-harness/start        — authenticated, DEV ONLY, creates an isolated agy CLI test job
  *
  * Run with: node service/server.js
@@ -44,6 +47,7 @@ const config = require('./config');
 const jobStore = require('./jobStore');
 const tutorialWriterPilot = require('./tutorialWriterPilot');
 const agyHarness = require('./agyHarness');
+const tutorialPublisher = require('./tutorialPublisher');
 const logger = require('./logger');
 
 // ---------------------------------------------------------------------------
@@ -468,6 +472,81 @@ function handleRevampCancel(req, res, cors, jobId) {
 }
 
 // ---------------------------------------------------------------------------
+// Route handlers — Milestone 5 (human approval / Final Output publish)
+//
+// The browser sends ONLY a jobId (route-validated to [A-Za-z0-9-]+, resolved
+// exclusively through jobStore.getJob()) and two booleans (`confirmed`,
+// `confirmedBlocking`). Every filesystem path, the commit message, and the
+// git remote/branch are fixed or derived server-side inside
+// tutorialPublisher.js — see that module for the full flow and safety
+// invariants. No shell, no arbitrary path, no arbitrary git argument is ever
+// accepted from the request body.
+// ---------------------------------------------------------------------------
+
+const PUBLISH_ERROR_STATUS = {
+  job_not_found: 404,
+  tutorial_not_found: 404,
+  no_output_for_job_type: 400,
+  invalid_tutorial_id: 400,
+  confirmation_required: 400,
+  job_not_eligible: 409,
+  already_published: 409,
+  blocking_confirmation_required: 409,
+  repo_not_clean: 409,
+  wrong_branch: 409,
+  candidate_missing: 422,
+  validation_failed: 422,
+  dataset_update_failed: 500,
+  commit_failed: 500,
+  git_error: 500,
+};
+
+async function handleRevampPublish(req, res, cors, jobId) {
+  if (!isAuthorized(req)) {
+    sendJson(res, 401, { error: { code: 'unauthorized', message: 'Missing or invalid pairing token.' } }, cors);
+    return;
+  }
+
+  if (!hasJsonContentType(req)) {
+    req.resume();
+    sendJson(res, 415, { error: { code: 'unsupported_media_type', message: 'Content-Type must be application/json.' } }, cors);
+    return;
+  }
+
+  let body;
+  try {
+    body = await readJsonBody(req, config.maxBodyBytes);
+  } catch (err) {
+    const status = err.code === 'payload_too_large' ? 413 : 400;
+    sendJson(res, status, { error: { code: err.code || 'invalid_json', message: err.message } }, cors);
+    return;
+  }
+
+  const confirmed = body && body.confirmed === true;
+  const confirmedBlocking = body && body.confirmedBlocking === true;
+
+  try {
+    const result = await tutorialPublisher.publish(jobId, { confirmed, confirmedBlocking });
+    sendJson(res, 200, result, cors);
+  } catch (err) {
+    const status = PUBLISH_ERROR_STATUS[err.code] || 500;
+    if (status === 500) {
+      console.error('[bridge] Publish failed:', err.message);
+    }
+    logger.log('publish_failed', { jobId, code: err.code || 'internal_error', message: err.message });
+    sendJson(res, status, {
+      error: {
+        code: err.code || 'internal_error',
+        message: err.message || 'Unexpected server error.',
+        ...(err.blockingReasons ? { blockingReasons: err.blockingReasons } : {}),
+        ...(err.files ? { files: err.files } : {}),
+        ...(err.problems ? { problems: err.problems } : {}),
+      },
+    }, cors);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Route handlers — Milestone 3A (dev-only Antigravity integration harness)
 //
 // No tutorialId, no instructions, no path, no filename — the browser sends
@@ -582,6 +661,19 @@ const server = http.createServer((req, res) => {
       return;
     }
     handleRevampCancel(req, res, cors, cancelMatch[1]);
+    return;
+  }
+
+  const publishMatch = pathname.match(/^\/api\/revamp\/([A-Za-z0-9-]+)\/publish$/);
+  if (publishMatch) {
+    if (req.method !== 'POST') {
+      sendJson(res, 405, { error: { code: 'method_not_allowed', message: 'Use POST.' } }, { ...cors, Allow: 'POST, OPTIONS' });
+      return;
+    }
+    handleRevampPublish(req, res, cors, publishMatch[1]).catch((err) => {
+      console.error('[bridge] Unhandled error in /api/revamp/:jobId/publish:', err);
+      sendJson(res, 500, { error: { code: 'internal_error', message: 'Unexpected server error.' } }, cors);
+    });
     return;
   }
 
