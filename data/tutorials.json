@@ -2570,7 +2570,7 @@
       },
       "decision": "Minor Update",
       "revampScope": "Small",
-      "revampStatus": "Reviewed",
+      "revampStatus": "Revamping",
       "priority": "P2",
       "technicalScore": 8,
       "scores": {
@@ -2743,6 +2743,7 @@
         }
       ],
       "auditFile": "audits/esp32-smoke-detection-alarm.md",
+      "revampedOutputFile": "revamped-tutorials/esp32-smoke-detection-alarm.md",
       "makerEsp32PublishDate": "2026-09-26",
       "hardwareUsed": {
         "board": "Maker ESP32",
