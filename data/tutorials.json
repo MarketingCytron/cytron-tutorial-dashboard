@@ -1060,7 +1060,7 @@
       },
       "decision": "Keep",
       "revampScope": "Small",
-      "revampStatus": "Reviewed",
+      "revampStatus": "Revamping",
       "priority": "P3",
       "technicalScore": 9,
       "scores": {
@@ -1227,6 +1227,7 @@
         }
       ],
       "auditFile": "audits/esp32-led-pattern-generator.md",
+      "revampedOutputFile": "revamped-tutorials/esp32-led-pattern-generator.md",
       "makerEsp32PublishDate": "2026-09-22",
       "hardwareUsed": {
         "board": "Maker ESP32",
