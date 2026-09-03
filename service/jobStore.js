@@ -109,6 +109,24 @@ function getActiveJobForTutorial(tutorialId) {
   return job;
 }
 
+/**
+ * Returns the most recently created 'revamp' job for `tutorialId`,
+ * regardless of state (active or terminal) — used for browser-refresh
+ * recovery (Milestone 4), so the dashboard can recover a completed job's
+ * result even though `activeJobIdByTutorial` only ever tracks the currently-
+ * active one. A plain linear scan over the in-memory `jobs` Map (already
+ * fully populated by loadJobsFromDisk() at startup) — simplest correct
+ * option at this job-count scale; no separate index to keep in sync.
+ */
+function getLatestJobForTutorial(tutorialId) {
+  let latest = null;
+  for (const job of jobs.values()) {
+    if (job.type !== JOB_TYPES.REVAMP || job.tutorialId !== tutorialId) continue;
+    if (!latest || job.createdAt > latest.createdAt) latest = job;
+  }
+  return latest;
+}
+
 // ---------------------------------------------------------------------------
 // Antigravity harness (Milestone 3A) jobs — no tutorial content, singleton
 // ---------------------------------------------------------------------------
@@ -253,6 +271,8 @@ function toSafeJson(job) {
       tutorialId: job.tutorialId,
       title: job.title,
       userInstructions: job.userInstructions,
+      validationSummary: job.validationSummary || null,
+      blockingReasons: job.blockingReasons || null,
     };
   }
 
@@ -280,6 +300,8 @@ function toSafeJson(job) {
       launchReturnedAt: job.launchReturnedAt,
       deadlineAt: job.deadlineAt,
       exitCode: job.exitCode,
+      validationSummary: job.validationSummary || null,
+      blockingReasons: job.blockingReasons || null,
     };
   }
 
@@ -338,8 +360,14 @@ function loadJobsFromDisk() {
     if (TERMINAL_STATES.has(job.state)) continue;
 
     if (job.type === JOB_TYPES.REVAMP) {
+      // As with 'writer-pilot' jobs, no exitCode-based recovery is
+      // implemented for the real writer's agy subprocess (Milestone 4) —
+      // deliberately conservative, matching the harness's stated limitation
+      // for the unrecoverable case. A restart mid-generation requires the
+      // user to click "Revamp Tutorial" again rather than risk silently
+      // resuming/guessing at an unknown subprocess outcome.
       updateJobState(jobId, 'Failed', {
-        error: 'Job state was lost because the bridge restarted before it finished (stub jobs cannot be resumed).',
+        error: 'Job state was lost because the bridge restarted before it finished. Please start the revamp again.',
       });
       continue;
     }
@@ -379,6 +407,7 @@ module.exports = {
   ACTIVE_STATES,
   createJob,
   getActiveJobForTutorial,
+  getLatestJobForTutorial,
   createHarnessJob,
   getActiveHarnessJob,
   createWriterPilotJob,

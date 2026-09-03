@@ -75,10 +75,11 @@ const STYLE_CONTRACT = [
 // Maker Port preference stays available globally — it is disabled only for
 // the one tutorial below, via `disallowMakerPort`).
 //
-// Source of this entry: human review of the second esp32-smoke-detection-
-// alarm writer-pilot draft (job f1328917-7f7a-4740-8b56-1e0b1866ae86, which
-// used the now-superseded GPIO36) — see docs/CYTRON_TUTORIAL_AUTHORING_
-// STANDARD.md §25 for the full recorded decision and rationale.
+// See docs/CYTRON_TUTORIAL_AUTHORING_STANDARD.md §25 for the operational
+// rule this mechanism implements, and docs/TUTORIAL_REVAMP_AGENT_DECISION_
+// LOG.md (Decision 3) for the full project-specific rationale/history
+// behind the entry below — neither file is read at runtime; this map is
+// the actual source of truth.
 const PROJECT_HARDWARE_DECISIONS = {
   'esp32-smoke-detection-alarm': {
     boardMigration: 'NodeMCU ESP32 -> Maker ESP32',
@@ -128,8 +129,49 @@ function readFileIfExists(absPath) {
   }
 }
 
+// Evidentiary authority classification (Milestone 4 — global evidence/
+// decision priority). Distinct from `classification` above, which is about
+// "is this required for prompt composition." `authority` is about "how much
+// weight does this source's claims carry when facts conflict." See
+// docs/CYTRON_TUTORIAL_AUTHORING_STANDARD.md §27 and promptBuilder.js's
+// EVIDENCE & DECISION PRIORITY section for the full ordering and rationale:
+//   HUMAN_APPROVED > PROJECT_SPECIFIC > OFFICIAL_PRODUCT_FACT >
+//   ORIGINAL_WORKING_EVIDENCE > AUDIT_RECOMMENDATION
+// STYLE_ONLY sources never carry factual authority at all. A source with no
+// natural place in this hierarchy (workflow rules, presentation format,
+// provenance-only records) is simply left without an `authority` field
+// rather than forced into an ill-fitting label.
+const AUTHORITY = {
+  HUMAN_APPROVED: 'HUMAN_APPROVED',
+  PROJECT_SPECIFIC: 'PROJECT_SPECIFIC',
+  OFFICIAL_PRODUCT_FACT: 'OFFICIAL_PRODUCT_FACT',
+  ORIGINAL_WORKING_EVIDENCE: 'ORIGINAL_WORKING_EVIDENCE',
+  AUDIT_RECOMMENDATION: 'AUDIT_RECOMMENDATION',
+  STYLE_ONLY: 'STYLE_ONLY',
+};
+
 function targetsMakerEsp32(tutorial, userInstructions) {
   return !!(tutorial && tutorial.makerEsp32) || /maker\s*esp32/i.test(userInstructions || '');
+}
+
+// MQ-2-specific logic (electrical-caution injection, MQ-2 validator checks)
+// must only ever run for a tutorial that is ACTUALLY about an MQ-2 sensor —
+// never inferred merely from "targets Maker ESP32" or "the Maker ESP32 pack
+// doesn't document MQ-2" (that fact is true for every tutorial and proves
+// nothing about relevance). Deliberately a narrow, exact-identifier match —
+// broad words like "sensor"/"gas"/"smoke" are NOT sufficient on their own,
+// since they describe many unrelated projects too.
+const MQ2_IDENTIFIER_PATTERN = /\bMQ-?2\b/i;
+
+function isMq2Relevant({ tutorial, auditContent, originalTutorialContent, userInstructions, projectHardwareDecision }) {
+  const sources = [
+    tutorial ? JSON.stringify(tutorial) : '',
+    auditContent || '',
+    originalTutorialContent || '',
+    userInstructions || '',
+    projectHardwareDecision ? JSON.stringify(projectHardwareDecision) : '',
+  ];
+  return sources.some((s) => MQ2_IDENTIFIER_PATTERN.test(s));
 }
 
 /**
@@ -165,6 +207,7 @@ function resolveContext(tutorialId, userInstructions, jobId) {
       styleContract: STYLE_CONTRACT,
       ownRevampFileExcluded: null,
       projectHardwareDecision: null,
+      mq2Relevant: false,
       sources,
       missingRequired: ['tutorialId must be a lowercase alphanumeric-hyphen slug matching an existing tutorial'],
     };
@@ -191,6 +234,20 @@ function resolveContext(tutorialId, userInstructions, jobId) {
   });
   if (!tutorial) missingRequired.push('tutorial record (data/tutorials.json)');
 
+  // Human-approved revamp instructions — the dashboard's "Revamp Tutorial"
+  // Special Instructions box. Highest evidentiary authority (see AUTHORITY
+  // above): this is a human decision entered for this specific job, not a
+  // suggestion. Not part of `missingRequired` — the box is genuinely
+  // optional — but always recorded here so its authority is visible
+  // alongside every other source, not just embedded in a prompt paragraph.
+  sources.push({
+    type: 'human_revamp_instructions',
+    identifier: userInstructions && userInstructions.trim() ? 'provided' : 'not provided',
+    classification: 'OPTIONAL',
+    status: userInstructions && userInstructions.trim() ? 'loaded' : 'not_provided',
+    authority: AUTHORITY.HUMAN_APPROVED,
+  });
+
   // 2b. Audit.
   let auditRead = { ok: false };
   const auditFile = tutorial && tutorial.auditFile;
@@ -202,6 +259,7 @@ function resolveContext(tutorialId, userInstructions, jobId) {
     identifier: auditFile || null,
     classification: 'REQUIRED',
     status: auditRead.ok ? 'loaded' : 'unavailable',
+    authority: AUTHORITY.AUDIT_RECOMMENDATION,
   });
   if (!auditRead.ok) missingRequired.push('audit (audits/*.md)');
 
@@ -224,6 +282,7 @@ function resolveContext(tutorialId, userInstructions, jobId) {
       status: 'loaded',
       fetchedAt: snapshot.meta.fetchedAt,
       extractedCharacters: snapshot.meta.extractedCharacters,
+      authority: AUTHORITY.ORIGINAL_WORKING_EVIDENCE,
     });
   } else {
     sources.push({
@@ -231,6 +290,7 @@ function resolveContext(tutorialId, userInstructions, jobId) {
       identifier: tutorial ? tutorial.url : null,
       classification: 'REQUIRED',
       status: 'unavailable',
+      authority: AUTHORITY.ORIGINAL_WORKING_EVIDENCE,
       reason: jobId
         ? 'No snapshot has been retrieved yet for this job (call originalTutorialSource.retrieveOriginalTutorial first).'
         : 'No jobId was provided, so no per-job snapshot could be checked.',
@@ -251,6 +311,7 @@ function resolveContext(tutorialId, userInstructions, jobId) {
         identifier: fileName,
         classification: 'REQUIRED_IF_TARGET',
         status: read.ok ? 'loaded' : 'unavailable',
+        authority: AUTHORITY.OFFICIAL_PRODUCT_FACT,
       });
       if (!read.ok) missingRequired.push(`Maker ESP32 AI Coding Pack: ${fileName}`);
     }
@@ -264,6 +325,7 @@ function resolveContext(tutorialId, userInstructions, jobId) {
       identifier: `sample-code/${tutorialId}-maker-esp32.ino`,
       classification: 'OPTIONAL',
       status: sampleRead.ok ? 'loaded' : 'not_found',
+      authority: AUTHORITY.OFFICIAL_PRODUCT_FACT,
     });
     if (sampleRead.ok) makerEsp32Files.push({ fileName: `sample-code/${tutorialId}-maker-esp32.ino`, ok: true, content: sampleRead.content });
   }
@@ -279,6 +341,7 @@ function resolveContext(tutorialId, userInstructions, jobId) {
     identifier: null,
     classification: 'REQUIRED',
     status: 'satisfied_via_audit',
+    authority: AUTHORITY.AUDIT_RECOMMENDATION,
     reason: "Live doc verification isn't performed by this bridge; the audit's own Evidence/Sources section already reflects that verification.",
   });
 
@@ -316,6 +379,7 @@ function resolveContext(tutorialId, userInstructions, jobId) {
     identifier: 'distilled from revamped-tutorials/ golden examples (structure/tone only)',
     classification: 'STYLE_ONLY',
     status: 'included',
+    authority: AUTHORITY.STYLE_ONLY,
     note: ownRevampFile
       ? `This tutorial's own existing output (${ownRevampFile}) was deliberately EXCLUDED from all sourcing (including style) to avoid factual contamination of this dry run.`
       : undefined,
@@ -332,9 +396,18 @@ function resolveContext(tutorialId, userInstructions, jobId) {
       identifier: tutorialId,
       classification: 'PROJECT_SPECIFIC',
       status: 'included',
-      reason: 'Human-approved, tutorial-specific hardware/editorial architecture decision — see docs/CYTRON_TUTORIAL_AUTHORING_STANDARD.md §25.',
+      authority: AUTHORITY.PROJECT_SPECIFIC,
+      reason: 'Human-approved, tutorial-specific hardware/editorial architecture decision — see docs/CYTRON_TUTORIAL_AUTHORING_STANDARD.md §25 (rule) and docs/TUTORIAL_REVAMP_AGENT_DECISION_LOG.md (full rationale).',
     });
   }
+
+  const mq2Relevant = isMq2Relevant({
+    tutorial,
+    auditContent: auditRead.ok ? auditRead.content : '',
+    originalTutorialContent,
+    userInstructions,
+    projectHardwareDecision,
+  });
 
   return {
     tutorial,
@@ -348,9 +421,10 @@ function resolveContext(tutorialId, userInstructions, jobId) {
     styleContract: STYLE_CONTRACT,
     ownRevampFileExcluded: ownRevampFile || null,
     projectHardwareDecision,
+    mq2Relevant,
     sources,
     missingRequired: [...new Set(missingRequired)],
   };
 }
 
-module.exports = { resolveContext, MAKER_ESP32_PACK_DIR, MAKER_ESP32_PACK_FILES, getProjectHardwareDecision };
+module.exports = { resolveContext, MAKER_ESP32_PACK_DIR, MAKER_ESP32_PACK_FILES, getProjectHardwareDecision, isMq2Relevant };

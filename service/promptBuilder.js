@@ -62,6 +62,20 @@ function buildTutorialPrompt({ tutorialId, userInstructions, jobId }) {
     'Do not invent facts. Do not use any source not explicitly provided in this prompt.'
   ));
 
+  parts.push(section(
+    'EVIDENCE & DECISION PRIORITY',
+    'When deciding hardware setup, wiring, component usage, GPIO migration, software behavior, or any other technical assumption, resolve it using this authority order — highest first:\n\n' +
+    '1. HUMAN-APPROVED REVAMP INSTRUCTIONS (below) — the human\'s decision for this specific job. Not a suggestion.\n' +
+    '2. PROJECT-SPECIFIC HARDWARE DECISIONS (below, if present for this tutorial) — recorded human-approved project architecture.\n' +
+    '3. APPROVED OFFICIAL / PRODUCT / CODING PACK REFERENCES (below) — the primary authority for board-specific facts (onboard GPIO assignments, onboard LED/buzzer/buttons, Maker Port, ADC/input limits, power requirements, boot-sensitive pins, pin conflicts).\n' +
+    '4. CURRENT TUTORIAL SOURCE SNAPSHOT (below) — fallback evidence for how an EXTERNAL product/module (a sensor, display, or other component not made by Cytron for this board) was actually wired and used in a working project, when the official references are silent about it.\n' +
+    '5. AUDIT FINDINGS (below) — identifies outdated hardware, migration opportunities, missing safety notes, and technical risks; useful context, not a technical authority over the tiers above it.\n\n' +
+    'A higher tier wins when sources disagree. Do NOT let an audit recommendation, a generic Coding Pack assumption, or another tutorial\'s setup silently override an explicit human instruction or a project-specific decision.\n\n' +
+    'CRITICAL: absence of a fact from the official/Coding Pack references is NOT negative evidence about an external component. It does NOT mean unsupported, unsafe, incompatible, or unresolved — the Coding Pack is not expected to document every external sensor, actuator, display, or module ever used in a Cytron tutorial. When the official references are silent about an external component, check the CURRENT TUTORIAL SOURCE SNAPSHOT before treating anything about it as unresolved: if that snapshot already demonstrates the component working in a specific configuration (power rail, analog/digital mode, connection architecture, library usage, a working threshold starting point), treat that configuration as valid project evidence and preserve it — unless the human changes it, a project-specific decision changes it, the new board has a VERIFIED incompatibility with it, approved technical evidence directly contradicts it, the audit identifies a confirmed technical defect in it, or the original tutorial is internally inconsistent about it.\n\n' +
+    'The original tutorial snapshot is evidence, not absolute authority — do not blindly copy it. It may contain an outdated controller, outdated library, pin choices unsuitable for the new board, or missing safety notes; board-specific migration must still respect the new board\'s verified constraints (e.g. an original pin choice must still be replaced with whatever pin the human or official references establish for the new board — see HUMAN-APPROVED REVAMP INSTRUCTIONS below).\n\n' +
+    'If a genuine, VERIFIED conflict exists between tiers (not merely silence) — for example, an approved official reference directly proves the original tutorial\'s exact setup is incompatible with the new board — do not invent a resolution or silently pick one side. Preserve both positions in your reasoning, follow the higher-authority tier for the public tutorial, and record the specific conflict under Outstanding Verification in INTERNAL EDITOR NOTES so a human can resolve it. The human reviewing this draft is the final QA step.'
+  ));
+
   const authoringRulesParts = [
     '## Source 1 of 2 — AGENTS.md (revamp workflow, source hierarchy, safety rules)',
     context.agentsContent || '[MISSING REQUIRED SOURCE: AGENTS.md could not be loaded. Do not proceed without it.]',
@@ -92,8 +106,9 @@ function buildTutorialPrompt({ tutorialId, userInstructions, jobId }) {
     parts.push(section(
       'CURRENT TUTORIAL SOURCE SNAPSHOT',
       `This is the tutorial content retrieved from the approved Cytron source URL${meta ? ` (${meta.sourceUrl})` : ''} at ${meta ? meta.fetchedAt : 'an unknown time'}.\n\n` +
-      'It may reflect updates made after the audit above was written. Do NOT assume this snapshot is historically identical to the version originally audited — use the audit and this snapshot\'s own provenance together when determining what has actually changed.\n\n' +
-      'If the audit describes an older state that differs from this snapshot: do not hide the discrepancy, and do not invent which version is "correct." Use the approved user instructions and verified current technical references below to write the new tutorial, and record any meaningful source-version discrepancy under INTERNAL EDITOR NOTES — never discuss this history in the public tutorial body.\n\n' +
+      'It may reflect updates made after the audit above was written. Do NOT assume this snapshot is historically identical to the version originally audited — use the audit and this snapshot\'s own provenance together when determining what has actually changed. Do not claim it is necessarily the exact historical version used during the original audit if that cannot be proven from what is supplied here.\n\n' +
+      'If the audit describes an older state that differs from this snapshot: do not hide the discrepancy, and do not invent which version is "correct." Use the approved human instructions and verified current technical references below to write the new tutorial, and record any meaningful source-version discrepancy under INTERNAL EDITOR NOTES — never discuss this history in the public tutorial body.\n\n' +
+      'Beyond tracking what changed, this snapshot is also your PRIMARY FALLBACK EVIDENCE (see EVIDENCE & DECISION PRIORITY above) for how any external product/module is actually configured and wired in a working project, whenever the official/Coding Pack references below are silent about that external component. It is evidence of a working project configuration, not merely historical trivia — and not absolute authority either: still apply the new board\'s verified constraints on top of it (e.g. replace a pin choice unsuitable for the new board with whatever pin the human instructions or official references establish).\n\n' +
       '---\n\n' +
       context.originalTutorialContent
     ));
@@ -123,10 +138,11 @@ function buildTutorialPrompt({ tutorialId, userInstructions, jobId }) {
   parts.push(section('APPROVED TECHNICAL REFERENCES', referenceParts.join('\n\n')));
 
   parts.push(section(
-    'USER REVAMP INSTRUCTIONS',
+    'HUMAN-APPROVED REVAMP INSTRUCTIONS',
     (userInstructions && userInstructions.trim())
-      ? `The following are the APPROVED product/hardware direction for this specific revamp. Treat them as authoritative editorial/hardware direction unless they conflict with a verified technical fact or a safety rule — in that case, follow the safer/verified option and note the conflict under Outstanding Verification.\n\n${userInstructions.trim()}`
-      : 'No special instructions were provided for this job. Use the audit\'s recommendation and the approved sources above as the sole direction.'
+      ? 'These are the HUMAN-APPROVED decision for this specific job — the highest-authority source in EVIDENCE & DECISION PRIORITY above. This is normal, expected daily use of this system, not an edge case: a human reviewed this tutorial and typed a specific direction (e.g. "NodeMCU replaced by Maker ESP32," "Use GPIO15 because it is nearer to 3V3 and GND," "LCD -> OLED," "Keep the original sensor and wiring," "Use onboard buzzer"). When an instruction is clear and technically possible, follow it. Do NOT silently override it using audit recommendations, historical/original hardware, generic Coding Pack assumptions, or another tutorial\'s setup. If — and only if — a genuine, VERIFIED technical conflict exists (not just a generic caution), do not invent an alternative: preserve this instruction in your reasoning, follow the safer/verified option for the public tutorial, and record the specific conflict under Outstanding Verification for human review.\n\n' +
+        `${userInstructions.trim()}`
+      : 'No special instructions were provided for this job. Use the project-specific decision (if any), the approved official references, the current tutorial source snapshot, and the audit\'s recommendation — in that priority order — as the direction.'
   ));
 
   if (context.projectHardwareDecision) {
@@ -137,7 +153,8 @@ function buildTutorialPrompt({ tutorialId, userInstructions, jobId }) {
       (context.projectHardwareDecision.disallowRoboEsp32 ? ' Robo ESP32 is not part of this project in any capacity — do not mention it, and do not describe the migration as involving Robo ESP32.' : '') +
       (context.projectHardwareDecision.disallowMakerPort ? ' Maker Port must NOT be used for this tutorial.' : '') +
       `\n\n${context.projectHardwareDecision.notes}\n\n` +
-      'These architecture decisions (board, power rail, sensor input pin, LED/buzzer pins) are RESOLVED and human-approved — do not re-list them as unresolved or uncertain under Outstanding Verification. Only genuine physical/bench-validation items belong there for this project.'
+      'These architecture decisions (board, power rail, sensor input pin, LED/buzzer pins) are RESOLVED and human-approved — do not re-list them as unresolved or uncertain under Outstanding Verification. Only genuine physical/bench-validation items belong there for this project.\n\n' +
+      'The HUMAN-APPROVED REVAMP INSTRUCTIONS below may further refine or explicitly supersede this recorded decision for this specific job — when they do, follow the more recent, more specific human instruction. Do not silently merge a contradiction between this recorded decision and the current instructions; if they genuinely conflict, follow the explicit current instruction for the public tutorial and record the discrepancy under Outstanding Verification for human review.'
     ));
   }
 
@@ -191,7 +208,7 @@ function buildTutorialPrompt({ tutorialId, userInstructions, jobId }) {
 
   parts.push(section(
     'HARDWARE COMPATIBILITY CONTRADICTION RULE',
-    'If any hardware or electrical compatibility fact needed for a connection is unresolved (not established by the approved sources), the public tutorial body must NOT commit to that connection ANYWHERE — not only in a wiring table. This rule covers the entire public body: List of Components / BOM, System Diagram & Wiring (prose as well as tables), Software Setup, Sample Code (including pin-definition constants and code comments), Testing & Validation, Demo / Results, and Troubleshooting. None of these may assert, even informally or "such as"-hedged, a specific GPIO/pin, supply voltage, Maker Port pin/interface, header pin/interface, voltage-divider value, or required connection cable/adapter for the unresolved connection. A code sketch must not hardcode a pin constant for that sensor\'s signal if the pin depends on the unresolved connection decision.\n\n' +
+    '"Unresolved" here means genuinely not established by ANY approved source at its appropriate priority tier (see EVIDENCE & DECISION PRIORITY) — not merely "the official/Coding Pack reference doesn\'t mention it." Check the current tutorial source snapshot for working fallback evidence before concluding something is unresolved. If any hardware or electrical compatibility fact needed for a connection is genuinely unresolved by that standard, the public tutorial body must NOT commit to that connection ANYWHERE — not only in a wiring table. This rule covers the entire public body: List of Components / BOM, System Diagram & Wiring (prose as well as tables), Software Setup, Sample Code (including pin-definition constants and code comments), Testing & Validation, Demo / Results, and Troubleshooting. None of these may assert, even informally or "such as"-hedged, a specific GPIO/pin, supply voltage, Maker Port pin/interface, header pin/interface, voltage-divider value, or required connection cable/adapter for the unresolved connection. A code sketch must not hardcode a pin constant for that sensor\'s signal if the pin depends on the unresolved connection decision.\n\n' +
     'In that situation, the public System Diagram & Wiring section must plainly state that this specific connection requires hardware verification before it can be finalized (do not hide this in vague language, and do not silently omit the sensor from the wiring section either), and the full technical detail of what needs checking belongs under Outstanding Verification in INTERNAL EDITOR NOTES. Do not publish a "confident-looking" wiring table, prose pin assignment, or hardcoded sketch constant for a connection you have just flagged as unverified elsewhere in the same draft — that is a contradiction and is not acceptable. This does NOT apply to onboard, already-verified connections (e.g. this tutorial\'s onboard LED/buzzer, which have no external wiring and no unresolved compatibility question) — only to the specific connection whose compatibility is actually unresolved.'
   ));
 
@@ -240,7 +257,7 @@ function buildTutorialPrompt({ tutorialId, userInstructions, jobId }) {
     'FACTUAL SAFETY',
     'Do not invent product specifications, GPIO assignments, electrical ratings, library behavior, compatibility claims, URLs, test results, or hardware availability.\n\n' +
     'This also covers decorative hardware details that feel harmless but are not actually established: LED colour, connector/cable colour, board behavior, or a component rating. Only state such a detail if it is explicitly supported by an approved source; otherwise describe the part generically (e.g. "onboard GPIO2 LED", not "blue GPIO2 LED").\n\n' +
-    'If an important fact cannot be verified from the sources supplied in this prompt, put it under Outstanding Verification. Do not guess.'
+    'Before putting anything under Outstanding Verification as "unresolved," re-check EVIDENCE & DECISION PRIORITY above: the official/Coding Pack references being silent about an external component is NOT by itself a reason to mark it unresolved — check whether the human instructions, a project-specific decision, or the current tutorial source snapshot already establish it. Only mark something Outstanding Verification / unresolved when none of the higher-priority sources establish it, or when a genuine verified conflict exists between them. Do not guess a fact that truly is missing from every source, but do not manufacture uncertainty about a fact that a lower-tier source (like the current tutorial snapshot) already evidences either.'
   ));
 
   parts.push(section(
@@ -250,6 +267,7 @@ function buildTutorialPrompt({ tutorialId, userInstructions, jobId }) {
 
   parts.push(section(
     'OUTPUT CONTRACT',
+    'All required information is already provided in this prompt. Do not use any tools, shell commands, filesystem exploration, directory searches, or external actions of any kind. Specifically: do not call run_command, find_by_name, or any other environment/exploration/browser/file tool; do not inspect, list, or search the filesystem or working directory; do not attempt to read, open, or fetch any additional file, URL, or resource beyond what is already included above. Your only task is to reason over the context already supplied in this prompt and respond directly with the complete Markdown tutorial as your final answer, in this single turn, with no intermediate tool calls.\n\n' +
     'Return ONLY the complete Markdown tutorial. No explanation before it. No explanation after it. No Markdown code fence around the entire result.\n\n' +
     'The response MUST begin directly with the heading `## Admin & SEO` — nothing may appear before it. Do not prepend a title, a "Revamped Tutorial Draft" label, an "Original Tutorial" / "Dashboard ID" / "Validity" / "Decision" / "Priority" / "Revamp Date" block, or any other process metadata. That information is already known to the dashboard and must never appear in the writer\'s output, not even before the first heading.'
   ));

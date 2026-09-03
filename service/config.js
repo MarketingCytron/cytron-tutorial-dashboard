@@ -15,7 +15,7 @@ module.exports = {
   port: 47821,
 
   serviceName: 'Cytron Tutorial Revamp Bridge',
-  version: '0.4.0',
+  version: '0.5.0',
 
   // Exact browser origins allowed to call this bridge.
   // Do NOT add '*'. Add a local static-server origin here temporarily if you

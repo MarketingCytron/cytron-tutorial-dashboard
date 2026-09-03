@@ -282,28 +282,39 @@ function validateDraft(markdown, context) {
     hasEducational && hasNotCertified ? 'pass' : 'fail',
     `educational=${hasEducational}, notCertifiedLanguage=${hasNotCertified}`));
 
-  // 14. MQ-2 electrical facts not obviously invented (heuristic — capped at warning).
-  const inventedVoltageDivider = /voltage divider[^.]{0,40}?(\d+(\.\d+)?\s*k?[ΩΩohm])/i.test(publicBody);
-  checks.push(check('mq2_no_invented_electricals', 'No specific invented MQ-2 voltage-divider value found in the public body (heuristic)',
-    inventedVoltageDivider ? 'warning' : 'pass',
-    inventedVoltageDivider ? 'a specific resistor/voltage-divider value was found near "voltage divider" — verify it is not invented' : 'none found'));
+  // 14/15. MQ-2-specific checks — ONLY meaningful, and ONLY added to the
+  // report, for a tutorial that is actually about an MQ-2 sensor
+  // (context.mq2Relevant, from tutorialContext.js's trusted-context
+  // detection). Running these against an unrelated tutorial produced a real
+  // false positive (esp32-led-pattern-generator landed in Needs Human
+  // Review over MQ-2 wording it had no business containing) — these checks
+  // must not even appear in the report for a non-MQ-2 tutorial, not just
+  // pass trivially, so the report never implies an MQ-2 check meaningfully
+  // ran when it did not.
+  if (context.mq2Relevant) {
+    // 14. MQ-2 electrical facts not obviously invented (heuristic — capped at warning).
+    const inventedVoltageDivider = /voltage divider[^.]{0,40}?(\d+(\.\d+)?\s*k?[ΩΩohm])/i.test(publicBody);
+    checks.push(check('mq2_no_invented_electricals', 'No specific invented MQ-2 voltage-divider value found in the public body (heuristic)',
+      inventedVoltageDivider ? 'warning' : 'pass',
+      inventedVoltageDivider ? 'a specific resistor/voltage-divider value was found near "voltage divider" — verify it is not invented' : 'none found'));
 
-  // 15. If MQ-2 voltage compatibility is uncertain, Outstanding Verification
-  // flags it. This generic heuristic is SUPERSEDED (skipped entirely, not
-  // just softened) whenever a PROJECT_HARDWARE_DECISIONS entry explicitly
-  // resolves the MQ-2 electrical architecture (sensorPowerRail +
-  // sensorInputGpio both set) — for that tutorial the electrical question is
-  // no longer open, so a generic "did you flag this as unresolved?" check
-  // would be stale by construction. Tutorials WITHOUT such a resolution keep
-  // this check exactly as before — it is never weakened generally.
-  const mq2ArchitectureResolved = !!(context.projectHardwareDecision
-    && context.projectHardwareDecision.sensorPowerRail
-    && context.projectHardwareDecision.sensorInputGpio);
-  if (!mq2ArchitectureResolved) {
-    const mq2InOutstanding = /(mq-?2)[\s\S]{0,300}?(voltage|adc|compatib)/i.test(internalNotes) || /(voltage|adc|compatib)[\s\S]{0,300}?(mq-?2)/i.test(internalNotes);
-    checks.push(check('mq2_outstanding_verification', 'MQ-2 voltage/ADC compatibility question is flagged under Outstanding Verification',
-      mq2InOutstanding ? 'pass' : 'warning',
-      mq2InOutstanding ? 'found' : 'not explicitly found — confirm manually'));
+    // 15. If MQ-2 voltage compatibility is uncertain, Outstanding Verification
+    // flags it. This generic heuristic is SUPERSEDED (skipped entirely, not
+    // just softened) whenever a PROJECT_HARDWARE_DECISIONS entry explicitly
+    // resolves the MQ-2 electrical architecture (sensorPowerRail +
+    // sensorInputGpio both set) — for that tutorial the electrical question is
+    // no longer open, so a generic "did you flag this as unresolved?" check
+    // would be stale by construction. Real MQ-2 tutorials WITHOUT such a
+    // resolution keep this check exactly as before — never weakened.
+    const mq2ArchitectureResolved = !!(context.projectHardwareDecision
+      && context.projectHardwareDecision.sensorPowerRail
+      && context.projectHardwareDecision.sensorInputGpio);
+    if (!mq2ArchitectureResolved) {
+      const mq2InOutstanding = /(mq-?2)[\s\S]{0,300}?(voltage|adc|compatib)/i.test(internalNotes) || /(voltage|adc|compatib)[\s\S]{0,300}?(mq-?2)/i.test(internalNotes);
+      checks.push(check('mq2_outstanding_verification', 'MQ-2 voltage/ADC compatibility question is flagged under Outstanding Verification',
+        mq2InOutstanding ? 'pass' : 'warning',
+        mq2InOutstanding ? 'found' : 'not explicitly found — confirm manually'));
+    }
   }
 
   // 16. Every URL in the public body must exist verbatim somewhere in the
@@ -430,7 +441,8 @@ function validateDraft(markdown, context) {
   // 25-28. Project-specific hardware expectations — ONLY added when this
   // tutorial has a PROJECT_HARDWARE_DECISIONS entry (tutorialContext.js).
   // These checks do not run, and do not appear in the report, for any other
-  // tutorial — see docs/CYTRON_TUTORIAL_AUTHORING_STANDARD.md §25.
+  // tutorial — see docs/CYTRON_TUTORIAL_AUTHORING_STANDARD.md §25 (rule)
+  // and docs/TUTORIAL_REVAMP_AGENT_DECISION_LOG.md (full rationale).
   if (context.projectHardwareDecision) {
     const decision = context.projectHardwareDecision;
 

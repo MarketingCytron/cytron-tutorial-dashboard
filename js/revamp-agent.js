@@ -1,15 +1,19 @@
 /**
- * Cytron Tutorial Revamp Agent — Milestone 2
+ * Cytron Tutorial Revamp Agent — Milestone 4
  *
  * Dashboard-side UI for: Revamp Tutorial modal -> job creation -> job
- * progress polling. Talks ONLY to the local bridge's
- * /api/revamp/start, /api/revamp/:jobId, and /api/revamp/:jobId/cancel
- * endpoints (plus /health and /api/test for the debug panel).
+ * progress polling -> Final Tutorial review. Talks ONLY to the local
+ * bridge's /api/revamp/start, /api/revamp/latest/:tutorialId,
+ * /api/revamp/:jobId, /api/revamp/:jobId/output, and
+ * /api/revamp/:jobId/cancel endpoints (plus /health and /api/test for the
+ * debug panel).
  *
- * This is still a stub pipeline: the bridge's StubWriter simulates
- * progress and writes a throwaway artifact inside its own gitignored job
- * directory. Nothing here ever touches revamped-tutorials/,
- * data/tutorials.json, or audits/.
+ * The bridge now runs the real Antigravity-backed writer (tutorialContext +
+ * promptBuilder + agyRunner + draftValidator) instead of the Milestone 2
+ * StubWriter. Nothing here ever touches revamped-tutorials/,
+ * data/tutorials.json, or audits/ — the generated draft stays a local
+ * review artifact until a human explicitly promotes it (not part of this
+ * milestone).
  */
 
 (function () {
@@ -17,9 +21,13 @@
   const TOKEN_KEY = 'revampBridgeToken';
   const POLL_INTERVAL_MS = 1500;
 
-  // Real bridge states shown in the progress checklist, in order.
-  // "Queued" is represented implicitly by the "Job Created" row.
-  const DISPLAY_STEPS = ['Preparing Context', 'Writing', 'Validating', 'Ready for Review'];
+  // Real bridge orchestration stages shown in the progress checklist, in
+  // order. "Queued" is represented implicitly by the "Job Created" row.
+  // Terminal outcomes (Ready for Review / Needs Human Review / Failed /
+  // Cancelled) are rendered separately, below the checklist — see
+  // renderProgressView().
+  const DISPLAY_STEPS = ['Preparing Context', 'Writing', 'Validating'];
+  const TERMINAL_STATES = ['Ready for Review', 'Needs Human Review', 'Failed', 'Cancelled'];
 
   function getToken() {
     try {
@@ -108,7 +116,7 @@
     // Modal shell
     // -----------------------------------------------------------------
 
-    openModal() {
+    async openModal() {
       const overlay = document.getElementById('revampModalOverlay');
       overlay.style.display = 'flex';
 
@@ -129,9 +137,37 @@
 
       if (!getToken()) {
         this.renderPairingView();
-      } else {
-        this.renderFormView();
+        return;
       }
+
+      // No jobId in this tab's sessionStorage (new tab, cleared storage, or a
+      // browser refresh) — recover the latest real job for this tutorial
+      // from the bridge's persisted jobStore, rather than forcing a fresh
+      // regeneration. Only worth resuming into if it's still active or has a
+      // reviewable result; a Failed/Cancelled prior attempt just starts fresh.
+      this.renderBody(`
+        <div class="revamp-modal-header"><h2>Revamp Tutorial</h2>${this.closeButton()}</div>
+        <div class="revamp-notice">Checking for an existing revamp job...</div>
+      `);
+
+      let recovered = null;
+      try {
+        const { res, data } = await bridgeFetch(`/api/revamp/latest/${encodeURIComponent(this.tutorial.id)}`, { method: 'GET' });
+        if (res.ok && data && data.ok && data.job) recovered = data.job;
+      } catch {
+        // Bridge unreachable — fall through to the normal form view, which
+        // itself surfaces a "could not reach bridge" notice.
+      }
+
+      if (recovered && (!TERMINAL_STATES.includes(recovered.state) || recovered.state === 'Ready for Review' || recovered.state === 'Needs Human Review')) {
+        this.activeJobId = recovered.jobId;
+        setStoredJobId(this.tutorial.id, recovered.jobId);
+        this.renderProgressView(recovered);
+        if (!TERMINAL_STATES.includes(recovered.state)) this.startPolling();
+        return;
+      }
+
+      this.renderFormView();
     },
 
     closeModal() {
@@ -285,17 +321,20 @@
       const stateIndex = DISPLAY_STEPS.indexOf(job.state);
       const isFailed = job.state === 'Failed';
       const isCancelled = job.state === 'Cancelled';
-      const isDone = job.state === 'Ready for Review';
-      const isTerminal = isFailed || isCancelled || isDone;
+      const isReady = job.state === 'Ready for Review';
+      const isNeedsReview = job.state === 'Needs Human Review';
+      const isTerminal = TERMINAL_STATES.includes(job.state);
 
       const stepsHtml = DISPLAY_STEPS.map((step, i) => {
         let cls = ''; let mark = '&#9675;'; // ○ upcoming
-        if (isFailed && i === Math.max(stateIndex, 0)) {
-          cls = 'failed'; mark = '&times;';
+        if (isFailed) {
+          cls = i === 0 ? 'failed' : ''; mark = i === 0 ? '&times;' : '&#9675;';
+        } else if (isReady || isNeedsReview) {
+          cls = 'done'; mark = '&#10003;';
         } else if (stateIndex === -1) {
           // still Queued — nothing started yet
-        } else if (i < stateIndex || (i === stateIndex && isDone)) {
-          cls = 'done'; mark = '&#10003;'; // check
+        } else if (i < stateIndex) {
+          cls = 'done'; mark = '&#10003;';
         } else if (i === stateIndex) {
           cls = 'active'; mark = '&#9679;'; // ● current
         }
@@ -303,19 +342,36 @@
       }).join('');
 
       let banner = '';
-      if (isDone) {
-        banner = `<div class="revamp-success">Milestone 2 stub completed successfully. No tutorial files were modified.</div>`;
+      if (isReady) {
+        banner = `<div class="revamp-success">Draft generation complete — no tutorial files were modified. This is a local review draft; review it before any publication decision.</div>`;
+      } else if (isNeedsReview) {
+        banner = `<div class="revamp-notice revamp-needs-review">Needs Human Review: deterministic validation found at least one unresolved hardware/electrical item that must be checked before this draft can be considered ready.${
+          Array.isArray(job.blockingReasons) && job.blockingReasons.length
+            ? `<ul class="revamp-blocking-reasons">${job.blockingReasons.map((r) => `<li>${escapeHtml(r)}</li>`).join('')}</ul>`
+            : ''
+        }</div>`;
       } else if (isFailed) {
         banner = `<div class="revamp-error">Job failed${job.error ? `: ${escapeHtml(job.error)}` : '.'}</div>`;
       } else if (isCancelled) {
         banner = `<div class="revamp-notice">Job cancelled.</div>`;
       }
 
+      const summary = job.validationSummary;
+      const validationHtml = summary
+        ? `<div class="revamp-validation-summary">Validation: ${summary.pass || 0} passed, ${summary.warning || 0} warning(s), ${summary.fail || 0} failed, ${summary.blocked || 0} blocking</div>`
+        : '';
+
+      const finalOutputHref = `final-output.html?id=${encodeURIComponent(this.tutorial.id)}&jobId=${encodeURIComponent(job.jobId)}`;
+      const viewFinalTutorialBtn = (isReady || isNeedsReview)
+        ? `<a class="btn btn-primary" href="${finalOutputHref}">View Final Tutorial</a>`
+        : '';
+
       this.renderBody(`
         <div class="revamp-modal-header"><h2>Tutorial Revamp Agent</h2>${this.closeButton()}</div>
         <div class="revamp-progress-tutorial">${escapeHtml(job.title || this.tutorial.title)}</div>
         <div class="revamp-progress-status">Status: <strong>${escapeHtml(job.state)}</strong></div>
         ${banner}
+        ${validationHtml}
         <ul class="revamp-steps">
           <li class="done"><span>&#10003;</span> Job Created</li>
           <li class="done"><span>&#10003;</span> Tutorial Loaded</li>
@@ -328,8 +384,10 @@
           </div>
         ` : ''}
         <div class="revamp-actions">
+          ${viewFinalTutorialBtn}
           ${isTerminal
-            ? `<button type="button" class="btn btn-secondary" id="revampCloseProgressBtn">Close</button>`
+            ? `<button type="button" class="btn btn-secondary" id="revampNewRevampBtn">Start New Revamp</button>
+               <button type="button" class="btn btn-secondary" id="revampCloseProgressBtn">Close</button>`
             : `<button type="button" class="btn btn-secondary" id="revampCancelJobBtn">Cancel Job</button>`}
         </div>
       `);
@@ -339,6 +397,14 @@
         closeBtn.addEventListener('click', () => {
           if (isTerminal) this.forgetStoredJob();
           this.closeModal();
+        });
+      }
+
+      const newRevampBtn = document.getElementById('revampNewRevampBtn');
+      if (newRevampBtn) {
+        newRevampBtn.addEventListener('click', () => {
+          this.forgetStoredJob();
+          this.renderFormView();
         });
       }
 

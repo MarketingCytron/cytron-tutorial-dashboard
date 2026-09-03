@@ -1,29 +1,32 @@
 'use strict';
 
 /**
- * Cytron Tutorial Revamp Bridge — Milestone 3A (agy edition)
+ * Cytron Tutorial Revamp Bridge — Milestone 4 (dashboard-integrated real writer)
  *
- * Milestone 2's Revamp UI backend (job creation, polling, cancellation,
- * backed by StubWriter) is unchanged. Milestone 3A adds a separate,
- * clearly dev-only Antigravity integration harness — no tutorial content
- * is ever involved in the harness. This uses the official headless `agy`
- * CLI (agyRunner.js / agyHarness.js); an earlier GUI-based approach
- * (`antigravity-ide.exe chat`) was tested and abandoned — see
- * docs/TUTORIAL_REVAMP_AGENT_MILESTONE_3A.md. This milestone intentionally
- * does NOT:
+ * The normal "Revamp Tutorial" flow now runs the real, proven Milestone 3
+ * writer pipeline (tutorialWriterPilot.js: current-source retrieval, trusted
+ * context, real prompt, headless `agy` CLI, deterministic validation) instead
+ * of the Milestone 2 StubWriter. StubWriter itself is untouched in source
+ * (service/stubWriter.js) for isolated tests, but this server no longer
+ * calls it for the user-facing flow. Milestone 3A's isolated Antigravity
+ * integration harness (no tutorial content) is unchanged and stays separate.
  *
- *   - generate a real Cytron tutorial, or use any tutorial content
- *   - invoke OpenAI/QA
+ * This milestone intentionally does NOT:
+ *   - invoke OpenAI/QA, or run any second model / automatic revision loop
  *   - write to data/tutorials.json, audits/, revamped-tutorials/, or references/
  *   - accept a shell command, arbitrary filesystem path, executable name,
  *     or "command" field of any kind from the browser
  *   - perform any git operation
+ *   - resolve a job's output file from anything other than a jobStore-owned
+ *     path derived from a jobId already validated by jobStore.getJob()
  *
  * Endpoints:
  *   GET  /health                              — unauthenticated liveness check
  *   POST /api/test                             — authenticated, read-only tutorial ID lookup (Milestone 1)
- *   POST /api/revamp/start                      — authenticated, creates a revamp job (Milestone 2, StubWriter)
+ *   POST /api/revamp/start                      — authenticated, creates a revamp job (Milestone 4, real writer)
+ *   GET  /api/revamp/latest/:tutorialId          — authenticated, returns the most recent revamp job for a tutorial (refresh recovery)
  *   GET  /api/revamp/:jobId                      — authenticated, returns safe job status (any job type)
+ *   GET  /api/revamp/:jobId/output                — authenticated, returns the candidate tutorial Markdown for that exact job
  *   POST /api/revamp/:jobId/cancel                — authenticated, cancels an active job (any job type)
  *   POST /api/dev/antigravity-harness/start        — authenticated, DEV ONLY, creates an isolated agy CLI test job
  *
@@ -34,11 +37,12 @@
 const http = require('http');
 const crypto = require('crypto');
 const fs = require('fs');
+const path = require('path');
 const { URL } = require('url');
 
 const config = require('./config');
 const jobStore = require('./jobStore');
-const stubWriter = require('./stubWriter');
+const tutorialWriterPilot = require('./tutorialWriterPilot');
 const agyHarness = require('./agyHarness');
 const logger = require('./logger');
 
@@ -334,10 +338,13 @@ async function handleRevampStart(req, res, cors) {
   }
 
   const job = jobStore.createJob(tutorialId, tutorial.title, instructionsCheck.value);
-  logger.log('job_created', { jobId: job.jobId, tutorialId, instructionsLength: instructionsCheck.value.length });
+  logger.log('job_created', { jobId: job.jobId, tutorialId, type: 'revamp', instructionsLength: instructionsCheck.value.length });
 
-  stubWriter.runStub(job.jobId).catch((err) => {
-    jobStore.updateJobState(job.jobId, 'Failed', { error: 'Unexpected stub writer error.' });
+  // Fire-and-forget: the real writer pipeline runs in the background exactly
+  // like StubWriter used to — the HTTP response returns immediately with the
+  // new job's ID, and the browser polls GET /api/revamp/:jobId for progress.
+  tutorialWriterPilot.runWriterForJob(job).catch((err) => {
+    jobStore.updateJobState(job.jobId, 'Failed', { error: 'Unexpected writer error.' });
     logger.log('job_failed', { jobId: job.jobId, reason: err.message });
   });
 
@@ -357,6 +364,76 @@ function handleRevampGet(req, res, cors, jobId) {
   }
 
   sendJson(res, 200, { ok: true, job: jobStore.toSafeJson(job) }, cors);
+}
+
+// The browser supplies ONLY tutorialId, already validated against
+// TUTORIAL_ID_PATTERN — jobStore.getLatestJobForTutorial() does a plain
+// in-memory lookup, never touches the filesystem with it.
+function handleRevampLatestForTutorial(req, res, cors, tutorialId) {
+  if (!isAuthorized(req)) {
+    sendJson(res, 401, { error: { code: 'unauthorized', message: 'Missing or invalid pairing token.' } }, cors);
+    return;
+  }
+
+  if (!TUTORIAL_ID_PATTERN.test(tutorialId)) {
+    sendJson(res, 400, { error: { code: 'invalid_tutorial_id', message: 'tutorialId must be a lowercase alphanumeric-hyphen slug.' } }, cors);
+    return;
+  }
+
+  const job = jobStore.getLatestJobForTutorial(tutorialId);
+  if (!job) {
+    sendJson(res, 404, { error: { code: 'no_job_found', message: 'No revamp job found for this tutorial.' } }, cors);
+    return;
+  }
+
+  sendJson(res, 200, { ok: true, job: jobStore.toSafeJson(job) }, cors);
+}
+
+// The browser supplies ONLY a jobId that must already resolve through
+// jobStore.getJob() — the candidate file path is then built exclusively from
+// jobStore.jobDir(jobId) (config.jobsDir + that exact jobId), never from any
+// browser-suppliable path fragment. jobId itself is constrained by the route
+// regex to [A-Za-z0-9-]+ before this handler ever runs, so it cannot contain
+// "..", "/", or an absolute/UNC/file:// path.
+function handleRevampOutput(req, res, cors, jobId) {
+  if (!isAuthorized(req)) {
+    sendJson(res, 401, { error: { code: 'unauthorized', message: 'Missing or invalid pairing token.' } }, cors);
+    return;
+  }
+
+  const job = jobStore.getJob(jobId);
+  if (!job) {
+    sendJson(res, 404, { error: { code: 'job_not_found', message: 'No job with that ID was found.' } }, cors);
+    return;
+  }
+
+  if (job.type !== jobStore.JOB_TYPES.REVAMP && job.type !== jobStore.JOB_TYPES.WRITER_PILOT) {
+    sendJson(res, 400, { error: { code: 'no_output_for_job_type', message: 'This job type does not produce a tutorial output.' } }, cors);
+    return;
+  }
+
+  const candidatePath = path.join(jobStore.jobDir(jobId), 'candidate-tutorial.md');
+  let markdown;
+  try {
+    markdown = fs.readFileSync(candidatePath, 'utf8');
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      sendJson(res, 404, { error: { code: 'output_not_ready', message: 'No candidate tutorial output exists yet for this job.' } }, cors);
+    } else {
+      console.error('[bridge] Failed to read candidate output:', err.message);
+      sendJson(res, 500, { error: { code: 'internal_error', message: 'Could not read candidate output.' } }, cors);
+    }
+    return;
+  }
+
+  sendJson(res, 200, {
+    ok: true,
+    jobId,
+    tutorialId: job.tutorialId,
+    state: job.state,
+    markdown,
+    validationSummary: job.validationSummary || null,
+  }, cors);
 }
 
 function handleRevampCancel(req, res, cors, jobId) {
@@ -379,10 +456,12 @@ function handleRevampCancel(req, res, cors, jobId) {
   jobStore.updateJobState(jobId, 'Cancelled');
   logger.log('job_cancelled', { jobId, tutorialId: job.tutorialId, type: job.type });
 
+  // Terminates ONLY this job's own tracked agy child process, if it is
+  // currently running — never a kill-by-name or global termination.
   if (job.type === jobStore.JOB_TYPES.ANTIGRAVITY_HARNESS) {
-    // Terminates ONLY this job's own tracked agy child process, if it is
-    // currently running — never a kill-by-name or global termination.
     agyHarness.cancelChildProcess(jobId);
+  } else if (job.type === jobStore.JOB_TYPES.REVAMP || job.type === jobStore.JOB_TYPES.WRITER_PILOT) {
+    tutorialWriterPilot.cancelChildProcess(jobId);
   }
 
   sendJson(res, 200, { ok: true, jobId, state: 'Cancelled' }, cors);
@@ -503,6 +582,26 @@ const server = http.createServer((req, res) => {
       return;
     }
     handleRevampCancel(req, res, cors, cancelMatch[1]);
+    return;
+  }
+
+  const outputMatch = pathname.match(/^\/api\/revamp\/([A-Za-z0-9-]+)\/output$/);
+  if (outputMatch) {
+    if (req.method !== 'GET') {
+      sendJson(res, 405, { error: { code: 'method_not_allowed', message: 'Use GET.' } }, { ...cors, Allow: 'GET, OPTIONS' });
+      return;
+    }
+    handleRevampOutput(req, res, cors, outputMatch[1]);
+    return;
+  }
+
+  const latestMatch = pathname.match(/^\/api\/revamp\/latest\/([a-z0-9-]+)$/);
+  if (latestMatch) {
+    if (req.method !== 'GET') {
+      sendJson(res, 405, { error: { code: 'method_not_allowed', message: 'Use GET.' } }, { ...cors, Allow: 'GET, OPTIONS' });
+      return;
+    }
+    handleRevampLatestForTutorial(req, res, cors, latestMatch[1]);
     return;
   }
 

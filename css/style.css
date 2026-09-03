@@ -1709,6 +1709,37 @@ a:hover {
     color: var(--text-secondary);
 }
 
+/* Local review draft banner (Milestone 4 — ?jobId= draft view only) */
+.draft-review-banner {
+    background: var(--partial-bg);
+    color: #92650a;
+    border: 1px solid rgba(202, 138, 4, 0.3);
+    border-radius: var(--border-radius);
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.85rem;
+    margin-bottom: var(--space-md);
+    max-width: 1040px;
+}
+
+/* Internal Editor Notes section within a rendered draft — visually set apart
+   from the public tutorial body, but never hidden: reviewers see everything. */
+.internal-editor-notes-block {
+    margin-top: var(--space-xl);
+    padding: var(--space-lg);
+    background: var(--bg-secondary, #f8f9fa);
+    border: 1px dashed var(--border);
+    border-radius: var(--border-radius-lg);
+}
+
+.internal-editor-notes-label {
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+}
+
 /* Final Output Card */
 .final-output-card {
     background: var(--bg-card);
@@ -2089,6 +2120,7 @@ a:hover {
 
 .revamp-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--space-sm);
     justify-content: flex-end;
     margin-top: var(--space-lg);
@@ -2121,6 +2153,22 @@ a:hover {
     border-radius: var(--border-radius);
     padding: var(--space-sm) var(--space-md);
     font-size: 0.85rem;
+    margin-bottom: var(--space-md);
+}
+
+.revamp-blocking-reasons {
+    margin: var(--space-xs) 0 0 0;
+    padding-left: 1.1rem;
+    font-size: 0.82rem;
+}
+
+.revamp-blocking-reasons li {
+    margin-bottom: 2px;
+}
+
+.revamp-validation-summary {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
     margin-bottom: var(--space-md);
 }
 

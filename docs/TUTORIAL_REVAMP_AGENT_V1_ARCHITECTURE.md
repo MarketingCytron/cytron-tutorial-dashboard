@@ -133,6 +133,8 @@ service/
 - **On completion**: `Utils.loadData()` caches `tutorials.json` in a module-level variable for the page's lifetime, so after the bridge patches the file, the dashboard must force a re-fetch (a small `Utils.reloadData()` addition, or simply reset the cached variable) before re-rendering, so the "View Final Output" button and updated `revampStatus` appear without a full page reload.
 - **Final Output tab is untouched** — it already renders anything with a valid `revampedOutputFile`, so a successful job "just shows up" there once `tutorials.json` is patched.
 
+**IMPLEMENTED (Milestone 4, 2026-09-02) — with real divergences from the plan above, recorded here rather than silently:** the pairing token is stored in `sessionStorage`, not `localStorage` (a Milestone 1 refinement made during live testing, before this section was written). The "on completion" `tutorials.json`-patch/re-fetch step described above **never happens** — Milestone 4 deliberately does not patch `tutorials.json` or `revampStatus` at all (see the §9 amendment below); instead, a new "View Final Tutorial" button appears once the job reaches `Ready for Review` or `Needs Human Review`, linking to `final-output.html?id=<tutorialId>&jobId=<jobId>` — a new **draft mode** of the existing Final Output page that fetches the candidate Markdown from the bridge (authenticated) rather than from a static, committed file. Full detail: `docs/TUTORIAL_REVAMP_AGENT_MILESTONE_4_DASHBOARD_WRITER.md`.
+
 ---
 
 ## 7. Antigravity Integration Design
@@ -204,6 +206,8 @@ interface QAProvider {
 - **`OpenAIQAProvider` (future, not built now)** would receive: the generated Markdown, the audit file, the tutorial's dashboard metadata, the user's approved hardware instructions, and a new `qa/CYTRON_TUTORIAL_QA_STANDARD.md` (referenced by the brief, not created in this step). It returns the same `{decision, issues}` shape.
 - Provider selection should be a config switch (`config.qaProvider = 'noop' | 'openai'`), not a code fork, so enabling real QA later is a config + API-key change.
 
+**HUMAN DECISION (Milestone 4, 2026-09-02): this section was not built, not even as a `NoopQAProvider` stub.** No QA-related state (`QA Review`, `Revision Required`), no `QAProvider` interface, and no revision loop exist anywhere in the implementation. The explicit product decision was that the human using the dashboard IS the QA reviewer — see §9's amendment for the actual (simpler) implemented state model. If OpenAI QA is ever added, it would need to be designed against the real implemented pipeline (`tutorialWriterPilot.js` / `draftValidator.js`), not retrofitted onto this section's `NoopQAProvider` sketch, which no longer reflects the codebase.
+
 ---
 
 ## 9. Job State Model
@@ -232,6 +236,8 @@ Cancelled                        (terminal — user-triggered from any non-termi
 
 Why split it this way: the fine-grained states (`Writing`, `Validating`, `QA Review`, `Revision Required`) are operationally useful for the progress UI and logs but would be noisy and short-lived if written into the git-tracked `tutorials.json` on every transition (and would require every existing consumer of `revampStatus` — CSS classes, `revamp.js` filters, the validator's enum — to learn five new values it doesn't otherwise need). Keeping them bridge-side avoids schema churn while still fully implementing the brief's state model.
 
+**IMPLEMENTED (Milestone 4, 2026-09-02) — Layer A does not exist.** `tutorials.json`'s `revampStatus` is never read or written by the bridge, at any point — `scripts/validate-data.js`'s `VALID_STATUSES` enum was never extended, and no `Ready for Review` value was added to it. This was a deliberate simplification: since Milestone 4 has no publish/promotion step at all (§11/§12 of `docs/TUTORIAL_REVAMP_AGENT_MILESTONE_4_DASHBOARD_WRITER.md`), there is nothing for that dashboard-facing status field to usefully reflect yet. Layer B (bridge-internal job state) is real, but simpler than planned here: `Queued → Preparing Context → Writing → Validating → { Ready for Review | Needs Human Review }`, or `Failed`/`Cancelled` from any point — no `QA Review` or `Revision Required` states (§8's amendment), and `Needs Human Review` (added in Milestone 3, wired to the dashboard in Milestone 4) is a new terminal-success state not anticipated here: it means `agy` succeeded but the deterministic validator found a genuinely blocking unresolved hardware/electrical item — not a failure, and not something this section's model accounted for.
+
 ---
 
 ## 10. API Design
@@ -247,6 +253,8 @@ All endpoints are loopback-only and (except `/health`) require a `X-Revamp-Token
 | `GET /api/revamp?tutorialId=` | Job history for a tutorial | Nice-to-have, not required for the walking skeleton (§19). |
 
 Error shape: `{ "error": { "code": "invalid_tutorial_id" | "unauthorized" | "job_not_found" | "job_already_active" | "antigravity_unavailable" | ..., "message": "..." } }`.
+
+**IMPLEMENTED (Milestone 4, 2026-09-02):** the auth header is `Authorization: Bearer <token>`, not `X-Revamp-Token`. `/health` is unauthenticated as planned. Actual endpoint set: `POST /api/revamp/start`, `GET /api/revamp/:jobId`, `POST /api/revamp/:jobId/cancel` (all as planned, same error-shape convention), plus two added in Milestone 4 that weren't in this table: `GET /api/revamp/:jobId/output` (returns the candidate Markdown for a job) and `GET /api/revamp/latest/:tutorialId` (browser-refresh recovery — the most recent `revamp` job for a tutorial, any state). The `GET /api/revamp?tutorialId=` history endpoint sketched here was never built — not needed once `latest/:tutorialId` covered the actual recovery use case.
 
 ---
 
@@ -359,6 +367,7 @@ These block or materially change Phases 3–4 and should be resolved with the us
 5. **Single global job concurrency** (§5) is assumed acceptable for V1 — confirm this matches how the user actually intends to use it (e.g., never queuing two tutorials back-to-back while waiting on the first).
 6. **Extending `tutorials.json`'s `revampStatus` enum** with `Ready for Review` (§9) touches a schema the user/team may have downstream expectations about (e.g. anything reading the CSV export, `tutorial_validation_export.csv`) — confirm no other consumer assumes the current fixed enum.
 7. **Is the GitHub repo/Pages site actually public, or restricted?** Confirms how seriously to weight the "public page, local high-privilege service" threat model in §12.
+8. **Wiring the proven real writer into the normal dashboard flow — RESOLVED (Milestone 4, 2026-09-02).** The Milestone 2 StubWriter behind `POST /api/revamp/start` was replaced with the real, already-proven Milestone 3 writer pipeline (`tutorialWriterPilot.js`'s `runWriterForJob()`, shared with the supervised pilot path — no duplicated writer logic). A real, confirmed bug was found and fixed in the process: the pilot's preflight checks (non-empty instructions, literal "educational"/"not certified" wording, mandatory Maker ESP32 targeting) were specific to the one safety-sensitive pilot project and would have blocked `agy` from ever being called for almost every other tutorial — verified with an isolated test before removing them as hard preconditions. Output retrieval, a "View Final Tutorial" draft-mode page, browser-refresh recovery, and cancellation were all added; publishing/promotion (writing `revamped-tutorials/`, patching `tutorials.json`) remains entirely unbuilt and unplanned in detail — see item 6 above, still open. Full detail: `docs/TUTORIAL_REVAMP_AGENT_MILESTONE_4_DASHBOARD_WRITER.md`.
 
 ---
 
