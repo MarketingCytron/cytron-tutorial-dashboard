@@ -3713,7 +3713,7 @@
       },
       "decision": "Keep",
       "revampScope": "Small",
-      "revampStatus": "Reviewed",
+      "revampStatus": "Revamping",
       "priority": "None",
       "technicalScore": 8,
       "scores": {
@@ -3786,6 +3786,7 @@
       ],
       "links": [],
       "auditFile": "audits/esp32-motion-detector-alert.md",
+      "revampedOutputFile": "revamped-tutorials/esp32-motion-detector-alert.md",
       "makerEsp32PublishDate": "2026-09-05",
       "hardwareUsed": {
         "board": "Maker ESP32",
