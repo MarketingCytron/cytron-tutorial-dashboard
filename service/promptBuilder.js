@@ -49,7 +49,62 @@ function metadataBlock(tutorial) {
   return lines.join('\n');
 }
 
-function buildTutorialPrompt({ tutorialId, userInstructions, jobId }) {
+function evidenceDecisionPriorityText(revision) {
+  if (!revision) {
+    return (
+      'When deciding hardware setup, wiring, component usage, GPIO migration, software behavior, or any other technical assumption, resolve it using this authority order — highest first:\n\n' +
+      '1. HUMAN-APPROVED REVAMP INSTRUCTIONS (below) — the human\'s decision for this specific job. Not a suggestion.\n' +
+      '2. PROJECT-SPECIFIC HARDWARE DECISIONS (below, if present for this tutorial) — recorded human-approved project architecture.\n' +
+      '3. APPROVED OFFICIAL / PRODUCT / CODING PACK REFERENCES (below) — the primary authority for board-specific facts (onboard GPIO assignments, onboard LED/buzzer/buttons, Maker Port, ADC/input limits, power requirements, boot-sensitive pins, pin conflicts).\n' +
+      '4. CURRENT TUTORIAL SOURCE SNAPSHOT (below) — fallback evidence for how an EXTERNAL product/module (a sensor, display, or other component not made by Cytron for this board) was actually wired and used in a working project, when the official references are silent about it.\n' +
+      '5. AUDIT FINDINGS (below) — identifies outdated hardware, migration opportunities, missing safety notes, and technical risks; useful context, not a technical authority over the tiers above it.\n\n' +
+      'A higher tier wins when sources disagree. Do NOT let an audit recommendation, a generic Coding Pack assumption, or another tutorial\'s setup silently override an explicit human instruction or a project-specific decision.\n\n' +
+      'CRITICAL: absence of a fact from the official/Coding Pack references is NOT negative evidence about an external component. It does NOT mean unsupported, unsafe, incompatible, or unresolved — the Coding Pack is not expected to document every external sensor, actuator, display, or module ever used in a Cytron tutorial. When the official references are silent about an external component, check the CURRENT TUTORIAL SOURCE SNAPSHOT before treating anything about it as unresolved: if that snapshot already demonstrates the component working in a specific configuration (power rail, analog/digital mode, connection architecture, library usage, a working threshold starting point), treat that configuration as valid project evidence and preserve it — unless the human changes it, a project-specific decision changes it, the new board has a VERIFIED incompatibility with it, approved technical evidence directly contradicts it, the audit identifies a confirmed technical defect in it, or the original tutorial is internally inconsistent about it.\n\n' +
+      'The original tutorial snapshot is evidence, not absolute authority — do not blindly copy it. It may contain an outdated controller, outdated library, pin choices unsuitable for the new board, or missing safety notes; board-specific migration must still respect the new board\'s verified constraints (e.g. an original pin choice must still be replaced with whatever pin the human or official references establish for the new board — see HUMAN-APPROVED REVAMP INSTRUCTIONS below).\n\n' +
+      'If a genuine, VERIFIED conflict exists between tiers (not merely silence) — for example, an approved official reference directly proves the original tutorial\'s exact setup is incompatible with the new board — do not invent a resolution or silently pick one side. Preserve both positions in your reasoning, follow the higher-authority tier for the public tutorial, and record the specific conflict under Outstanding Verification in INTERNAL EDITOR NOTES so a human can resolve it. The human reviewing this draft is the final QA step.'
+    );
+  }
+
+  return (
+    'This is a REVISION of a previous draft. When deciding hardware setup, wiring, component usage, GPIO migration, software behavior, or any other technical assumption, resolve it using this authority order — highest first:\n\n' +
+    '1. HUMAN-APPROVED REVIEW FEEDBACK (below) — the latest human decision for THIS revision. Not a suggestion.\n' +
+    '2. HUMAN-APPROVED REVAMP INSTRUCTIONS (below) — the original human decision for this job, still in force except where REVIEW FEEDBACK explicitly changes it.\n' +
+    '3. PROJECT-SPECIFIC HARDWARE DECISIONS (below, if present for this tutorial) — recorded human-approved project architecture.\n' +
+    '4. APPROVED OFFICIAL / PRODUCT / CODING PACK REFERENCES (below) — the primary authority for board-specific facts (onboard GPIO assignments, onboard LED/buzzer/buttons, Maker Port, ADC/input limits, power requirements, boot-sensitive pins, pin conflicts).\n' +
+    '5. PREVIOUS REVIEW DRAFT (below) — the primary EDITORIAL baseline for this revision. Preserve its content except where a higher tier above requires a change.\n' +
+    '6. CURRENT TUTORIAL SOURCE SNAPSHOT (below) — historical/original fallback evidence for how an EXTERNAL product/module was actually wired and used in a working project, when nothing higher-priority resolves it.\n' +
+    '7. AUDIT FINDINGS (below) — identifies outdated hardware, migration opportunities, missing safety notes, and technical risks; useful context, not a technical authority over the tiers above it.\n\n' +
+    'A higher tier wins when sources disagree. When the current HUMAN-APPROVED REVIEW FEEDBACK directly conflicts with the earlier HUMAN-APPROVED REVAMP INSTRUCTIONS, PROJECT-SPECIFIC HARDWARE DECISIONS, or the PREVIOUS REVIEW DRAFT: the newest explicit human feedback wins. Do not silently combine contradictory human directions — follow the latest one for the public tutorial and, if the conflict is substantive, note it under Outstanding Verification.\n\n' +
+    'CRITICAL: absence of a fact from the official/Coding Pack references is NOT negative evidence about an external component. It does NOT mean unsupported, unsafe, incompatible, or unresolved. When the official references are silent about an external component, check the PREVIOUS REVIEW DRAFT and then the CURRENT TUTORIAL SOURCE SNAPSHOT before treating anything about it as unresolved: if either already demonstrates the component working in a specific configuration, treat that configuration as valid evidence and preserve it — unless the human feedback changes it, a project-specific decision changes it, the new board has a VERIFIED incompatibility with it, or approved technical evidence directly contradicts it.\n\n' +
+    'If a genuine, VERIFIED conflict exists between tiers (not merely silence), do not invent a resolution or silently pick one side. Preserve both positions in your reasoning, follow the higher-authority tier for the public tutorial, and record the specific conflict under Outstanding Verification in INTERNAL EDITOR NOTES so a human can resolve it. The human reviewing this draft is the final QA step.'
+  );
+}
+
+function internalEditorNotesText(revision) {
+  if (!revision) {
+    return (
+      'After the publishable tutorial, include exactly:\n\n' +
+      '---\n# INTERNAL EDITOR NOTES — DO NOT PUBLISH\n\n## Revamp Change Log\n\n## Outstanding Verification\n\n## Media Replacement Plan\n\n' +
+      'All migration reasoning, uncertainty, physical verification requirements, and media replacement instructions belong here — never in the public tutorial above.'
+    );
+  }
+
+  return (
+    'After the publishable tutorial, include exactly:\n\n' +
+    '---\n# INTERNAL EDITOR NOTES — DO NOT PUBLISH\n\n## Revision History\n\n## Revamp Change Log\n\n## Outstanding Verification\n\n## Media Replacement Plan\n\n' +
+    'All migration reasoning, uncertainty, physical verification requirements, and media replacement instructions belong under the sections above — never in the public tutorial above.\n\n' +
+    `The "## Revision History" subsection is REQUIRED for this revision and must contain, concisely and reviewer-friendly (no chain-of-thought, no internal reasoning transcript):\n\n` +
+    `Revision ${revision.revisionNumber}\n` +
+    'Human Feedback:\n' +
+    `"${revision.reviewFeedback}"\n\n` +
+    'Changes Applied:\n' +
+    '- (a short bullet list of what was actually changed in response to the feedback above)\n' +
+    '- Other sections preserved.\n\n' +
+    'List only what genuinely changed. If the feedback was narrow (e.g. "shorten the introduction, keep everything else unchanged"), the bullet list should be short and the closing "Other sections preserved." line must be accurate — do not claim preservation if you in fact rewrote other sections.'
+  );
+}
+
+function buildPrompt({ tutorialId, userInstructions, jobId, revision }) {
   const context = tutorialContext.resolveContext(tutorialId, userInstructions, jobId);
   const { tutorial } = context;
 
@@ -57,24 +112,23 @@ function buildTutorialPrompt({ tutorialId, userInstructions, jobId }) {
 
   parts.push(section(
     'ROLE AND TASK',
-    'You are the Cytron Tutorial Revamp Writer.\n\n' +
+    (revision
+      ? `You are the Cytron Tutorial Revamp Writer, producing Revision ${revision.revisionNumber} of an existing draft based on human review feedback.\n\n` +
+        'This is a REVISION, not a fresh rewrite. Preserve the previous draft\'s content except where the HUMAN-APPROVED REVIEW FEEDBACK below requires a change, or where a higher-authority source (see EVIDENCE & DECISION PRIORITY) requires a correction. Do not rewrite unrelated sections with different wording merely because you are able to.\n\n'
+      : 'You are the Cytron Tutorial Revamp Writer.\n\n') +
     'Write a publish-ready Cytron tutorial based strictly on the supplied approved sources below. ' +
     'Do not invent facts. Do not use any source not explicitly provided in this prompt.'
   ));
 
-  parts.push(section(
-    'EVIDENCE & DECISION PRIORITY',
-    'When deciding hardware setup, wiring, component usage, GPIO migration, software behavior, or any other technical assumption, resolve it using this authority order — highest first:\n\n' +
-    '1. HUMAN-APPROVED REVAMP INSTRUCTIONS (below) — the human\'s decision for this specific job. Not a suggestion.\n' +
-    '2. PROJECT-SPECIFIC HARDWARE DECISIONS (below, if present for this tutorial) — recorded human-approved project architecture.\n' +
-    '3. APPROVED OFFICIAL / PRODUCT / CODING PACK REFERENCES (below) — the primary authority for board-specific facts (onboard GPIO assignments, onboard LED/buzzer/buttons, Maker Port, ADC/input limits, power requirements, boot-sensitive pins, pin conflicts).\n' +
-    '4. CURRENT TUTORIAL SOURCE SNAPSHOT (below) — fallback evidence for how an EXTERNAL product/module (a sensor, display, or other component not made by Cytron for this board) was actually wired and used in a working project, when the official references are silent about it.\n' +
-    '5. AUDIT FINDINGS (below) — identifies outdated hardware, migration opportunities, missing safety notes, and technical risks; useful context, not a technical authority over the tiers above it.\n\n' +
-    'A higher tier wins when sources disagree. Do NOT let an audit recommendation, a generic Coding Pack assumption, or another tutorial\'s setup silently override an explicit human instruction or a project-specific decision.\n\n' +
-    'CRITICAL: absence of a fact from the official/Coding Pack references is NOT negative evidence about an external component. It does NOT mean unsupported, unsafe, incompatible, or unresolved — the Coding Pack is not expected to document every external sensor, actuator, display, or module ever used in a Cytron tutorial. When the official references are silent about an external component, check the CURRENT TUTORIAL SOURCE SNAPSHOT before treating anything about it as unresolved: if that snapshot already demonstrates the component working in a specific configuration (power rail, analog/digital mode, connection architecture, library usage, a working threshold starting point), treat that configuration as valid project evidence and preserve it — unless the human changes it, a project-specific decision changes it, the new board has a VERIFIED incompatibility with it, approved technical evidence directly contradicts it, the audit identifies a confirmed technical defect in it, or the original tutorial is internally inconsistent about it.\n\n' +
-    'The original tutorial snapshot is evidence, not absolute authority — do not blindly copy it. It may contain an outdated controller, outdated library, pin choices unsuitable for the new board, or missing safety notes; board-specific migration must still respect the new board\'s verified constraints (e.g. an original pin choice must still be replaced with whatever pin the human or official references establish for the new board — see HUMAN-APPROVED REVAMP INSTRUCTIONS below).\n\n' +
-    'If a genuine, VERIFIED conflict exists between tiers (not merely silence) — for example, an approved official reference directly proves the original tutorial\'s exact setup is incompatible with the new board — do not invent a resolution or silently pick one side. Preserve both positions in your reasoning, follow the higher-authority tier for the public tutorial, and record the specific conflict under Outstanding Verification in INTERNAL EDITOR NOTES so a human can resolve it. The human reviewing this draft is the final QA step.'
-  ));
+  if (revision) {
+    parts.push(section(
+      'HUMAN-APPROVED REVIEW FEEDBACK',
+      'This is the latest human decision for this revision — HUMAN-APPROVED REVIEW FEEDBACK, not casual commentary. It is authoritative direction for this specific revision (see EVIDENCE & DECISION PRIORITY below for its exact rank relative to other sources). If it conflicts with any earlier human instruction, project-specific decision, or the previous draft, this latest feedback wins.\n\n' +
+      `${(revision.reviewFeedback || '').trim()}`
+    ));
+  }
+
+  parts.push(section('EVIDENCE & DECISION PRIORITY', evidenceDecisionPriorityText(revision)));
 
   const authoringRulesParts = [
     '## Source 1 of 2 — AGENTS.md (revamp workflow, source hierarchy, safety rules)',
@@ -120,6 +174,17 @@ function buildTutorialPrompt({ tutorialId, userInstructions, jobId }) {
       (tutorial ? `The current tutorial is published at: ${tutorial.url}. ` : '') +
       'Do NOT invent this content. ' +
       'Anything about it that cannot be confirmed from the AUDIT FINDINGS above must be marked NEEDS VERIFICATION, not guessed.]'
+    ));
+  }
+
+  if (revision) {
+    parts.push(section(
+      'PREVIOUS REVIEW DRAFT — PRIMARY REVISION BASELINE',
+      `This is the complete previous candidate draft (Revision ${revision.revisionNumber - 1}) for this same job. It is the PRIMARY EDITORIAL BASELINE for this revision — see EVIDENCE & DECISION PRIORITY above for its exact rank relative to the other sources.\n\n` +
+      'Preserve all content that is not affected by the HUMAN-APPROVED REVIEW FEEDBACK above as closely as possible. This is a targeted revision of this draft, not a fresh rewrite from the original tutorial — do NOT regenerate unrelated sections with different wording merely because you are able to. If the feedback is narrow (e.g. "shorten the introduction, keep the rest unchanged"), only the affected section(s) should materially change.\n\n' +
+      'This draft is an EDITORIAL baseline, not a technical authority above the human, project-specific, or official sources listed above it in EVIDENCE & DECISION PRIORITY — if it contains a technical error that a higher-priority source corrects, fix it; otherwise preserve it verbatim.\n\n' +
+      '---\n\n' +
+      revision.previousCandidateMarkdown
     ));
   }
 
@@ -240,12 +305,7 @@ function buildTutorialPrompt({ tutorialId, userInstructions, jobId }) {
     'Do NOT name specific regulatory standards (e.g. UL 217, EN 14604, IEC numbers) unless an approved source actually requires citing them AND doing so materially helps the beginner complete the project safely — naming a standard just for authoritative flavor is exactly the "regulatory essay" density this project has moved away from. Deeper safety/engineering verification notes belong in Outstanding Verification, not the public disclaimer.'
   ));
 
-  parts.push(section(
-    'INTERNAL EDITOR NOTES',
-    'After the publishable tutorial, include exactly:\n\n' +
-    '---\n# INTERNAL EDITOR NOTES — DO NOT PUBLISH\n\n## Revamp Change Log\n\n## Outstanding Verification\n\n## Media Replacement Plan\n\n' +
-    'All migration reasoning, uncertainty, physical verification requirements, and media replacement instructions belong here — never in the public tutorial above.'
-  ));
+  parts.push(section('INTERNAL EDITOR NOTES', internalEditorNotesText(revision)));
 
   parts.push(section(
     'OUTPUT CONSISTENCY',
@@ -285,9 +345,37 @@ function buildTutorialPrompt({ tutorialId, userInstructions, jobId }) {
     promptUtf8Bytes,
     sizeWarning: promptCharacters > PROMPT_SIZE_WARNING_CHARS,
     generatedAt: new Date().toISOString(),
+    isRevision: !!revision,
+    revisionNumber: revision ? revision.revisionNumber : null,
   };
 
   return { promptText, manifest };
 }
 
-module.exports = { buildTutorialPrompt, PROMPT_SIZE_WARNING_CHARS };
+/**
+ * Builds the prompt for a normal (non-revision) tutorial generation job.
+ * Unchanged behavior from Milestone 3B/4.
+ */
+function buildTutorialPrompt({ tutorialId, userInstructions, jobId }) {
+  return buildPrompt({ tutorialId, userInstructions, jobId, revision: null });
+}
+
+/**
+ * Builds the prompt for a Milestone 6 revision job — the same composer as
+ * buildTutorialPrompt, with the HUMAN-APPROVED REVIEW FEEDBACK and PREVIOUS
+ * REVIEW DRAFT sections injected, EVIDENCE & DECISION PRIORITY reordered to
+ * put the feedback first, and an INTERNAL EDITOR NOTES contract that
+ * requires a "## Revision History" entry. `previousCandidateMarkdown` and
+ * `reviewFeedback` are supplied by the caller (tutorialWriterPilot.js) —
+ * this module never fetches or resolves either itself.
+ */
+function buildRevisionPrompt({ tutorialId, userInstructions, jobId, previousCandidateMarkdown, reviewFeedback, revisionNumber }) {
+  return buildPrompt({
+    tutorialId,
+    userInstructions,
+    jobId,
+    revision: { previousCandidateMarkdown, reviewFeedback, revisionNumber },
+  });
+}
+
+module.exports = { buildTutorialPrompt, buildRevisionPrompt, PROMPT_SIZE_WARNING_CHARS };

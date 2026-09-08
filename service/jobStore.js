@@ -97,6 +97,87 @@ function createJob(tutorialId, title, userInstructions) {
   return job;
 }
 
+// ---------------------------------------------------------------------------
+// Revision metadata (Milestone 6) — parentJobId / rootJobId / revisionNumber
+// live directly on 'revamp' job records (see createRevisionJob below). A job
+// created before Milestone 6 has none of these fields; deriveRevisionMeta()
+// supplies the documented defaults (revisionNumber=1, rootJobId=own jobId,
+// parentJobId=null) at READ time rather than migrating/rewriting any
+// existing job.json on disk.
+// ---------------------------------------------------------------------------
+
+function deriveRevisionMeta(job) {
+  return {
+    revisionNumber: job.revisionNumber || 1,
+    parentJobId: job.parentJobId || null,
+    rootJobId: job.rootJobId || job.jobId,
+  };
+}
+
+/**
+ * Creates a new 'revamp' job that revises `parentJob`. Never mutates or
+ * overwrites `parentJob` — its own job.json, candidate, and validation
+ * report are left completely untouched. The new job inherits tutorialId,
+ * title, and the ORIGINAL human-approved `userInstructions` from the parent
+ * (so that authority stays intact across a whole revision chain); the new
+ * human review feedback is recorded separately as `reviewFeedback`, never
+ * merged into `userInstructions`.
+ */
+function createRevisionJob(parentJob, feedback) {
+  const jobId = crypto.randomUUID();
+  const now = new Date().toISOString();
+  const parentMeta = deriveRevisionMeta(parentJob);
+
+  const job = {
+    jobId,
+    type: JOB_TYPES.REVAMP,
+    tutorialId: parentJob.tutorialId,
+    title: parentJob.title,
+    userInstructions: parentJob.userInstructions,
+    parentJobId: parentJob.jobId,
+    rootJobId: parentMeta.rootJobId,
+    revisionNumber: parentMeta.revisionNumber + 1,
+    reviewFeedback: feedback,
+    state: 'Queued',
+    createdAt: now,
+    updatedAt: now,
+    revisionCount: 0,
+    error: null,
+  };
+
+  jobs.set(jobId, job);
+  activeJobIdByTutorial.set(parentJob.tutorialId, jobId);
+  persist(job);
+  return job;
+}
+
+/**
+ * Returns the full revision chain (root + every revision) for whichever
+ * root job `job` belongs to, oldest first, as safe summary records only —
+ * never a raw filesystem path. Works for a job created before Milestone 6
+ * (its derived rootJobId is its own jobId, so it appears as a length-1
+ * history unless/until a revision is requested from it).
+ */
+function listRevisions(job) {
+  const rootJobId = deriveRevisionMeta(job).rootJobId;
+  const matches = [];
+  for (const candidate of jobs.values()) {
+    if (candidate.type !== JOB_TYPES.REVAMP) continue;
+    const meta = deriveRevisionMeta(candidate);
+    if (meta.rootJobId !== rootJobId) continue;
+    matches.push({ job: candidate, meta });
+  }
+  matches.sort((a, b) => a.meta.revisionNumber - b.meta.revisionNumber);
+  return matches.map(({ job: j, meta }) => ({
+    jobId: j.jobId,
+    revisionNumber: meta.revisionNumber,
+    parentJobId: meta.parentJobId,
+    state: j.state,
+    createdAt: j.createdAt,
+    validationSummary: j.validationSummary || null,
+  }));
+}
+
 function getActiveJobForTutorial(tutorialId) {
   const jobId = activeJobIdByTutorial.get(tutorialId);
   if (!jobId) return null;
@@ -266,6 +347,7 @@ function toSafeJson(job) {
   };
 
   if (job.type === JOB_TYPES.REVAMP) {
+    const revisionMeta = deriveRevisionMeta(job);
     return {
       ...base,
       tutorialId: job.tutorialId,
@@ -273,6 +355,10 @@ function toSafeJson(job) {
       userInstructions: job.userInstructions,
       validationSummary: job.validationSummary || null,
       blockingReasons: job.blockingReasons || null,
+      revisionNumber: revisionMeta.revisionNumber,
+      parentJobId: revisionMeta.parentJobId,
+      rootJobId: revisionMeta.rootJobId,
+      reviewFeedback: job.reviewFeedback || null,
     };
   }
 
@@ -408,6 +494,9 @@ module.exports = {
   createJob,
   getActiveJobForTutorial,
   getLatestJobForTutorial,
+  deriveRevisionMeta,
+  createRevisionJob,
+  listRevisions,
   createHarnessJob,
   getActiveHarnessJob,
   createWriterPilotJob,

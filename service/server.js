@@ -31,6 +31,12 @@
  *   POST /api/revamp/:jobId/publish                — authenticated, Milestone 5: human-approved Final Output publish
  *                                                     (candidate -> revamped-tutorials/, dataset update, validate,
  *                                                     commit, push — see service/tutorialPublisher.js)
+ *   POST /api/revamp/:jobId/revise                 — authenticated, Milestone 6: creates a NEW revision job from an
+ *                                                     eligible, unpublished parent draft + human review feedback
+ *                                                     (see service/revisionManager.js) — never overwrites the parent.
+ *   GET  /api/revamp/:jobId/revisions               — authenticated, Milestone 6: safe revision-history summary
+ *                                                     (jobId/revisionNumber/parentJobId/state/createdAt/validationSummary
+ *                                                     only — no filesystem paths) for the whole chain `jobId` belongs to.
  *   POST /api/dev/antigravity-harness/start        — authenticated, DEV ONLY, creates an isolated agy CLI test job
  *
  * Run with: node service/server.js
@@ -48,6 +54,7 @@ const jobStore = require('./jobStore');
 const tutorialWriterPilot = require('./tutorialWriterPilot');
 const agyHarness = require('./agyHarness');
 const tutorialPublisher = require('./tutorialPublisher');
+const revisionManager = require('./revisionManager');
 const logger = require('./logger');
 
 // ---------------------------------------------------------------------------
@@ -215,6 +222,28 @@ function validateInstructions(instructions) {
     return { ok: false, code: 'invalid_instructions', message: 'instructions contains unsupported control characters.' };
   }
   return { ok: true, value: instructions };
+}
+
+// Milestone 6 — human review feedback for a revision request. Same opaque-
+// editorial-text treatment as validateInstructions above (never interpreted
+// as a shell command, filename, path, or argument), but — unlike
+// instructions, which the "Revamp Tutorial" form leaves optional — feedback
+// MUST be non-empty: an empty "Request Changes" submission has no direction
+// to act on.
+function validateFeedback(feedback) {
+  if (typeof feedback !== 'string') {
+    return { ok: false, code: 'invalid_feedback', message: 'feedback must be a string.' };
+  }
+  if (feedback.trim().length === 0) {
+    return { ok: false, code: 'invalid_feedback', message: 'feedback must not be empty.' };
+  }
+  if (feedback.length > config.maxInstructionsLength) {
+    return { ok: false, code: 'feedback_too_long', message: `feedback must be ${config.maxInstructionsLength} characters or fewer.` };
+  }
+  if (DISALLOWED_CONTROL_CHARS.test(feedback)) {
+    return { ok: false, code: 'invalid_feedback', message: 'feedback contains unsupported control characters.' };
+  }
+  return { ok: true, value: feedback };
 }
 
 // ---------------------------------------------------------------------------
@@ -547,6 +576,87 @@ async function handleRevampPublish(req, res, cors, jobId) {
 }
 
 // ---------------------------------------------------------------------------
+// Route handlers — Milestone 6 (human feedback & draft revision)
+//
+// The browser sends ONLY a parent jobId (route-validated, resolved
+// exclusively through jobStore.getJob()) and a plain-text `feedback` string.
+// Every other value — tutorialId, title, original instructions, the
+// previous candidate's file path — is resolved server-side from the
+// persisted parent job by service/revisionManager.js. No tutorialId,
+// candidate Markdown, file path, model name, command, or git argument is
+// ever accepted from the request body.
+// ---------------------------------------------------------------------------
+
+const REVISE_ERROR_STATUS = {
+  job_not_found: 404,
+  no_output_for_job_type: 400,
+  job_not_eligible: 409,
+  already_published: 409,
+  candidate_missing: 422,
+};
+
+async function handleRevampRevise(req, res, cors, jobId) {
+  if (!isAuthorized(req)) {
+    sendJson(res, 401, { error: { code: 'unauthorized', message: 'Missing or invalid pairing token.' } }, cors);
+    return;
+  }
+
+  if (!hasJsonContentType(req)) {
+    req.resume();
+    sendJson(res, 415, { error: { code: 'unsupported_media_type', message: 'Content-Type must be application/json.' } }, cors);
+    return;
+  }
+
+  let body;
+  try {
+    body = await readJsonBody(req, config.maxBodyBytes);
+  } catch (err) {
+    const status = err.code === 'payload_too_large' ? 413 : 400;
+    sendJson(res, status, { error: { code: err.code || 'invalid_json', message: err.message } }, cors);
+    return;
+  }
+
+  const feedbackCheck = validateFeedback(body && body.feedback);
+  if (!feedbackCheck.ok) {
+    sendJson(res, 400, { error: { code: feedbackCheck.code, message: feedbackCheck.message } }, cors);
+    return;
+  }
+
+  try {
+    const result = await revisionManager.requestRevision(jobId, feedbackCheck.value);
+    logger.log('revision_requested', {
+      parentJobId: jobId,
+      jobId: result.jobId,
+      rootJobId: result.rootJobId,
+      revisionNumber: result.revisionNumber,
+    });
+    sendJson(res, 200, { ok: true, ...result }, cors);
+  } catch (err) {
+    const status = REVISE_ERROR_STATUS[err.code] || 500;
+    if (status === 500) {
+      console.error('[bridge] Revision request failed:', err.message);
+    }
+    logger.log('revision_failed', { parentJobId: jobId, code: err.code || 'internal_error', message: err.message });
+    sendJson(res, status, { error: { code: err.code || 'internal_error', message: err.message || 'Unexpected server error.' } }, cors);
+  }
+}
+
+function handleRevampRevisions(req, res, cors, jobId) {
+  if (!isAuthorized(req)) {
+    sendJson(res, 401, { error: { code: 'unauthorized', message: 'Missing or invalid pairing token.' } }, cors);
+    return;
+  }
+
+  const revisions = revisionManager.getRevisionHistory(jobId);
+  if (revisions === null) {
+    sendJson(res, 404, { error: { code: 'job_not_found', message: 'No job with that ID was found.' } }, cors);
+    return;
+  }
+
+  sendJson(res, 200, { ok: true, revisions }, cors);
+}
+
+// ---------------------------------------------------------------------------
 // Route handlers — Milestone 3A (dev-only Antigravity integration harness)
 //
 // No tutorialId, no instructions, no path, no filename — the browser sends
@@ -674,6 +784,29 @@ const server = http.createServer((req, res) => {
       console.error('[bridge] Unhandled error in /api/revamp/:jobId/publish:', err);
       sendJson(res, 500, { error: { code: 'internal_error', message: 'Unexpected server error.' } }, cors);
     });
+    return;
+  }
+
+  const reviseMatch = pathname.match(/^\/api\/revamp\/([A-Za-z0-9-]+)\/revise$/);
+  if (reviseMatch) {
+    if (req.method !== 'POST') {
+      sendJson(res, 405, { error: { code: 'method_not_allowed', message: 'Use POST.' } }, { ...cors, Allow: 'POST, OPTIONS' });
+      return;
+    }
+    handleRevampRevise(req, res, cors, reviseMatch[1]).catch((err) => {
+      console.error('[bridge] Unhandled error in /api/revamp/:jobId/revise:', err);
+      sendJson(res, 500, { error: { code: 'internal_error', message: 'Unexpected server error.' } }, cors);
+    });
+    return;
+  }
+
+  const revisionsMatch = pathname.match(/^\/api\/revamp\/([A-Za-z0-9-]+)\/revisions$/);
+  if (revisionsMatch) {
+    if (req.method !== 'GET') {
+      sendJson(res, 405, { error: { code: 'method_not_allowed', message: 'Use GET.' } }, { ...cors, Allow: 'GET, OPTIONS' });
+      return;
+    }
+    handleRevampRevisions(req, res, cors, revisionsMatch[1]);
     return;
   }
 

@@ -30,6 +30,15 @@
  *   candidate-tutorial.md        (deliberately NOT revamped-tutorials/*.md)
  *   validation-report.json
  *
+ * Milestone 6 adds one branch: a job carrying a `parentJobId` (created by
+ * service/revisionManager.js) is a REVISION of an existing, already-reviewed
+ * draft. Everything above "Build the real prompt" below is identical to a
+ * root job; only the prompt-building step differs (buildRevisionPrompt
+ * instead of buildTutorialPrompt, primed with the parent's already-written
+ * candidate and the human's review feedback for this revision) — job
+ * creation, preflight, the agy call itself, NDJSON parsing, and
+ * draftValidator all stay exactly the same code path for both.
+ *
  * Flow: fetch ONE current-source snapshot -> resolve context ->
  * deterministically check whether the approved Maker ESP32 references cover
  * MQ-2 electrical compatibility (or whether a PROJECT_HARDWARE_DECISIONS
@@ -375,12 +384,47 @@ async function runWriterForJob(job) {
     logger.log('mq2_relevance_checked', { jobId, mq2Relevant: false, projectResolutionApplied: hasProjectResolution });
   }
 
-  // Build the real prompt with the (possibly caution-augmented) instructions.
-  const { promptText, manifest } = promptBuilder.buildTutorialPrompt({
-    tutorialId,
-    userInstructions: finalUserInstructions,
-    jobId,
-  });
+  // Milestone 6: a job with a parentJobId is a REVISION — read back the
+  // parent's already-written candidate (never regenerated, never re-fetched)
+  // and hand it to promptBuilder.buildRevisionPrompt() as the primary
+  // editorial baseline, alongside the human's review feedback for this
+  // revision. A root (non-revision) job is completely unaffected — same
+  // promptBuilder.buildTutorialPrompt() call as before.
+  let promptText;
+  let manifest;
+  if (job.parentJobId) {
+    const previousCandidatePath = path.join(writerJobDir(job.parentJobId), 'candidate-tutorial.md');
+    let previousCandidateMarkdown;
+    try {
+      previousCandidateMarkdown = fs.readFileSync(previousCandidatePath, 'utf8');
+    } catch (err) {
+      jobStore.updateJobState(jobId, 'Failed', {
+        error: 'Could not read the previous draft to revise — the parent job\'s candidate output is missing.',
+      });
+      logger.log('job_failed', { jobId, reason: 'PARENT_CANDIDATE_MISSING' });
+      return jobStore.getJob(jobId);
+    }
+    if (!previousCandidateMarkdown || !previousCandidateMarkdown.trim()) {
+      jobStore.updateJobState(jobId, 'Failed', { error: 'The previous draft to revise is empty.' });
+      logger.log('job_failed', { jobId, reason: 'PARENT_CANDIDATE_EMPTY' });
+      return jobStore.getJob(jobId);
+    }
+
+    ({ promptText, manifest } = promptBuilder.buildRevisionPrompt({
+      tutorialId,
+      userInstructions: finalUserInstructions,
+      jobId,
+      previousCandidateMarkdown,
+      reviewFeedback: job.reviewFeedback || '',
+      revisionNumber: job.revisionNumber || 2,
+    }));
+  } else {
+    ({ promptText, manifest } = promptBuilder.buildTutorialPrompt({
+      tutorialId,
+      userInstructions: finalUserInstructions,
+      jobId,
+    }));
+  }
   const finalContext = tutorialContext.resolveContext(tutorialId, finalUserInstructions, jobId);
 
   fs.writeFileSync(path.join(dir, 'prompt-preview.md'), promptText, 'utf8');

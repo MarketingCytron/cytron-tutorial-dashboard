@@ -189,6 +189,10 @@
 
             const metaEl = document.getElementById('tutorialMeta');
             if (metaEl) {
+                const revisionNumber = job.revisionNumber || 1;
+                const revisionLabel = job.parentJobId
+                    ? `Revision ${revisionNumber} &middot; Based on Revision ${revisionNumber - 1}`
+                    : `Revision ${revisionNumber}`;
                 metaEl.innerHTML = `
                     <div class="meta-item">
                         <strong>Job Status:</strong>
@@ -197,6 +201,9 @@
                     <div class="meta-item">
                         <strong>Level:</strong>
                         <span class="level-badge ${Utils.getLevelClass(t.targetLevel)}">${Utils.escapeHtml(t.targetLevel || '-')}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="revision-badge">${revisionLabel}</span>
                     </div>
                 `;
             }
@@ -271,6 +278,7 @@
             }
 
             this.renderDraftHeader(job);
+            this.loadRevisionHistory(job.jobId);
 
             let outputResult;
             try {
@@ -335,9 +343,139 @@
             }
 
             area.style.display = 'flex';
-            area.innerHTML = `<button type="button" class="btn btn-primary" id="approvePublishBtn">Approve &amp; Publish to Final Output</button>`;
+            area.innerHTML = `
+                <button type="button" class="btn btn-secondary" id="requestChangesBtn">Request Changes</button>
+                <button type="button" class="btn btn-primary" id="approvePublishBtn">Approve &amp; Publish to Final Output</button>
+            `;
             const btn = document.getElementById('approvePublishBtn');
             if (btn) btn.addEventListener('click', () => this.openPublishModal());
+            const reviseBtn = document.getElementById('requestChangesBtn');
+            if (reviseBtn) reviseBtn.addEventListener('click', () => this.openReviseModal());
+        },
+
+        // -----------------------------------------------------------------
+        // Milestone 6 — Human Feedback & Draft Revision
+        // -----------------------------------------------------------------
+
+        async loadRevisionHistory(jobId) {
+            try {
+                const { res, data } = await bridgeFetch(`/api/revamp/${encodeURIComponent(jobId)}/revisions`, { method: 'GET' });
+                if (res.ok && data && data.ok && Array.isArray(data.revisions)) {
+                    this.renderRevisionHistory(data.revisions);
+                }
+            } catch {
+                // Best-effort only — revision history is a review convenience,
+                // never required to view or act on the current draft.
+            }
+        },
+
+        renderRevisionHistory(revisions) {
+            const area = document.getElementById('revisionInfoArea');
+            if (!area) return;
+
+            if (!Array.isArray(revisions) || revisions.length <= 1) {
+                area.style.display = 'none';
+                area.innerHTML = '';
+                return;
+            }
+
+            const items = revisions.map((r) => {
+                const isCurrent = r.jobId === this.jobId;
+                const href = `final-output.html?id=${encodeURIComponent(this.tutorial.id)}&jobId=${encodeURIComponent(r.jobId)}`;
+                const label = `Revision ${r.revisionNumber} &middot; ${Utils.escapeHtml(r.state)}`;
+                return `<li class="revision-history-item${isCurrent ? ' current' : ''}">
+                    ${isCurrent ? `<span>${label} (current)</span>` : `<a href="${href}">${label}</a>`}
+                </li>`;
+            }).join('');
+
+            area.style.display = 'block';
+            area.innerHTML = `
+                <div class="revision-history-label">Revision History</div>
+                <ul class="revision-history-list">${items}</ul>
+            `;
+        },
+
+        openReviseModal() {
+            const overlay = document.getElementById('reviseModalOverlay');
+            const body = document.getElementById('reviseModalBody');
+            if (!overlay || !body) return;
+
+            body.innerHTML = `
+                <div class="revamp-modal-header"><h2 id="reviseModalTitle">Request Changes</h2>
+                    <button type="button" class="revamp-modal-close" id="reviseModalCloseBtn" aria-label="Close">&times;</button>
+                </div>
+                <div class="revamp-field">
+                    <label for="reviseFeedbackInput">What would you like to change?</label>
+                    <textarea id="reviseFeedbackInput" rows="6" maxlength="4000" placeholder="Change GPIO32 to GPIO33.&#10;Make the introduction shorter.&#10;Keep the rest unchanged."></textarea>
+                    <p class="hint">Plain text only, up to 4000 characters. This becomes the authoritative human direction for the revised draft.</p>
+                </div>
+                <div id="reviseModalError"></div>
+                <div class="revamp-actions">
+                    <button type="button" class="btn btn-secondary" id="reviseCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="reviseGenerateBtn">Generate Revised Draft</button>
+                </div>
+            `;
+
+            overlay.style.display = 'flex';
+
+            const closeModal = () => { overlay.style.display = 'none'; };
+            document.getElementById('reviseModalCloseBtn').addEventListener('click', closeModal);
+            document.getElementById('reviseCancelBtn').addEventListener('click', closeModal);
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); }, { once: true });
+
+            document.getElementById('reviseGenerateBtn').addEventListener('click', () => this.submitRevise());
+        },
+
+        async submitRevise() {
+            const textarea = document.getElementById('reviseFeedbackInput');
+            const feedback = (textarea && textarea.value) || '';
+            const generateBtn = document.getElementById('reviseGenerateBtn');
+            const cancelBtn = document.getElementById('reviseCancelBtn');
+            const errorBox = document.getElementById('reviseModalError');
+
+            if (!feedback.trim()) {
+                if (errorBox) errorBox.innerHTML = `<div class="revamp-error">Enter what you'd like to change before generating a revised draft.</div>`;
+                return;
+            }
+
+            if (generateBtn) { generateBtn.disabled = true; generateBtn.textContent = 'Generating...'; }
+            if (cancelBtn) cancelBtn.disabled = true;
+            if (errorBox) errorBox.innerHTML = '';
+
+            let result;
+            try {
+                result = await bridgeFetch(`/api/revamp/${encodeURIComponent(this.job.jobId)}/revise`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ feedback }),
+                });
+            } catch {
+                this.showReviseModalError(`Could not reach the local bridge at ${BRIDGE_URL}. Make sure it is running.`);
+                return;
+            }
+
+            const { res, data } = result;
+            if (!res.ok || !data || !data.ok) {
+                const message = (data && data.error && data.error.message) || `Bridge returned HTTP ${res.status}.`;
+                this.showReviseModalError(message);
+                return;
+            }
+
+            document.getElementById('reviseModalOverlay').style.display = 'none';
+
+            // Per Milestone 6: the human should immediately see the new
+            // revision's draft, not have to find it manually.
+            const newDraftHref = `final-output.html?id=${encodeURIComponent(this.tutorial.id)}&jobId=${encodeURIComponent(data.jobId)}`;
+            window.location.href = newDraftHref;
+        },
+
+        showReviseModalError(message) {
+            const errorBox = document.getElementById('reviseModalError');
+            const generateBtn = document.getElementById('reviseGenerateBtn');
+            const cancelBtn = document.getElementById('reviseCancelBtn');
+            if (generateBtn) { generateBtn.disabled = false; generateBtn.textContent = 'Generate Revised Draft'; }
+            if (cancelBtn) cancelBtn.disabled = false;
+            if (errorBox) errorBox.innerHTML = `<div class="revamp-error">${Utils.escapeHtml(message)}</div>`;
         },
 
         openPublishModal() {
