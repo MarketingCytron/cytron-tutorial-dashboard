@@ -3019,7 +3019,7 @@
       },
       "decision": "Keep",
       "revampScope": "Small",
-      "revampStatus": "Reviewed",
+      "revampStatus": "Revamping",
       "priority": "P3",
       "technicalScore": 9,
       "scores": {
@@ -3195,6 +3195,7 @@
         }
       ],
       "auditFile": "audits/esp32-water-tank-monitoring.md",
+      "revampedOutputFile": "revamped-tutorials/esp32-water-tank-monitoring.md",
       "makerEsp32PublishDate": "2026-09-21",
       "hardwareUsed": {
         "board": "Maker ESP32",
