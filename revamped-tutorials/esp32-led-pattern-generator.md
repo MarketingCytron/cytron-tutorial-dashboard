@@ -7,14 +7,14 @@
 | Slug | esp32-led-pattern-generator |
 | Tags | ESP32, Maker ESP32, LED Patterns, Arduino, GPIO, Beginner |
 | Meta Title | ESP32 LED Pattern Generator on Maker ESP32 |
-| Meta Description | Create dynamic LED animations using the 14 onboard LEDs on Maker ESP32. Learn digital output, arrays, and loops in Arduino IDE without extra wiring. |
+| Meta Tag Keywords | ESP32, Maker ESP32, LED Patterns, Arduino, GPIO, Beginner |
 | Target Audience | Education |
 | Content Type | Tutorial |
 | Difficulty Level | Beginner |
 | Author | Cytron Technologies |
 | Categories | ESP32 / GPIO Basics |
 | Related Products | |
-| Related Tutorials | |
+| Related Tutorials | [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32) |
 | Publish Date | 2026-09-04 |
 
 ## Overview / Introduction
@@ -210,6 +210,10 @@ On the board, all 14 indicator LEDs trace each animation smoothly across the GPI
 ## Community / Related Tutorials
 
 [![ESP32 Makers Community](https://static.cytron.io/image/cache/catalog/Banner/esp-telegram-group-1523x246.png)](https://t.me/ESPmakersMY)
+
+### Related Tutorials
+
+- [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32)
 
 ---
 # INTERNAL EDITOR NOTES — DO NOT PUBLISH

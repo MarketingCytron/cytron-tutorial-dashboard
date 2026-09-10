@@ -350,15 +350,28 @@ function validateDraft(markdown, context) {
       'fail', 'No "| Meta Title | ... |" row found in the required Admin & SEO table format.'));
   }
 
-  // 19. Meta Description <= 160 characters — same table format.
-  const metaDescriptionValue = extractAdminField(publicBody, 'Meta Description');
-  if (metaDescriptionValue !== null) {
-    checks.push(check('meta_description_length', 'Admin & SEO "Meta Description" field is at most 160 characters',
-      metaDescriptionValue.length <= 160 ? 'pass' : 'fail', `${metaDescriptionValue.length} characters`));
+  // 19. Milestone 8 — "Meta Tag Keywords" REPLACES the older "Meta
+  // Description" field. A new/revised candidate must have a Meta Tag
+  // Keywords row (non-empty); a lingering "Meta Description" row (an
+  // obsolete field from before this milestone) is flagged so it can be
+  // normalized — this never fails a historical, already-immutable
+  // service/jobs candidate, since validateDraft() is only ever invoked for
+  // a NEW writer/revision run, never re-run against old job artifacts.
+  const metaTagKeywordsValue = extractAdminField(publicBody, 'Meta Tag Keywords');
+  if (metaTagKeywordsValue !== null && metaTagKeywordsValue.length > 0) {
+    checks.push(check('meta_tag_keywords_present', 'Admin & SEO "Meta Tag Keywords" field is present and non-empty',
+      'pass', `${metaTagKeywordsValue.length} characters`));
   } else {
-    checks.push(check('meta_description_length', 'Admin & SEO "Meta Description" field is at most 160 characters',
-      'fail', 'No "| Meta Description | ... |" row found in the required Admin & SEO table format.'));
+    checks.push(check('meta_tag_keywords_present', 'Admin & SEO "Meta Tag Keywords" field is present and non-empty',
+      'fail', metaTagKeywordsValue === null
+        ? 'No "| Meta Tag Keywords | ... |" row found in the required Admin & SEO table format.'
+        : 'The "Meta Tag Keywords" row is present but empty.'));
   }
+
+  const obsoleteMetaDescriptionValue = extractAdminField(publicBody, 'Meta Description');
+  checks.push(check('no_obsolete_meta_description', 'Admin & SEO does not still contain the retired "Meta Description" field',
+    obsoleteMetaDescriptionValue === null ? 'pass' : 'fail',
+    obsoleteMetaDescriptionValue === null ? 'not found' : 'found an obsolete "Meta Description" row — normalize it to "Meta Tag Keywords" instead'));
 
   // 20/21. Hardware/electrical blocking classification + contradiction.
   // These are deliberately two SEPARATE signals:
@@ -701,6 +714,22 @@ function validateDraft(markdown, context) {
           ? 'Prerequisites still marks the Getting Started guide URL as NEEDS VERIFICATION, but the canonical URL is now known and approved'
           : (hasCanonicalLink ? 'canonical Getting Started URL found' : 'Prerequisites uses the Getting-Started-guide pattern but does not link the canonical URL')));
     }
+  }
+
+  // 36. Milestone 8 — for a Maker ESP32 tutorial, the Getting Started guide
+  // must be the standard Related Tutorial: present somewhere in either the
+  // Admin & SEO "Related Tutorials" field or the public Related Tutorials /
+  // Community section, using the exact canonical URL. Does not require it
+  // to be the ONLY related tutorial — other genuinely relevant entries may
+  // remain alongside it.
+  if (context.needsMakerEsp32) {
+    const adminRelatedTutorials = extractAdminField(publicBody, 'Related Tutorials') || '';
+    const communityText = extractSectionText(publicBody, 'Community\\s*/\\s*Related Tutorials|Related Tutorials|Community');
+    const hasCanonicalRelatedTutorial = adminRelatedTutorials.includes(approvedLinks.MAKER_ESP32_GETTING_STARTED_URL)
+      || communityText.includes(approvedLinks.MAKER_ESP32_GETTING_STARTED_URL);
+    checks.push(check('related_tutorial_getting_started_present', 'The Maker ESP32 Getting Started guide is included as a Related Tutorial (Admin & SEO field and/or public Related Tutorials section)',
+      hasCanonicalRelatedTutorial ? 'pass' : 'fail',
+      hasCanonicalRelatedTutorial ? 'found' : 'canonical Getting Started guide URL not found in Admin & SEO Related Tutorials or the public Related Tutorials/Community section'));
   }
 
   // 35. Milestone 7 — when this tutorial has a human-approved scheduled

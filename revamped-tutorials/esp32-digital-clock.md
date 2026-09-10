@@ -18,7 +18,7 @@ Revamp Date: 2026-08-30
 | Slug | esp32-digital-clock | Matches original tutorial slug |
 | Tags | ESP32, Maker ESP32, Digital Clock, NTP, OLED Display, SSD1306, I2C, WiFi | Keyword tags for search indexing |
 | Meta Title | ESP32 Digital Clock with NTP and OLED Display - Cytron Tutorial | SEO-optimized title (<60 chars) |
-| Meta Description | Build an internet-synchronized digital clock with Maker ESP32 and an I2C OLED display. Sync time automatically using WiFi and NTP without an RTC module. | SEO summary (<160 chars) |
+| Meta Tag Keywords | ESP32, Maker ESP32, Digital Clock, NTP, OLED Display, SSD1306, I2C, WiFi | Keyword tags for search indexing |
 | Target Audience | Beginners, students, IoT hobbyists, STEM educators | Clear audience definition |
 | Content Type | Project Tutorial | Standard project guide |
 | Difficulty Level | Beginner | Accessible starter IoT project |

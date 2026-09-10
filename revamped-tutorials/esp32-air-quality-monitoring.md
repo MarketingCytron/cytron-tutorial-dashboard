@@ -7,14 +7,14 @@
 | Slug | esp32-air-quality-monitoring |
 | Tags | ESP32, Maker ESP32, MQ-2, Gas Sensor, Air Quality, Web Server, IoT |
 | Meta Title | ESP32 Air Quality Monitoring |
-| Meta Description | Build a real-time air quality monitoring web server using Maker ESP32, an MQ-2 gas sensor, and a breadboard. |
+| Meta Tag Keywords | ESP32, Maker ESP32, MQ-2, Gas Sensor, Air Quality, Web Server, IoT |
 | Target Audience | Education |
 | Content Type | Tutorial |
 | Difficulty Level | Beginner |
 | Author | Cytron Technologies |
 | Categories | IoT / Environmental Monitoring |
 | Related Products | [Maker ESP32](https://my.cytron.io/p-maker-esp32), [MQ-2 Smoke LPG CO Sensor Module](https://my.cytron.io/p-mq2-smoke-lpg-co-sensor-module) |
-| Related Tutorials | [Control ESP32 Outputs with Telegram](https://my.cytron.io/tutorial/control-esp32-outputs-with-telegram) |
+| Related Tutorials | [Control ESP32 Outputs with Telegram](https://my.cytron.io/tutorial/control-esp32-outputs-with-telegram), [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32) |
 | Publish Date | 2026-09-10 |
 
 ## Overview / Introduction
@@ -235,6 +235,7 @@ Join the [ESP32 Telegram Community Group](https://t.me/ESPmakersMY) to ask quest
 ### Related Tutorials
 
 - [Control ESP32 Outputs with Telegram](https://my.cytron.io/tutorial/control-esp32-outputs-with-telegram)
+- [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32)
 
 ---
 # INTERNAL EDITOR NOTES — DO NOT PUBLISH

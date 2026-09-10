@@ -127,8 +127,8 @@ const RevampQueue = {
 
         const topIssue = t.topIssues?.[0];
 
-        // Date displays
-        const prepDateDisplay = this.formatDateWithStatus(t.preparationDate, t.revampStatus, 'Prep');
+        // Date display. Milestone 8: Prep Date is no longer shown on
+        // tutorial cards — Publish Date remains the sole visible date.
         const pubDateDisplay = this.formatDateWithStatus(t.publishDate, t.revampStatus, 'Publish');
 
         return `
@@ -152,7 +152,6 @@ const RevampQueue = {
                     </div>
                 ` : ''}
                 <div class="queue-card-dates">
-                    ${prepDateDisplay}
                     ${pubDateDisplay}
                 </div>
                 <div class="queue-card-footer">

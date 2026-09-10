@@ -7,14 +7,14 @@
 | Slug | esp32-smoke-detection-alarm |
 | Tags | ESP32, Maker ESP32, MQ-2, Gas Sensor, Smoke Alarm, Arduino |
 | Meta Title | ESP32 Smoke Detection Alarm Tutorial |
-| Meta Description | Build an educational smoke and gas alarm using Maker ESP32 and an MQ-2 sensor with onboard LED and buzzer alerts. |
+| Meta Tag Keywords | ESP32, Maker ESP32, MQ-2, Gas Sensor, Smoke Alarm, Arduino |
 | Target Audience | Education |
 | Content Type | Tutorial |
 | Difficulty Level | Beginner |
 | Author | Cytron Technologies |
 | Categories | IoT / Safety & Alerts |
 | Related Products | |
-| Related Tutorials | |
+| Related Tutorials | [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32) |
 | Publish Date | 2026-09-05 |
 
 ## Overview / Introduction
@@ -170,6 +170,10 @@ Gas Sensor Value: 530
 ## Community / Related Tutorials
 
 Join the [ESP32 Makers Community](https://t.me/ESPmakersMY) on Telegram to share your projects, get technical help, and explore more tutorials.
+
+### Related Tutorials
+
+- [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32)
 
 ---
 # INTERNAL EDITOR NOTES — DO NOT PUBLISH

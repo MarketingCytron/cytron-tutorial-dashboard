@@ -7,14 +7,14 @@
 | Slug | control-esp32-outputs-with-telegram |
 | Tags | ESP32, Maker ESP32, Telegram Bot, IoT, Arduino IDE, Remote Control, Home Automation |
 | Meta Title | ESP32 Control Outputs with Telegram |
-| Meta Description | Control Maker ESP32 outputs wirelessly with Telegram. Toggle the onboard GPIO2 LED and check states remotely using secure HTTPS commands. |
+| Meta Tag Keywords | ESP32, Maker ESP32, Telegram Bot, IoT, Arduino IDE, Remote Control, Home Automation |
 | Target Audience | Education |
 | Content Type | Tutorial |
 | Difficulty Level | Beginner |
 | Author | Cytron Technologies |
 | Categories | IoT / Telegram Bot |
 | Related Products | [Maker ESP32](https://my.cytron.io/p-nodemcu-esp32-with-expansion-board) |
-| Related Tutorials | |
+| Related Tutorials | [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32) |
 | Publish Date | 2026-09-09 |
 
 ## Overview / Introduction
@@ -245,6 +245,10 @@ Ensure `ledPin` is assigned to GPIO `2` and configured as `OUTPUT`. Onboard GPIO
 ## Community / Related Tutorials
 
 [![](https://static.cytron.io/image/tutorial/getting-started-freertos-robo-esp32/esp-telegram-footer.png)](https://t.me/ESPmakersMY)
+
+### Related Tutorials
+
+- [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32)
 
 ---
 

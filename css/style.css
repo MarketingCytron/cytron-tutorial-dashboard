@@ -1790,6 +1790,20 @@ a:hover {
 
 .markdown-content p {
     margin-bottom: var(--space-md);
+    /* Milestone 8: public tutorial prose paragraphs are justified. Scoped to
+       this shared markdown-rendering class only (final-output static/draft
+       mode, tutorial.js's audit report) — never a global `p {}` rule, so
+       nothing outside rendered Markdown content is affected. Headings,
+       lists, tables, blockquotes, and code blocks all render as different
+       elements (see js/app.js's renderMarkdown()), so they are untouched by
+       this <p>-only selector without needing any :not() exclusions. */
+    text-align: justify;
+}
+
+/* Internal Editor Notes are reviewer-only content — keep them left-aligned
+   for reviewer readability, overriding the justify rule above via higher
+   selector specificity (not by making the general rule less scoped). */
+.markdown-content .internal-editor-notes-block p {
     text-align: left;
 }
 
@@ -1845,16 +1859,25 @@ a:hover {
     text-align: left;
 }
 
+/* Milestone 8: inline code in normal tutorial prose (e.g. `pinMode()`,
+   `GPIO15`, `HIGH`) no longer renders in the monospace "Computer Code" font
+   — it reads as normal italic text instead, with no boxed background. This
+   is the DEFAULT for every <code> element; the rule below restores full
+   code-block styling specifically for <code> inside <pre> (fenced code
+   blocks, Serial Monitor output), which wins via selector specificity. */
 .markdown-content code {
-    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    font-size: 0.875em;
-    background: rgba(111, 45, 189, 0.08);
-    color: var(--primary);
-    padding: 2px 6px;
-    border-radius: var(--border-radius-sm);
+    font-family: inherit;
+    font-style: italic;
+    font-size: inherit;
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    border-radius: 0;
 }
 
 .markdown-content pre code {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-style: normal;
     background: transparent;
     color: inherit;
     padding: 0;

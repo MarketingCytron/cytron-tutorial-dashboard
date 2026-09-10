@@ -7,7 +7,7 @@
 | Slug | esp32-water-tank-monitoring |
 | Tags | ESP32, Maker ESP32, IoT, Ultrasonic Sensor, WebServer, Arduino |
 | Meta Title | ESP32 Water Tank Monitoring with Web Dashboard |
-| Meta Description | Build an IoT water tank monitor using Maker ESP32 and an ultrasonic sensor to track water levels in real time on a web dashboard. |
+| Meta Tag Keywords | ESP32, Maker ESP32, IoT, Ultrasonic Sensor, WebServer, Arduino |
 | Target Audience | Education |
 | Content Type | Tutorial |
 | Difficulty Level | Beginner |

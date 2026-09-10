@@ -7,14 +7,14 @@
 | Slug | esp32-motion-detector-alert |
 | Tags | ESP32, Maker ESP32, HC-SR501, PIR Sensor, IoT, Web Server, Motion Detection, Security |
 | Meta Title | ESP32 Motion Detector Alert with Maker ESP32 & HC-SR501 |
-| Meta Description | Build an IoT motion detection alert system using Cytron Maker ESP32 and HC-SR501 PIR sensor with real-time web monitoring and onboard LED alerts. |
+| Meta Tag Keywords | ESP32, Maker ESP32, HC-SR501, PIR Sensor, IoT, Web Server, Motion Detection, Security |
 | Target Audience | Education |
 | Content Type | Tutorial |
 | Difficulty Level | Beginner |
 | Author | Cytron Technologies |
 | Categories | IoT / Security |
 | Related Products | [Low Cost PIR Sensor Module](https://my.cytron.io/p-low-cost-pir-sensor-module-hc-sr501) |
-| Related Tutorials | [Control ESP32 Outputs with Telegram](https://my.cytron.io/tutorial/control-esp32-outputs-with-telegram) |
+| Related Tutorials | [Control ESP32 Outputs with Telegram](https://my.cytron.io/tutorial/control-esp32-outputs-with-telegram), [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32) |
 | Publish Date | 2026-09-06 |
 
 ---
@@ -247,6 +247,7 @@ The HC-SR501 has two orange potentiometers on the back:
 ## Community / Related Tutorials
 
 - Related Project: [Control ESP32 Outputs with Telegram](https://my.cytron.io/tutorial/control-esp32-outputs-with-telegram)
+- [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32)
 
 ---
 # INTERNAL EDITOR NOTES — DO NOT PUBLISH

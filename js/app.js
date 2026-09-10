@@ -560,18 +560,11 @@ const Dashboard = {
         today.setHours(0, 0, 0, 0);
         const todayStr = today.toISOString().split('T')[0];
 
-        // Filter tutorials with dates
-        const withPrepDate = tutorials.filter(t => t.preparationDate);
+        // Filter tutorials with dates. Milestone 8: Prep Date is no longer
+        // displayed anywhere in the UI — preparationDate stays in the
+        // dataset (historical/internal metadata), but this widget/stat set
+        // no longer surfaces it. Publish Date remains the sole visible date.
         const withPubDate = tutorials.filter(t => t.publishDate);
-
-        // Prep stats
-        const preppedCount = withPrepDate.filter(t => Utils.isDoneStatus(t.revampStatus)).length;
-        const overduePrepCount = withPrepDate.filter(t =>
-            t.preparationDate < todayStr && !Utils.isDoneStatus(t.revampStatus)
-        ).length;
-        const pendingPrepCount = withPrepDate.filter(t =>
-            t.preparationDate >= todayStr && !Utils.isDoneStatus(t.revampStatus)
-        ).length;
 
         // Publish stats
         const publishedCount = withPubDate.filter(t =>
@@ -601,9 +594,6 @@ const Dashboard = {
             if (el) el.textContent = value;
         };
 
-        updateElement('preppedCount', preppedCount);
-        updateElement('pendingPrepCount', pendingPrepCount);
-        updateElement('overduePrepCount', overduePrepCount);
         updateElement('publishedCount', publishedCount);
         updateElement('upcomingPublishCount', upcomingPublishCount);
         updateElement('overduePublishCount', overduePublishCount);
@@ -612,12 +602,6 @@ const Dashboard = {
         updateElement('afterLaunchCount', afterLaunchCount);
 
         // Update progress bars
-        const prepProgressBar = document.getElementById('prepProgressBar');
-        if (prepProgressBar && withPrepDate.length > 0) {
-            const prepPercent = (preppedCount / withPrepDate.length) * 100;
-            prepProgressBar.style.width = `${prepPercent}%`;
-        }
-
         const publishProgressBar = document.getElementById('publishProgressBar');
         if (publishProgressBar && withPubDate.length > 0) {
             const pubPercent = (publishedCount / withPubDate.length) * 100;

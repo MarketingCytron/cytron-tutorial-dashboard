@@ -12,7 +12,7 @@ Revamp Date: 2026-08-29
 | Field | Draft value |
 |---|---|
 | Post Name | ESP32 Clap Switch |
-| Pitch / Meta Description | Build a clap-activated lighting project that detects sound and changes RGB LED colours with every clap. |
+| Pitch | Build a clap-activated lighting project that detects sound and changes RGB LED colours with every clap. |
 | SEO URL | esp32-clap-switch |
 | Post Tags | ESP32, Maker ESP32, Robo ESP32, clap switch, sound sensor, NeoPixel, beginner project |
 | Meta Tag Title | ESP32 Clap Switch |
@@ -23,6 +23,7 @@ Revamp Date: 2026-08-29
 | Status | Enabled |
 | Categories | IoT; Home Automation |
 | Related Products | [Maker ESP32](https://my.cytron.io/p-maker-esp32); [Robo ESP32](https://my.cytron.io/p-robo-esp32); [Grove - Sound Sensor](https://my.cytron.io/p-grove-sound-sensor) |
+| Related Tutorials | [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32) |
 | Publish Date | 2026-09-02 |
 
 ## Introduction
@@ -204,7 +205,11 @@ Each clap above the configured threshold changes both onboard Robo ESP32 NeoPixe
 
 [ESP32 Makers Community](https://t.me/ESPmakersMY)
 
-**[EDITOR PLACEHOLDER: Add verified related tutorials.]**
+### Related Tutorials
+
+- [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32)
+
+**[EDITOR PLACEHOLDER: Add other verified related tutorials, if any.]**
 
 ---
 
