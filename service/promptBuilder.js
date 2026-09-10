@@ -19,6 +19,7 @@
  */
 
 const tutorialContext = require('./tutorialContext');
+const approvedLinks = require('./approvedLinks');
 
 const PROMPT_SIZE_WARNING_CHARS = 100 * 1024; // conservative, no truncation — just a flagged warning
 
@@ -129,6 +130,13 @@ function buildPrompt({ tutorialId, userInstructions, jobId, revision }) {
   }
 
   parts.push(section('EVIDENCE & DECISION PRIORITY', evidenceDecisionPriorityText(revision)));
+
+  parts.push(section(
+    'APPROVED GLOBAL LINKS (HUMAN-APPROVED)',
+    'The following URLs are explicitly supplied and approved by the human, globally, for every tutorial — not just this one. Treat them as trusted, canonical, and already verified. Do NOT search for alternatives, do NOT rewrite them, and do NOT mark them or anything they link to as NEEDS VERIFICATION.\n\n' +
+    `${context.approvedLinksText}\n\n` +
+    'See MAKER ESP32 LINKING RULE, MAKER PORT CABLE SELECTION, PREREQUISITES, and TELEGRAM COMMUNITY LINK below for exactly how/when to use each of these.'
+  ));
 
   const authoringRulesParts = [
     '## Source 1 of 2 — AGENTS.md (revamp workflow, source hierarchy, safety rules)',
@@ -256,10 +264,37 @@ function buildPrompt({ tutorialId, userInstructions, jobId, revision }) {
   parts.push(section(
     'PREREQUISITES',
     'For a Maker ESP32 tutorial, the Prerequisites section must NOT re-explain Arduino IDE installation, ESP32 board package installation, USB connection, COM port selection, or basic Maker ESP32 setup — those belong in a separate Getting Started guide, not repeated in every tutorial.\n\n' +
-    'Instead keep it to one short sentence pointing the reader at the approved Maker ESP32 Getting Started guide, in this style:\n\n' +
-    '> Before starting, make sure your Maker ESP32 is ready to program. If this is your first time using the board, follow the Maker ESP32 Getting Started guide first.\n\n' +
-    'Only link that guide if its exact URL appears in the approved sources supplied in this prompt. Do NOT invent or guess the URL. If the correct URL is not present in the supplied sources, write the sentence without a link and record "Maker ESP32 Getting Started guide URL — NEEDS VERIFICATION" under Outstanding Verification in INTERNAL EDITOR NOTES.\n\n' +
+    'Instead keep it to one short sentence pointing the reader at the Maker ESP32 Getting Started guide, in this style:\n\n' +
+    `> Before starting, make sure your Maker ESP32 is ready to program. If this is your first time using the board, follow the ${approvedLinks.MAKER_ESP32_GETTING_STARTED_MARKDOWN} first.\n\n` +
+    `The exact canonical Getting Started Guide URL is now known and human-approved (${approvedLinks.MAKER_ESP32_GETTING_STARTED_URL} — see APPROVED GLOBAL LINKS above): ALWAYS link it for a Maker ESP32 tutorial's Prerequisites. Do NOT write "Getting Started Guide URL — NEEDS VERIFICATION" anymore — that placeholder is retired now that the URL is known.\n\n` +
     'This has a direct consequence for Software Setup: once Prerequisites has pointed the reader at the Getting Started guide, do NOT repeat generic Maker ESP32 board setup there or anywhere else — no re-explaining Arduino IDE installation, ESP32 board-package installation, USB connection, board/COM-port selection, or upload-speed configuration. Software Setup should contain ONLY project-specific software requirements (for example, a required third-party library — or, if none is needed, a single line stating that no additional libraries are required). Where the code needs to be uploaded and run naturally belongs under Sample Code / Testing, not as a repeated setup checklist. (This does not apply if the tutorial genuinely requires a special, non-default board setting beyond what the Getting Started guide covers — state that setting specifically, not the generic steps around it.)'
+  ));
+
+  parts.push(section(
+    'MAKER ESP32 PRODUCT MIGRATION RULE',
+    'When a tutorial is being migrated from NodeMCU ESP32 to Maker ESP32, the new controller is standalone Maker ESP32 — do NOT retain NodeMCU ESP32 as part of the final hardware architecture unless the human explicitly asks for it, and do NOT automatically introduce Robo ESP32. If the human says "Change NodeMCU ESP32 to Maker ESP32," that means standalone Maker ESP32 unless further hardware instructions say otherwise. (This is a GENERIC rule; a PROJECT-SPECIFIC HARDWARE DECISIONS entry above, if present, may explicitly confirm or override this for one specific tutorial — follow that entry\'s explicit instruction when present.)'
+  ));
+
+  parts.push(section(
+    'MAKER ESP32 LINKING RULE',
+    `Any visible public tutorial text that says "Maker ESP32" must hyperlink that text to the canonical product page: ${approvedLinks.MAKER_ESP32_PRODUCT_MARKDOWN}\n\n` +
+    'Apply this consistently across public tutorial content, wherever "Maker ESP32" appears as plain text: headings, introductory paragraphs, the Bill of Materials, wiring explanations, software instructions, testing, troubleshooting, and related products. If a heading contains "Maker ESP32", link it there too.\n\n' +
+    'Do NOT double-wrap an occurrence that is already a Markdown link (e.g. already reads `[Maker ESP32](...)`, or is part of a longer link like the Getting Started guide link above) — link each plain-text occurrence exactly once.\n\n' +
+    'Do NOT attempt a Markdown link inside: code blocks, inline code (where a Markdown link would corrupt the code), a raw URL, an HTML attribute, or INTERNAL EDITOR NOTES. This rule concerns visible PUBLIC tutorial prose only.'
+  ));
+
+  parts.push(section(
+    'MAKER PORT CABLE SELECTION',
+    'When the human says "Use the Maker Port on Maker ESP32", interpret this as using the Maker ESP32 JST-SH/Qwiic-style Maker Port connection instead of manually wiring the component directly to GPIO header pins — but ONLY when the component/interface is genuinely compatible (see WIRING — MAKER PORT PREFERENCE and HARDWARE COMPATIBILITY CONTRADICTION RULE above/below; "use Maker Port" never means forcing an incompatible sensor onto the port).\n\n' +
+    `CASE A — the sensor/module exposes normal male header pins and needs female socket connections: use the ${approvedLinks.STEMMA_QT_QWIIC_FEMALE_CABLE_NAME} (${approvedLinks.STEMMA_QT_QWIIC_FEMALE_CABLE_URL}). Use this exact cable name and link in the BOM.\n\n` +
+    `CASE B — the sensor/module has a Grove port: use the ${approvedLinks.GROVE_TO_JST_SH_QWIIC_CABLE_NAME} (${approvedLinks.GROVE_TO_JST_SH_QWIIC_CABLE_URL}). Use this exact cable name and link in the BOM.\n\n` +
+    'Do NOT guess which cable is required. Determine it using trusted context for the component (the tutorial record, audit, current tutorial source snapshot, or approved technical references) applying the standard EVIDENCE & DECISION PRIORITY order above. If the component interface is genuinely not established by any of those sources, do NOT invent the connector or default to one of the two cables anyway — record it under Outstanding Verification in INTERNAL EDITOR NOTES instead. Note: the component being absent from the Maker ESP32 AI Coding Pack, by itself, is NOT sufficient to call it unresolved (see EVIDENCE & DECISION PRIORITY\'s "silence is not negative evidence" rule) — check the other sources first.'
+  ));
+
+  parts.push(section(
+    'TELEGRAM COMMUNITY LINK',
+    `When the tutorial includes an ESP32 Makers community / Telegram community section, use this exact canonical URL: ${approvedLinks.TELEGRAM_ESP32_MAKERS_COMMUNITY_URL}. Do NOT mark it NEEDS VERIFICATION.\n\n` +
+    `Do NOT use this URL as an image source — t.me is a destination link, not an image asset (never write \`![...](${approvedLinks.TELEGRAM_ESP32_MAKERS_COMMUNITY_URL})\`, which is broken Markdown). If no approved community banner IMAGE URL exists in the supplied sources, use a normal text link instead: ${approvedLinks.TELEGRAM_ESP32_MAKERS_COMMUNITY_MARKDOWN}.`
   ));
 
   parts.push(section(
@@ -286,17 +321,28 @@ function buildPrompt({ tutorialId, userInstructions, jobId, revision }) {
   parts.push(section(
     'LINK POLICY',
     'Do not invent URLs of any kind — Related Tutorial links, product links, download links, GitHub Gist links, documentation links, Getting Started links, or any other Cytron URL. ' +
-    'A URL may appear in the public tutorial ONLY if it appears verbatim in the approved sources supplied in this prompt (CURRENT TUTORIAL, AUDIT FINDINGS, CURRENT TUTORIAL SOURCE SNAPSHOT, APPROVED TECHNICAL REFERENCES). ' +
+    'A URL may appear in the public tutorial ONLY if it appears verbatim in the approved sources supplied in this prompt (APPROVED GLOBAL LINKS, CURRENT TUTORIAL, AUDIT FINDINGS, CURRENT TUTORIAL SOURCE SNAPSHOT, APPROVED TECHNICAL REFERENCES). ' +
     'If a URL you would want to include is not present in those sources, omit it from the public body and, if it matters, record it under Outstanding Verification as "NEEDS VERIFICATION" rather than guessing.\n\n' +
     'Being present in an approved source is necessary but not sufficient: only include a Related Tutorials, Downloads & Assets, or Community link when it is also genuinely useful and relevant to THIS tutorial. Do not populate "Related Tutorials" just because some approved URL happens to be available — if no clearly relevant related tutorial exists in the approved sources, leave that field blank/omit it rather than including a tangential link.'
   ));
+
+  if (context.scheduledPublishDate) {
+    parts.push(section(
+      'HUMAN-APPROVED PUBLISH DATE',
+      `HUMAN-APPROVED PUBLISH DATE: ${context.scheduledPublishDate}\n\n` +
+      'This date is the authoritative, human-approved publication schedule for this tutorial (see APPROVED GLOBAL LINKS / EVIDENCE & DECISION PRIORITY above — this is HUMAN_APPROVED authority, the highest tier). ' +
+      'The Admin & SEO "Publish Date" field below MUST use exactly this date. ' +
+      'Do NOT use today\'s date, the job creation date, the generation date, or the revision date as the Publish Date when this human-approved schedule is present — use only the date given here, exactly as written (YYYY-MM-DD).'
+    ));
+  }
 
   parts.push(section(
     'ADMIN & SEO FORMAT',
     'The Admin & SEO section must be the exact heading `## Admin & SEO` followed by a single Markdown table with exactly these rows, in this order, using exactly these field names in the first column (so the field values can be parsed reliably):\n\n' +
     '| Field | Draft Value |\n|---|---|\n| Title | ... |\n| Pitch | ... |\n| Slug | ... |\n| Tags | ... |\n| Meta Title | ... (max 60 characters) |\n| Meta Description | ... (max 160 characters) |\n| Target Audience | ... |\n| Content Type | ... |\n| Difficulty Level | ... |\n| Author | Cytron Technologies |\n| Categories | ... |\n| Related Products | ... |\n| Related Tutorials | ... |\n| Publish Date | ... |\n\n' +
     'Do not rename these fields (no "SEO Title", "Post Name", "Meta Tag Title", etc. as substitutes for "Meta Title") and do not add a Revamp Status, Validity, Decision, or Priority row here — those are internal dashboard fields and do not belong in Admin & SEO. ' +
-    'Leave "Related Products"/"Related Tutorials" cells empty rather than inventing links (see LINK POLICY above).'
+    'Leave "Related Products"/"Related Tutorials" cells empty rather than inventing links (see LINK POLICY above). ' +
+    'If a HUMAN-APPROVED PUBLISH DATE section is present above, "Publish Date" MUST be exactly that date — never today\'s date or any other generated/derived date.'
   ));
 
   parts.push(section(

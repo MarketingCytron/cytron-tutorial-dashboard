@@ -15,11 +15,11 @@
 | Categories | IoT / Safety & Alerts |
 | Related Products | |
 | Related Tutorials | |
-| Publish Date | 2026-09-02 |
+| Publish Date | 2026-09-05 |
 
 ## Overview / Introduction
 
-In this tutorial, you will build an educational smoke and flammable gas detection alarm prototype using the Cytron Maker ESP32 and an MQ-2 gas sensor module. You will learn how to read analog voltage values from the sensor, process gas concentration thresholds, and trigger instant visual and audible alerts using the Maker ESP32 onboard indicator LED and piezo buzzer. This project provides a practical foundation for understanding environmental monitoring and microcontroller alert systems.
+In this tutorial, you will build an educational smoke and flammable gas detection alarm prototype using the Cytron [Maker ESP32](https://my.cytron.io/p-maker-esp32) and an MQ-2 gas sensor module. You will learn how to read analog voltage values from the sensor, process gas concentration thresholds, and trigger instant visual and audible alerts using the [Maker ESP32](https://my.cytron.io/p-maker-esp32) onboard indicator LED and piezo buzzer. This project provides a practical foundation for understanding environmental monitoring and microcontroller alert systems.
 
 ## Disclaimer / Safety Notes
 
@@ -27,15 +27,15 @@ This project is an educational prototype designed for learning and experimentati
 
 ## Prerequisites
 
-Before starting, make sure your Maker ESP32 is ready to program. If this is your first time using the board, follow the Maker ESP32 Getting Started guide first.
+Before starting, make sure your [Maker ESP32](https://my.cytron.io/p-maker-esp32) is ready to program. If this is your first time using the board, follow the [Maker ESP32 Getting Started guide](https://my.cytron.io/tutorial/getting-started-with-maker-esp32) first.
 
 ## Objectives
 
-The objective of this project is to interface an MQ-2 gas/smoke sensor with the Maker ESP32, read real-time analog sensor data via GPIO15, and activate the onboard GPIO2 LED and GPIO26 buzzer whenever detected smoke or gas levels exceed a defined threshold.
+The objective of this project is to interface an MQ-2 gas/smoke sensor with the [Maker ESP32](https://my.cytron.io/p-maker-esp32), read real-time analog sensor data via GPIO15, and activate the onboard GPIO2 LED and GPIO26 buzzer whenever detected smoke or gas levels exceed a defined threshold.
 
 ## List of Components / BOM
 
-1. Maker ESP32 x1
+1. [Maker ESP32](https://my.cytron.io/p-maker-esp32) x1
 2. [MQ-2 Gas/Smoke Sensor Module](https://my.cytron.io/search?search=MQ2%20Smoke%20LPG%20CO%20Sensor%20Module) x1
 3. Breadboard x1
 4. Male-to-Male Jumper Wires x3
@@ -43,22 +43,22 @@ The objective of this project is to interface an MQ-2 gas/smoke sensor with the 
 
 ## System Diagram & Wiring
 
-Connect the MQ-2 sensor module to the Maker ESP32 using a breadboard and jumper wires. The sensor's analog output connects directly to GPIO15, which sits adjacent to the 3.3V and GND pins on the Maker ESP32 for straightforward breadboard routing.
+Connect the MQ-2 sensor module to the [Maker ESP32](https://my.cytron.io/p-maker-esp32) using a breadboard and jumper wires. The sensor's analog output connects directly to GPIO15, which sits adjacent to the 3.3V and GND pins on the [Maker ESP32](https://my.cytron.io/p-maker-esp32) for straightforward breadboard routing.
 
-| MQ-2 Sensor Pin | Maker ESP32 Pin | Function |
+| MQ-2 Sensor Pin | [Maker ESP32](https://my.cytron.io/p-maker-esp32) Pin | Function |
 |---|---|---|
 | VCC | 3V3 | 3.3V Power Supply |
 | GND | GND | Common Ground |
 | AO | GPIO15 | Analog Gas/Smoke Signal Input |
 
-*Note: The visual indicator (GPIO2 LED) and audio sounder (GPIO26 buzzer) are built directly into the Maker ESP32 board and require no external wiring.*
+*Note: The visual indicator (GPIO2 LED) and audio sounder (GPIO26 buzzer) are built directly into the [Maker ESP32](https://my.cytron.io/p-maker-esp32) board and require no external wiring.*
 
 ## Software Setup
 
 1. Open the **Arduino IDE**.
 2. Go to **Tools > Board > ESP32 Arduino** and select **ESP32 Dev Module**.
-3. Connect the Maker ESP32 to your computer using a USB-C cable.
-4. Go to **Tools > Port** and select the active COM port for your Maker ESP32.
+3. Connect the [Maker ESP32](https://my.cytron.io/p-maker-esp32) to your computer using a USB-C cable.
+4. Go to **Tools > Port** and select the active COM port for your [Maker ESP32](https://my.cytron.io/p-maker-esp32).
 5. Ensure the **Upload Speed** is set to **115200**.
 
 *Note: This project uses built-in analog reading functions (`analogRead()`) and native ESP32 buzzer control (`tone()`), so no third-party libraries are required.*
@@ -111,15 +111,15 @@ void loop() {
 ### Key Code Explanation
 
 - `SENSOR_PIN (GPIO15)`: Reads the analog voltage signal output from the MQ-2 sensor module.
-- `LED_PIN (GPIO2)` & `BUZZER_PIN (GPIO26)`: Control the Maker ESP32 onboard visual LED and audible piezo sounder.
+- `LED_PIN (GPIO2)` & `BUZZER_PIN (GPIO26)`: Control the [Maker ESP32](https://my.cytron.io/p-maker-esp32) onboard visual LED and audible piezo sounder.
 - `analogRead(SENSOR_PIN)`: Samples the sensor's analog voltage and converts it into a 12-bit digital reading (0–4095).
 - `if (sensorValue > THRESHOLD)`: Evaluates the real-time reading against the set threshold to switch between normal and alert states.
 - `tone()` & `noTone()`: Generates a 1 kHz audio frequency on the onboard buzzer when smoke is detected, and silences it under safe conditions.
 
 ## Testing & Validation
 
-1. Slide the Maker ESP32 onboard buzzer **Mute Switch** to the **ON** position.
-2. Connect the Maker ESP32 to your computer using the USB-C cable and upload the sketch.
+1. Slide the [Maker ESP32](https://my.cytron.io/p-maker-esp32) onboard buzzer **Mute Switch** to the **ON** position.
+2. Connect the [Maker ESP32](https://my.cytron.io/p-maker-esp32) to your computer using the USB-C cable and upload the sketch.
 3. Open the **Serial Monitor** in Arduino IDE and set the baud rate to **115200**.
 4. Allow the MQ-2 sensor to warm up for 5 to 10 minutes until baseline readings stabilize in clean air.
 5. Introduce a controlled smoke source (such as smoke from an extinguished match or incense stick) near the sensor face.
@@ -153,7 +153,7 @@ Gas Sensor Value: 530
 - **Adjust the threshold:** If ambient air conditions cause readings near your trigger limit, increase `THRESHOLD` in code (e.g., from 1500 to 2000).
 
 ### Buzzer produces no sound during an alarm
-- **Check the physical Mute Switch:** Verify the hardware slide switch next to the buzzer on the Maker ESP32 is set to **ON**.
+- **Check the physical Mute Switch:** Verify the hardware slide switch next to the buzzer on the [Maker ESP32](https://my.cytron.io/p-maker-esp32) is set to **ON**.
 - **Verify code assignment:** Ensure `BUZZER_PIN` is set to GPIO26.
 
 ### Sensor readings do not change when exposed to smoke
@@ -161,7 +161,7 @@ Gas Sensor Value: 530
 - **Verify analog pin:** Make sure you connected to the analog output (AO) pin on the MQ-2 module, not the digital output (DO) pin.
 
 ### Onboard LED does not light up
-- **Verify GPIO assignment:** Confirm `LED_PIN` is set to GPIO2 in your sketch. Onboard Maker ESP32 LEDs are active HIGH.
+- **Verify GPIO assignment:** Confirm `LED_PIN` is set to GPIO2 in your sketch. Onboard [Maker ESP32](https://my.cytron.io/p-maker-esp32) LEDs are active HIGH.
 
 ## Downloads & Assets
 
@@ -169,7 +169,7 @@ Gas Sensor Value: 530
 
 ## Community / Related Tutorials
 
-Join the Cytron Maker Community to share your projects, get technical help, and explore more tutorials.
+Join the [ESP32 Makers Community](https://t.me/ESPmakersMY) on Telegram to share your projects, get technical help, and explore more tutorials.
 
 ---
 # INTERNAL EDITOR NOTES — DO NOT PUBLISH
@@ -191,7 +191,7 @@ Join the Cytron Maker Community to share your projects, get technical help, and 
 - **Physical Bench Testing**: Perform bench validation with physical Maker ESP32 and MQ-2 sensor to verify analog output dynamic range on GPIO15 when powered from the 3.3V rail.
 - **GPIO15 Boot Sensitivity Validation**: Perform physical power-up, reset, and sketch upload tests with the MQ-2 sensor connected to GPIO15 to confirm no boot-mode strapping interference.
 - **Threshold Calibration Verification**: Validate baseline analog readings in ambient air vs. controlled smoke exposure to confirm the default 1500 threshold is optimal.
-- **Maker ESP32 Getting Started URL**: Confirm exact official Cytron URL for the Maker ESP32 Getting Started guide before publishing.
+- **Maker ESP32 Getting Started URL**: RESOLVED (Milestone 7 human-approved canonical link: `https://my.cytron.io/tutorial/getting-started-with-maker-esp32`, now linked from Prerequisites). No longer needs confirmation.
 - **Product Store URLs**: Verify official store links for Maker ESP32 and accessories across regional stores (MY/SG).
 - **Editor Review**: Final proofreading and editorial review by Cytron content team.
 

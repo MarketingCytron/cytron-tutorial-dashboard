@@ -23,7 +23,7 @@ Revamp Date: 2026-08-29
 | Status | Enabled |
 | Categories | IoT; Home Automation |
 | Related Products | [Maker ESP32](https://my.cytron.io/p-maker-esp32); [Robo ESP32](https://my.cytron.io/p-robo-esp32); [Grove - Sound Sensor](https://my.cytron.io/p-grove-sound-sensor) |
-| Publish Date | 2026-09-01 |
+| Publish Date | 2026-09-02 |
 
 ## Introduction
 
@@ -33,12 +33,12 @@ It is a simple way to explore sound-triggered control with an ESP32. Each clap c
 
 ## Disclaimer / Safety Notes
 
-- Turn off the power before mounting or removing Maker ESP32 from Robo ESP32.
+- Turn off the power before mounting or removing [Maker ESP32](https://my.cytron.io/p-maker-esp32) from Robo ESP32.
 - Check that the boards are aligned in the correct orientation before powering the project.
 
 ## Prerequisites
 
-Before starting, make sure your Maker ESP32 is ready for programming. If this is your first time using Maker ESP32, follow the [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32) tutorial first.
+Before starting, make sure your [Maker ESP32](https://my.cytron.io/p-maker-esp32) is ready for programming. If this is your first time using [Maker ESP32](https://my.cytron.io/p-maker-esp32), follow the [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32) tutorial first.
 
 ## Objective
 
@@ -53,11 +53,11 @@ Read the sound level from a Grove Sound Sensor, detect a clap with a configurabl
 
 ## System Diagram & Wiring
 
-Mount Maker ESP32 on Robo ESP32, then connect the Grove Sound Sensor to **Robo ESP32 Grove Port 7**. The sound sensor signal uses GPIO36. Robo ESP32's two onboard NeoPixels use GPIO15.
+Mount [Maker ESP32](https://my.cytron.io/p-maker-esp32) on Robo ESP32, then connect the Grove Sound Sensor to **Robo ESP32 Grove Port 7**. The sound sensor signal uses GPIO36. Robo ESP32's two onboard NeoPixels use GPIO15.
 
 **[INTERNAL MEDIA PLACEHOLDER: Add final Maker ESP32 + Robo ESP32 system/wiring image here.]**
 
-| Component / Connection | Robo ESP32 / Maker ESP32 |
+| Component / Connection | Robo ESP32 / [Maker ESP32](https://my.cytron.io/p-maker-esp32) |
 |---|---|
 | Grove Sound Sensor | Grove Port 7 |
 | Sound Sensor Signal | GPIO36 |
@@ -147,7 +147,7 @@ void setAllPixels(uint32_t color) {
 
 ## Testing & Validation
 
-1. Upload the code to Maker ESP32.
+1. Upload the code to [Maker ESP32](https://my.cytron.io/p-maker-esp32).
 2. Open Serial Monitor and set the baud rate to **115200**.
 3. Observe the normal sound reading in a quiet room.
 4. Clap near the Grove Sound Sensor.
@@ -169,7 +169,7 @@ Each clap above the configured threshold changes both onboard Robo ESP32 NeoPixe
 ### RGB LEDs Do Not Change
 
 - Check that the Adafruit NeoPixel library is installed.
-- Check that Maker ESP32 is mounted correctly on Robo ESP32.
+- Check that [Maker ESP32](https://my.cytron.io/p-maker-esp32) is mounted correctly on Robo ESP32.
 - Upload the code again and restart the board.
 
 ### Sound Sensor Reading Does Not Change
@@ -198,11 +198,11 @@ Each clap above the configured threshold changes both onboard Robo ESP32 NeoPixe
 ## Downloads & Assets
 
 - Code / GitHub Gist: Add the verified public Gist link before publishing.
-- Wiring diagram: Add the final Maker ESP32 + Robo ESP32 wiring diagram when available.
+- Wiring diagram: Add the final [Maker ESP32](https://my.cytron.io/p-maker-esp32) + Robo ESP32 wiring diagram when available.
 
 ## Community / Related Tutorials
 
-**[EDITOR PLACEHOLDER: Insert the appropriate Arduino / Maker Boards Telegram community banner.]**
+[ESP32 Makers Community](https://t.me/ESPmakersMY)
 
 **[EDITOR PLACEHOLDER: Add verified related tutorials.]**
 
@@ -232,7 +232,7 @@ Each clap above the configured threshold changes both onboard Robo ESP32 NeoPixe
 - Threshold calibration, debounce behaviour (300 ms), and complete clap-to-colour-cycle operation.
 - Direct public Gist URL and final tested code asset.
 - New Maker ESP32 + Robo ESP32 wiring diagram, thumbnail, project photo, and any replacement screenshots.
-- Telegram banner asset/link, related tutorial links, and editor review of Admin & SEO fields.
+- Telegram community link now uses the human-approved canonical URL (`https://t.me/ESPmakersMY`) as a text link — an approved banner IMAGE asset can replace it later if one becomes available. Related tutorial links and editor review of Admin & SEO fields remain outstanding.
 
 ## Media Replacement Plan
 

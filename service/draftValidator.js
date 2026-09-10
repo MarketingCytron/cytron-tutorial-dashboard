@@ -21,6 +21,8 @@
  * job states 'Ready for Review' and 'Needs Human Review'.
  */
 
+const approvedLinks = require('./approvedLinks');
+
 const REQUIRED_STRUCTURE_HEADINGS = [
   /admin\s*&\s*seo/i,
   /overview|introduction/i,
@@ -178,6 +180,7 @@ function validateDraft(markdown, context) {
   const approvedText = [
     context.agentsContent, context.authoringStandardContent, context.auditContent,
     context.originalTutorialContent, JSON.stringify(context.tutorial || {}),
+    context.approvedLinksText || approvedLinks.ALL_APPROVED_URLS.join('\n'),
     ...(context.makerEsp32Files || []).map((f) => f.content || ''),
   ].join('\n');
 
@@ -448,17 +451,45 @@ function validateDraft(markdown, context) {
 
     // 25. The sensor input GPIO must be used consistently — the required
     // pin present, and none of the explicitly superseded/forbidden pins
-    // mixed in anywhere in the public body.
-    const requiredPin = decision.sensorInputGpio;
-    const forbiddenPins = decision.disallowedSensorInputGpios || [];
-    const hasRequiredPin = new RegExp(`\\bGPIO\\s*0*${requiredPin}\\b`, 'i').test(publicBody);
-    const foundForbiddenPins = forbiddenPins.filter((p) => new RegExp(`\\bGPIO\\s*0*${p}\\b`, 'i').test(publicBody));
-    const gpioConsistent = hasRequiredPin && foundForbiddenPins.length === 0;
-    checks.push(check('project_sensor_gpio_consistency', `MQ-2 analog input consistently uses GPIO${requiredPin} (no GPIO${forbiddenPins.join('/')} mix-in) across the public body`,
-      gpioConsistent ? 'pass' : 'fail',
-      gpioConsistent
-        ? `GPIO${requiredPin} present, no forbidden pins found`
-        : `hasRequiredPin(GPIO${requiredPin})=${hasRequiredPin}, forbiddenPinsFound=${foundForbiddenPins.length ? foundForbiddenPins.map((p) => `GPIO${p}`).join(',') : 'none'}`));
+    // mixed in anywhere in the public body. Deliberately generic (not
+    // hardcoded to any one project's sensor name) — reused as-is by every
+    // PROJECT_HARDWARE_DECISIONS entry that sets sensorInputGpio. Gated on
+    // `decision.sensorInputGpio` actually being present: a project decision
+    // that only resolves a sensor MODEL (not a specific pin) must not get
+    // this check at all — a GPIO was never human-approved for it, and
+    // running the check anyway would fabricate false project-specific GPIO
+    // authority the human never gave (see docs/TUTORIAL_REVAMP_AGENT_
+    // MILESTONE_7... GPIO16 authority correction).
+    if (decision.sensorInputGpio) {
+      const requiredPin = decision.sensorInputGpio;
+      const forbiddenPins = decision.disallowedSensorInputGpios || [];
+      const sensorLabel = decision.sensorModel ? `${decision.sensorModel} sensor` : 'sensor';
+      const hasRequiredPin = new RegExp(`\\bGPIO\\s*0*${requiredPin}\\b`, 'i').test(publicBody);
+      const foundForbiddenPins = forbiddenPins.filter((p) => new RegExp(`\\bGPIO\\s*0*${p}\\b`, 'i').test(publicBody));
+      const gpioConsistent = hasRequiredPin && foundForbiddenPins.length === 0;
+      checks.push(check('project_sensor_gpio_consistency', `${sensorLabel} input consistently uses GPIO${requiredPin} (no GPIO${forbiddenPins.join('/')} mix-in) across the public body`,
+        gpioConsistent ? 'pass' : 'fail',
+        gpioConsistent
+          ? `GPIO${requiredPin} present, no forbidden pins found`
+          : `hasRequiredPin(GPIO${requiredPin})=${hasRequiredPin}, forbiddenPinsFound=${foundForbiddenPins.length ? foundForbiddenPins.map((p) => `GPIO${p}`).join(',') : 'none'}`));
+    }
+
+    // 25b. Milestone 7 — the human-approved sensor MODEL must be used
+    // consistently, and the (possibly wrong) legacy model name must not be
+    // asserted as the sensor anywhere in the public body. Only runs for a
+    // project that actually sets both `sensorModel` and `legacySensorModel`
+    // — most PROJECT_HARDWARE_DECISIONS entries don't have a naming
+    // discrepancy to resolve, so this doesn't apply to them at all.
+    if (decision.sensorModel && decision.legacySensorModel) {
+      const hasCorrectSensor = new RegExp(`\\b${escapeRegExp(decision.sensorModel)}\\b`, 'i').test(publicBody);
+      const hasLegacySensor = new RegExp(`\\b${escapeRegExp(decision.legacySensorModel)}\\b`, 'i').test(publicBody);
+      const sensorModelConsistent = hasCorrectSensor && !hasLegacySensor;
+      checks.push(check('project_sensor_model_consistency', `Public body consistently names the human-approved sensor (${decision.sensorModel}), never the legacy/incorrect name (${decision.legacySensorModel})`,
+        sensorModelConsistent ? 'pass' : 'fail',
+        sensorModelConsistent
+          ? `${decision.sensorModel} present, ${decision.legacySensorModel} not found`
+          : `hasCorrectSensor(${decision.sensorModel})=${hasCorrectSensor}, hasLegacySensor(${decision.legacySensorModel})=${hasLegacySensor}`));
+    }
 
     // 26. Robo ESP32 must not appear anywhere — public OR internal — for
     // this project (stricter than the generic public-only check, since the
@@ -592,6 +623,97 @@ function validateDraft(markdown, context) {
       : (unsupportedPhrases.length === 0
         ? 'all Demo/Results status text traced to the Sample Code sketch'
         : `Demo/Results shows text not produced by the sketch: ${unsupportedPhrases.join(', ')}`)));
+
+  // 32. Milestone 7 — every plain-text public occurrence of "Maker ESP32"
+  // must be hyperlinked to the canonical product URL. Deliberately excludes
+  // fenced code blocks, inline code spans, and INTERNAL EDITOR NOTES (never
+  // checked here at all, since publicBody already excludes it) — a plain
+  // string search-and-replace risk (corrupting Markdown) is avoided by
+  // stripping code first and only ever comparing text, never rewriting it.
+  {
+    const canonicalLinkPattern = new RegExp(`\\[Maker ESP32\\]\\(${escapeRegExp(approvedLinks.MAKER_ESP32_PRODUCT_URL)}\\)`, 'g');
+    const gettingStartedLinkPattern = new RegExp(`\\[[^\\]]*Maker ESP32[^\\]]*\\]\\(${escapeRegExp(approvedLinks.MAKER_ESP32_GETTING_STARTED_URL)}\\)`, 'g');
+    const anyOtherLinkTextPattern = /\[[^\]]*Maker ESP32[^\]]*\]\([^)]*\)/g;
+
+    // Strip fenced code blocks and inline code spans entirely so a
+    // "Maker ESP32" appearing in a code comment or inline code snippet is
+    // never flagged. Also strip the Admin & SEO table itself — its Tags /
+    // Meta Title / Meta Description / Title cells are CMS/dashboard
+    // metadata, not rendered reader-facing prose, and Milestone 7's own
+    // linking-rule list (headings, intro paragraphs, BOM, wiring, software
+    // instructions, testing, troubleshooting, related products) does not
+    // include tag/keyword fields — only "Related Products" does, and that
+    // field is already covered because it uses real Markdown links, not a
+    // bare comma-separated tag list.
+    const adminSeoSectionText = extractSectionText(publicBody, 'Admin\\s*&\\s*SEO');
+    const scanText = publicBody
+      .replace(adminSeoSectionText || ' ', '')
+      .replace(/```[a-zA-Z]*\n[\s\S]*?```/g, '')
+      .replace(/`[^`\n]+`/g, '')
+      // Editorial placeholder markers (e.g. "[EDITOR PLACEHOLDER: ...]",
+      // "[INTERNAL MEDIA PLACEHOLDER: ...]") are internal notes-to-self that
+      // happen to sit in the public-body region before a real image/diagram
+      // replaces them — never actually published reader-facing prose.
+      .replace(/\[(?:EDITOR PLACEHOLDER|INTERNAL MEDIA PLACEHOLDER)[^\]]*\]/gi, '');
+
+    const withoutCanonicalLinks = scanText.replace(canonicalLinkPattern, '').replace(gettingStartedLinkPattern, '');
+    // Any remaining `[...Maker ESP32...](someOtherUrl)` link is a mismatch —
+    // "Maker ESP32" text linked to neither the canonical product URL nor the
+    // Getting Started guide URL (both already stripped above).
+    const mismatchedLinks = withoutCanonicalLinks.match(anyOtherLinkTextPattern) || [];
+    const withoutAnyExistingLink = withoutCanonicalLinks.replace(anyOtherLinkTextPattern, '');
+    const unlinkedMakerEsp32 = (withoutAnyExistingLink.match(/\bMaker ESP32\b/g) || []).length;
+
+    const problems = [];
+    if (unlinkedMakerEsp32 > 0) problems.push(`${unlinkedMakerEsp32} plain-text "Maker ESP32" occurrence(s) not hyperlinked to the canonical product URL`);
+    if (mismatchedLinks.length > 0) problems.push(`"Maker ESP32" linked to an unexpected URL: ${mismatchedLinks.slice(0, 5).join(', ')}`);
+
+    checks.push(check('maker_esp32_public_links', 'Every plain-text public "Maker ESP32" mention is hyperlinked to the canonical product URL (or the Getting Started guide link), never double-wrapped or linked elsewhere',
+      problems.length === 0 ? 'pass' : 'fail',
+      problems.length === 0 ? 'all public "Maker ESP32" mentions are correctly linked (or none were present)' : problems.join('; ')));
+  }
+
+  // 33. Milestone 7 — the ESP32 Makers Telegram community URL must never be
+  // used as an image source (t.me is a destination link, not an image
+  // asset) — that produces broken Markdown (an image tag pointing at a page,
+  // not a picture file).
+  {
+    const brokenTelegramImage = new RegExp(`!\\[[^\\]]*\\]\\(${escapeRegExp(approvedLinks.TELEGRAM_ESP32_MAKERS_COMMUNITY_URL)}\\)`).test(publicBody);
+    checks.push(check('telegram_community_link_not_image', 'The ESP32 Makers Telegram community URL is never used as a Markdown image source',
+      brokenTelegramImage ? 'fail' : 'pass',
+      brokenTelegramImage ? 'found broken image Markdown (![...](t.me/...)) — t.me is a destination link, not an image asset' : 'not found / clean'));
+  }
+
+  // 34. Milestone 7 — the Getting Started guide URL is now known; a
+  // Prerequisites section that defers to "the Getting Started guide" must
+  // no longer mark that URL NEEDS VERIFICATION, and (when this tutorial
+  // targets Maker ESP32) should link the canonical URL.
+  if (context.needsMakerEsp32) {
+    const prereqText = extractSectionText(publicBody, 'Prerequisites');
+    const usesGettingStartedPattern = /getting started guide/i.test(prereqText);
+    if (usesGettingStartedPattern) {
+      const stillMarkedNeedsVerification = /getting started guide[^.\n]{0,80}needs? verification/i.test(prereqText)
+        || /needs? verification[^.\n]{0,80}getting started guide/i.test(prereqText);
+      const hasCanonicalLink = prereqText.includes(approvedLinks.MAKER_ESP32_GETTING_STARTED_URL);
+      checks.push(check('getting_started_link_resolved', 'Prerequisites links the now-known canonical Maker ESP32 Getting Started guide URL and does not mark it NEEDS VERIFICATION',
+        (!stillMarkedNeedsVerification && hasCanonicalLink) ? 'pass' : 'fail',
+        stillMarkedNeedsVerification
+          ? 'Prerequisites still marks the Getting Started guide URL as NEEDS VERIFICATION, but the canonical URL is now known and approved'
+          : (hasCanonicalLink ? 'canonical Getting Started URL found' : 'Prerequisites uses the Getting-Started-guide pattern but does not link the canonical URL')));
+    }
+  }
+
+  // 35. Milestone 7 — when this tutorial has a human-approved scheduled
+  // publish date, the Admin & SEO "Publish Date" field must match it exactly
+  // (FAIL on mismatch, not a warning — this is an objective, human-approved
+  // requirement, not a heuristic).
+  if (context.scheduledPublishDate) {
+    const publishDateValue = extractAdminField(publicBody, 'Publish Date');
+    const matches = publishDateValue === context.scheduledPublishDate;
+    checks.push(check('scheduled_publish_date_consistency', `Admin & SEO "Publish Date" matches the human-approved scheduled date (${context.scheduledPublishDate})`,
+      matches ? 'pass' : 'fail',
+      matches ? 'matches' : `expected "${context.scheduledPublishDate}", found ${publishDateValue === null ? 'no Publish Date field' : `"${publishDateValue}"`}`));
+  }
 
   const summary = checks.reduce((acc, c) => {
     acc[c.status] = (acc[c.status] || 0) + 1;

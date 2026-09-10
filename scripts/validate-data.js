@@ -33,7 +33,11 @@ const VALID_GRADES = ['A', 'B', 'C', 'D', 'E'];
 const VALID_LABELS = ['Valid', 'Mostly Valid', 'Partially Outdated', 'Outdated', 'Invalid'];
 const VALID_DECISIONS = ['Keep', 'Minor Update', 'Major Revamp', 'Replace', 'Not Decided'];
 const VALID_PRIORITIES = ['P0', 'P1', 'P2', 'P3', 'None'];
-const VALID_STATUSES = ['Not Reviewed', 'Reviewed', 'Planned', 'Revamping', 'Completed', 'Archived'];
+// Milestone 7: 'Complete' is the new human-approved canonical status for a
+// tutorial already promoted into Final Output (see docs/CYTRON_TUTORIAL_
+// AUTHORING_STANDARD.md §28) — distinct from the older 'Completed' spelling,
+// which stays valid so no existing record needs to change meaning.
+const VALID_STATUSES = ['Not Reviewed', 'Reviewed', 'Planned', 'Revamping', 'Completed', 'Complete', 'Archived'];
 const VALID_LEVELS = ['Beginner', 'Intermediate', 'Advanced'];
 const VALID_SCOPES = ['Small', 'Medium', 'Large'];
 

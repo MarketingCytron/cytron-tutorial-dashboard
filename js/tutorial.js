@@ -3,8 +3,15 @@
  * Tutorial Detail Page JavaScript
  */
 
+// Milestone 7 — same bulk, best-effort effective-status lookup as
+// tutorials.js: falls back to the dataset's own revampStatus whenever the
+// local bridge isn't paired/reachable.
+const STATUS_BRIDGE_URL = 'http://127.0.0.1:47821';
+const STATUS_BRIDGE_TOKEN_KEY = 'revampBridgeToken';
+
 const TutorialDetail = {
     tutorial: null,
+    effectiveStatus: null,
 
     async init() {
         const id = Utils.getUrlParam('id');
@@ -21,8 +28,32 @@ const TutorialDetail = {
             return;
         }
 
+        await this.loadEffectiveStatus();
         this.render();
         this.loadAuditReport();
+    },
+
+    async loadEffectiveStatus() {
+        this.effectiveStatus = this.tutorial.revampStatus;
+        let token = '';
+        try {
+            token = window.sessionStorage.getItem(STATUS_BRIDGE_TOKEN_KEY) || '';
+        } catch {
+            return;
+        }
+        if (!token) return;
+        try {
+            const res = await fetch(`${STATUS_BRIDGE_URL}/api/tutorial-status`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) return;
+            const body = await res.json();
+            if (body && body.ok && body.statuses && body.statuses[this.tutorial.id]) {
+                this.effectiveStatus = body.statuses[this.tutorial.id];
+            }
+        } catch {
+            // Bridge not reachable — keep the dataset value.
+        }
     },
 
     showNotFound() {
@@ -106,10 +137,11 @@ const TutorialDetail = {
         const scopeDisplay = document.getElementById('scopeDisplay');
         scopeDisplay.innerHTML = `<span>${Utils.escapeHtml(t.revampScope || '-')}</span>`;
 
-        // Status display
+        // Status display (bridge-derived effective status when available)
+        const status = this.effectiveStatus || t.revampStatus;
         const statusDisplay = document.getElementById('statusDisplay');
         statusDisplay.innerHTML = `
-            <span class="status-badge ${Utils.getStatusClass(t.revampStatus)}" style="font-size: 0.95rem;">${Utils.escapeHtml(t.revampStatus || 'Not Reviewed')}</span>
+            <span class="status-badge ${Utils.getStatusClass(status)}" style="font-size: 0.95rem;">${Utils.escapeHtml(status || 'Not Reviewed')}</span>
         `;
 
         // Main recommendation

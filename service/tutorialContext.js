@@ -22,6 +22,8 @@ const path = require('path');
 const config = require('./config');
 const { findTutorialRecord, TUTORIAL_ID_PATTERN } = require('./tutorialRepo');
 const originalTutorialSource = require('./originalTutorialSource');
+const approvedLinks = require('./approvedLinks');
+const publishSchedule = require('./publishSchedule');
 
 // Fixed, bridge-owned. Matches AGENTS.md's "Required source hierarchy" #3
 // verbatim. Never derived from browser input.
@@ -113,6 +115,40 @@ const PROJECT_HARDWARE_DECISIONS = {
       'Approved BOM: Maker ESP32, MQ-2 Gas/Smoke Sensor Module, breadboard, jumper wires as required. Breadboard and jumper wires are approved parts of this project, not a sign of unresolved wiring — do not omit them or flag them as inconsistent. Do not add a Maker Port cable/adapter, an external buzzer, NeoPixel, or Robo ESP32 to the BOM unless a genuine new requirement emerges.',
       'Do not use Maker Port for this tutorial at all (this is a project-specific override — Maker Port remains the generally preferred approach for other tutorials where compatibility is confirmed).',
       'Remaining Outstanding Verification for this project should be physical/bench-level only (e.g. confirm MQ-2 AO produces usable readings on GPIO15, confirm GPIO15 does not interfere with boot/reset/upload if relevant, confirm threshold behavior, confirm LED/buzzer alerts, end-to-end bench test) — do not re-list the architecture decisions above (board, power rail, GPIO15, LED/buzzer pins) as if they were still unresolved.',
+    ].join(' '),
+  },
+  // Milestone 7 human decision: the correct sensor for this tutorial is
+  // DHT11 — the "dht22" appearing in this record's `id`, `auditFile` path,
+  // and original source `url` is a LEGACY NAMING MISTAKE from earlier
+  // authoring, deliberately left unrenamed (renaming would break audit
+  // references, job history, dashboard links, and existing URLs — see
+  // docs/CYTRON_TUTORIAL_AUTHORING_STANDARD.md §28 note 10). `sensorModel`/
+  // `legacySensorModel` below are consumed by draftValidator.js's
+  // `project_sensor_model_consistency` check (a generic, reusable pattern —
+  // not hardcoded to DHT anything) to fail a draft that writes the legacy
+  // sensor name into the public body instead of the human-approved one.
+  // NOTE (narrow scope, human-corrected): the human explicitly approved ONLY
+  // the sensor MODEL (DHT11, not DHT22) — NOT any specific GPIO pin. Earlier
+  // drafting of this entry mistakenly also set `sensorInputGpio: '16'` to
+  // reuse the generic GPIO-consistency check, which would have wrongly
+  // elevated GPIO16 to PROJECT_SPECIFIC/human-approved authority without an
+  // actual human decision behind it. That has been removed. If GPIO16 (or
+  // any pin) is demonstrated by the current tutorial source snapshot/
+  // original working tutorial, it remains ORDINARY ORIGINAL_WORKING_EVIDENCE
+  // under the standard EVIDENCE & DECISION PRIORITY order — the same tier
+  // every other tutorial's pin choices get, no more and no less. The audit's
+  // own GPIO4->GPIO16 recommendation likewise stays at its ordinary
+  // AUDIT_RECOMMENDATION tier — this entry does not touch it.
+  'esp32-high-temperature-alert-system-with-dht22-sensor': {
+    boardMigration: 'Generic ESP32 -> Maker ESP32 (this entry corrects the sensor MODEL only; GPIO/pin selection is resolved through the standard evidence hierarchy, not by this decision)',
+    sensorModel: 'DHT11',
+    legacySensorModel: 'DHT22',
+    notes: [
+      'HUMAN-APPROVED HARDWARE DECISION (sensor model only): the correct sensor for this tutorial is DHT11, not DHT22. Any earlier DHT22 naming — in this tutorial\'s legacy tutorialId, audit filename, or original source URL — is an editorial mistake from earlier authoring and must NOT determine the revised hardware. This decision has higher authority than the original tutorial\'s own metadata, the audit recommendation, any previous draft, and the legacy tutorial ID/URL — do not silently prefer DHT22 merely because it appears in any of those places.',
+      'Use DHT11 consistently everywhere the sensor is named in the public tutorial: title, introduction, objectives, BOM, wiring, Sample Code (including any sensor-type constant and code comments), Testing, and Troubleshooting. Do not write DHT22 as the sensor anywhere in the public body.',
+      'If the sample code uses a sensor-type constant/argument (e.g. an Adafruit DHT library `DHT11`/`DHT22` type selector), it must select the DHT11 type — never DHT22.',
+      'This decision covers ONLY the sensor model — it does NOT resolve, approve, or elevate any specific GPIO/pin to project-specific or human-approved authority. Determine the DHT data pin the normal way, via EVIDENCE & DECISION PRIORITY: if the current tutorial source snapshot or original working tutorial already demonstrates a working DHT connection on a specific GPIO, that is ORIGINAL_WORKING_EVIDENCE (useful, not a settled project decision); the audit\'s own GPIO4->GPIO16 recommendation (if present) is ordinary AUDIT_RECOMMENDATION-tier evidence, exactly as it would be for any other tutorial. Do not treat GPIO16 (or any other pin) as already human-approved on this entry\'s authority alone.',
+      'This tutorial\'s own tutorialId, audit file path, and original source URL happen to contain the string "dht22". That is a stable LEGACY IDENTIFIER only — kept so audit references, job history, dashboard links, and existing URLs are not broken — and carries NO evidentiary weight about which sensor model is correct. Do not treat its presence as a reason to keep or reintroduce DHT22 as the sensor, and do not invent a replacement URL for the original source (a URL naming mistake is not the same question as hardware truth). Do not discuss this legacy naming discrepancy in the public tutorial body at all — it is an internal/editorial fact, not reader-facing content.',
     ].join(' '),
   },
 };
@@ -208,6 +244,8 @@ function resolveContext(tutorialId, userInstructions, jobId) {
       ownRevampFileExcluded: null,
       projectHardwareDecision: null,
       mq2Relevant: false,
+      approvedLinksText: '',
+      scheduledPublishDate: null,
       sources,
       missingRequired: ['tutorialId must be a lowercase alphanumeric-hyphen slug matching an existing tutorial'],
     };
@@ -409,6 +447,45 @@ function resolveContext(tutorialId, userInstructions, jobId) {
     projectHardwareDecision,
   });
 
+  // Milestone 7 — human-approved GLOBAL canonical links (approvedLinks.js).
+  // These are always pre-approved, regardless of whether this tutorial
+  // targets Maker ESP32 — a tutorial may still reference the Maker ESP32
+  // product page or the ESP32 Makers Telegram community even if Maker ESP32
+  // isn't itself the migration target. Recorded as its own HUMAN_APPROVED
+  // source (so its authority is visible like every other source) and folded
+  // into the text draftValidator.js's URL-provenance check treats as
+  // "approved" — these five URLs must never be flagged as invented, and
+  // must never be marked NEEDS VERIFICATION.
+  sources.push({
+    type: 'approved_global_links',
+    identifier: 'service/approvedLinks.js',
+    classification: 'REQUIRED',
+    status: 'included',
+    authority: AUTHORITY.HUMAN_APPROVED,
+    reason: 'Human-approved canonical URLs (Maker ESP32 product, Getting Started guide, ESP32 Makers Telegram community, Maker Port cables) — see docs/CYTRON_TUTORIAL_AUTHORING_STANDARD.md §28.',
+  });
+  const approvedLinksText = [
+    `Maker ESP32 product page: ${approvedLinks.MAKER_ESP32_PRODUCT_URL}`,
+    `Maker ESP32 Getting Started guide: ${approvedLinks.MAKER_ESP32_GETTING_STARTED_URL}`,
+    `ESP32 Makers Telegram community: ${approvedLinks.TELEGRAM_ESP32_MAKERS_COMMUNITY_URL}`,
+    `${approvedLinks.STEMMA_QT_QWIIC_FEMALE_CABLE_NAME}: ${approvedLinks.STEMMA_QT_QWIIC_FEMALE_CABLE_URL}`,
+    `${approvedLinks.GROVE_TO_JST_SH_QWIIC_CABLE_NAME}: ${approvedLinks.GROVE_TO_JST_SH_QWIIC_CABLE_URL}`,
+  ].join('\n');
+
+  // Milestone 7 — human-approved publish-date schedule (publishSchedule.js).
+  // null for any tutorial not on the schedule; callers must not invent one.
+  const scheduledPublishDate = publishSchedule.getScheduledPublishDate(tutorialId);
+  if (scheduledPublishDate) {
+    sources.push({
+      type: 'scheduled_publish_date',
+      identifier: tutorialId,
+      classification: 'PROJECT_SPECIFIC',
+      status: 'included',
+      authority: AUTHORITY.HUMAN_APPROVED,
+      reason: `Human-approved Maker ESP32 publish schedule date: ${scheduledPublishDate}. See service/publishSchedule.js.`,
+    });
+  }
+
   return {
     tutorial,
     agentsContent: agentsRead.ok ? agentsRead.content : '',
@@ -422,6 +499,8 @@ function resolveContext(tutorialId, userInstructions, jobId) {
     ownRevampFileExcluded: ownRevampFile || null,
     projectHardwareDecision,
     mq2Relevant,
+    approvedLinksText,
+    scheduledPublishDate,
     sources,
     missingRequired: [...new Set(missingRequired)],
   };

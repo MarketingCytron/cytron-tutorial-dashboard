@@ -15,34 +15,34 @@
 | Categories | ESP32 / GPIO Basics |
 | Related Products | |
 | Related Tutorials | |
-| Publish Date | 2026-09-03 |
+| Publish Date | 2026-09-04 |
 
 ## Overview / Introduction
 
 Light animations are one of the most rewarding ways to learn microcontroller programming. In this project, you will build an LED pattern generator that runs four distinct animations—including sequential running lights, bounce effects, and synchronized blinking.
 
-The Cytron Maker ESP32 features 14 onboard status LEDs connected directly to its GPIO pins. This lets you experiment with arrays, loops, and digital outputs immediately using only a USB-C cable—no external breadboards, resistors, or jumper wires required.
+The Cytron [Maker ESP32](https://my.cytron.io/p-maker-esp32) features 14 onboard status LEDs connected directly to its GPIO pins. This lets you experiment with arrays, loops, and digital outputs immediately using only a USB-C cable—no external breadboards, resistors, or jumper wires required.
 
 ## Prerequisites
 
-Before starting, make sure your Maker ESP32 is ready to program. If this is your first time using the board, follow the Maker ESP32 Getting Started guide first.
+Before starting, make sure your [Maker ESP32](https://my.cytron.io/p-maker-esp32) is ready to program. If this is your first time using the board, follow the [Maker ESP32 Getting Started guide](https://my.cytron.io/tutorial/getting-started-with-maker-esp32) first.
 
 ## Objectives
 
-Learn how to program dynamic LED light sequences using the 14 onboard GPIO status LEDs on the Cytron Maker ESP32. You will explore core Arduino programming concepts including arrays, loops, digital outputs, and timing delays to create multiple visual animation patterns without connecting any external components.
+Learn how to program dynamic LED light sequences using the 14 onboard GPIO status LEDs on the Cytron [Maker ESP32](https://my.cytron.io/p-maker-esp32). You will explore core Arduino programming concepts including arrays, loops, digital outputs, and timing delays to create multiple visual animation patterns without connecting any external components.
 
 ## List of Components / BOM
 
-1. Maker ESP32 x1
+1. [Maker ESP32](https://my.cytron.io/p-maker-esp32) x1
 2. USB Type-C Cable x1
 
 ## System Diagram & Wiring
 
-No external wiring is required for this project. All 14 indicator LEDs are built directly onto the Maker ESP32 board and are connected to individual GPIO pins. 
+No external wiring is required for this project. All 14 indicator LEDs are built directly onto the [Maker ESP32](https://my.cytron.io/p-maker-esp32) board and are connected to individual GPIO pins. 
 
 The onboard LEDs operate with active-HIGH logic: driving a pin HIGH turns its corresponding LED on, and driving it LOW turns it off.
 
-| Component | Maker ESP32 Pin | Function |
+| Component | [Maker ESP32](https://my.cytron.io/p-maker-esp32) Pin | Function |
 |---|---|---|
 | Onboard LED 1 | GPIO 2 | Output indicator LED |
 | Onboard LED 2 | GPIO 12 | Output indicator LED |
@@ -153,7 +153,7 @@ void patternAlternating() {
 
 ### Key Code Explanations
 
-- `ledPins[]`: Stores the array of 14 GPIO pin numbers connected to the Maker ESP32 onboard LEDs.
+- `ledPins[]`: Stores the array of 14 GPIO pin numbers connected to the [Maker ESP32](https://my.cytron.io/p-maker-esp32) onboard LEDs.
 - `setup()`: Initializes serial output at 115200 baud and configures every pin in the array as a digital output.
 - `patternAllBlink()`: Turns all 14 LEDs on and off simultaneously across three cycles using a 300 ms delay.
 - `patternSequential()`: Lights each LED one after another to create a smooth running-light animation.
@@ -162,9 +162,9 @@ void patternAlternating() {
 
 ## Testing & Validation
 
-1. Connect your Maker ESP32 to your computer using a USB-C cable.
+1. Connect your [Maker ESP32](https://my.cytron.io/p-maker-esp32) to your computer using a USB-C cable.
 2. Open the sketch in Arduino IDE.
-3. Click the **Upload** button to program the Maker ESP32.
+3. Click the **Upload** button to program the [Maker ESP32](https://my.cytron.io/p-maker-esp32).
 4. Open the Serial Monitor (**Tools > Serial Monitor**) and set the baud rate to **115200**.
 5. Watch the onboard LEDs next to the GPIO pins cycle through each animation.
 
@@ -226,8 +226,8 @@ On the board, all 14 indicator LEDs trace each animation smoothly across the GPI
 
 ## Outstanding Verification
 
-1. **Maker ESP32 Getting Started guide URL** — NEEDS VERIFICATION. The exact URL was not present in the approved sources; link was omitted from Prerequisites per authoring rules.
-2. **Maker ESP32 product page URL** — NEEDS VERIFICATION. Not present in approved sources; link omitted from BOM and Admin & SEO table.
+1. **Maker ESP32 Getting Started guide URL** — RESOLVED (Milestone 7 human-approved canonical link: `https://my.cytron.io/tutorial/getting-started-with-maker-esp32`). Now linked from Prerequisites; no longer NEEDS VERIFICATION.
+2. **Maker ESP32 product page URL** — RESOLVED (Milestone 7 human-approved canonical link: `https://my.cytron.io/p-maker-esp32`). Now linked from the BOM and public body; no longer NEEDS VERIFICATION.
 3. **Public GitHub Gist embed** — NEEDS VERIFICATION. Public gist URL must be generated and embedded by the editor prior to publishing.
 4. **Physical Hardware Validation** — Verify the physical arrangement/sequence of the 14 LEDs on the Maker ESP32 PCB to confirm visual left-to-right order matches array indexing.
 

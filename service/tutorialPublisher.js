@@ -176,12 +176,17 @@ async function doPublish(jobId, { confirmed, confirmedBlocking } = {}) {
   }
 
   // ---- Promote: write final output + update dataset (targeted surgery) -----
-  const establishedStatus = recordEditor.detectEstablishedRevampStatus(dataBefore);
+  // Milestone 7: 'Complete' is now the explicit, human-approved canonical
+  // status for a tutorial that has just been approved into Final Output —
+  // it is no longer inferred/detected from whatever status existing Final
+  // Output records happen to already use (that "detect the established
+  // convention" behavior belonged to Milestone 5, before this status had a
+  // human-approved name of its own).
   let updatedRaw;
   try {
     updatedRaw = recordEditor.applyFinalOutputPromotion(tutorialsRawBefore, job.tutorialId, {
       revampedOutputFile: finalOutputRelPath,
-      revampStatus: establishedStatus, // null => leave the field untouched, never invent a value
+      revampStatus: 'Complete',
     });
   } catch (e) {
     throw fail('dataset_update_failed', e.message);

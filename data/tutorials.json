@@ -857,7 +857,7 @@
       },
       "decision": "Minor Update",
       "revampScope": "Small",
-      "revampStatus": "Revamping",
+      "revampStatus": "Complete",
       "priority": "P2",
       "technicalScore": 7,
       "scores": {
@@ -1015,7 +1015,7 @@
       ],
       "auditFile": "audits/control-esp32-outputs-with-telegram.md",
       "revampedOutputFile": "revamped-tutorials/control-esp32-outputs-with-telegram.md",
-      "makerEsp32PublishDate": "2026-09-07",
+      "makerEsp32PublishDate": "2026-09-09",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [],
@@ -1061,7 +1061,7 @@
       },
       "decision": "Keep",
       "revampScope": "Small",
-      "revampStatus": "Revamping",
+      "revampStatus": "Complete",
       "priority": "P3",
       "technicalScore": 9,
       "scores": {
@@ -1229,14 +1229,14 @@
       ],
       "auditFile": "audits/esp32-led-pattern-generator.md",
       "revampedOutputFile": "revamped-tutorials/esp32-led-pattern-generator.md",
-      "makerEsp32PublishDate": "2026-09-22",
+      "makerEsp32PublishDate": "2026-09-04",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [],
         "notes": "Uses Maker ESP32 onboard 14 GPIO status LEDs"
       },
       "preparationDate": "2026-08-10",
-      "publishDate": "2026-09-06"
+      "publishDate": "2026-09-04"
     },
     {
       "id": "esp32-smart-light-control-with-app",
@@ -1438,7 +1438,7 @@
         }
       ],
       "auditFile": "audits/esp32-smart-light-control-with-app.md",
-      "makerEsp32PublishDate": "2026-09-10",
+      "makerEsp32PublishDate": "2026-09-11",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -1921,7 +1921,7 @@
       },
       "decision": "Keep",
       "revampScope": "Small",
-      "revampStatus": "Revamping",
+      "revampStatus": "Complete",
       "priority": "P3",
       "technicalScore": 9,
       "scores": {
@@ -2079,7 +2079,7 @@
       ],
       "auditFile": "audits/esp32-digital-clock.md",
       "revampedOutputFile": "revamped-tutorials/esp32-digital-clock.md",
-      "makerEsp32PublishDate": "2026-09-03",
+      "makerEsp32PublishDate": "2026-09-01",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -2088,7 +2088,7 @@
         "notes": "Connect via Maker Port (I2C)"
       },
       "preparationDate": "2026-08-04",
-      "publishDate": "2026-09-02"
+      "publishDate": "2026-09-01"
     },
     {
       "id": "dot-matrix-clock-ntp-esp32",
@@ -2358,7 +2358,7 @@
       },
       "decision": "Minor Update",
       "revampScope": "Small",
-      "revampStatus": "Revamping",
+      "revampStatus": "Complete",
       "priority": "P2",
       "technicalScore": 7,
       "scores": {
@@ -2521,7 +2521,7 @@
       ],
       "auditFile": "audits/esp32-air-quality-monitoring.md",
       "revampedOutputFile": "revamped-tutorials/esp32-air-quality-monitoring.md",
-      "makerEsp32PublishDate": "2026-09-12",
+      "makerEsp32PublishDate": "2026-09-10",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -2572,7 +2572,7 @@
       },
       "decision": "Minor Update",
       "revampScope": "Small",
-      "revampStatus": "Revamping",
+      "revampStatus": "Complete",
       "priority": "P2",
       "technicalScore": 8,
       "scores": {
@@ -2746,7 +2746,7 @@
       ],
       "auditFile": "audits/esp32-smoke-detection-alarm.md",
       "revampedOutputFile": "revamped-tutorials/esp32-smoke-detection-alarm.md",
-      "makerEsp32PublishDate": "2026-09-26",
+      "makerEsp32PublishDate": "2026-09-05",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -2756,7 +2756,7 @@
         "notes": "Use onboard buzzer (GPIO26) or external. Replace NeoPixel with GPIO LEDs"
       },
       "preparationDate": "2026-09-03",
-      "publishDate": "2026-09-24"
+      "publishDate": "2026-09-05"
     },
     {
       "id": "farm-automation-system-roboesp32",
@@ -3021,7 +3021,7 @@
       },
       "decision": "Keep",
       "revampScope": "Small",
-      "revampStatus": "Revamping",
+      "revampStatus": "Complete",
       "priority": "P3",
       "technicalScore": 9,
       "scores": {
@@ -3198,7 +3198,7 @@
       ],
       "auditFile": "audits/esp32-water-tank-monitoring.md",
       "revampedOutputFile": "revamped-tutorials/esp32-water-tank-monitoring.md",
-      "makerEsp32PublishDate": "2026-09-21",
+      "makerEsp32PublishDate": "2026-09-07",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -3412,7 +3412,7 @@
         }
       ],
       "auditFile": "audits/wifi-weather-station-esp32.md",
-      "makerEsp32PublishDate": "2026-09-11",
+      "makerEsp32PublishDate": "2026-09-12",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -3425,7 +3425,7 @@
     },
     {
       "id": "esp32-high-temperature-alert-system-with-dht22-sensor",
-      "title": "ESP32 High Temperature Alert System with DHT22 Sensor",
+      "title": "ESP32 High Temperature Alert System with DHT11 Sensor",
       "url": "https://my.cytron.io/tutorial/esp32-high-temperature-alert-system-with-dht22-sensor",
       "category": "IoT",
       "subcategory": "Sensors",
@@ -3436,12 +3436,12 @@
       "technologies": [
         "ESP32",
         "Arduino IDE",
-        "DHT22",
+        "DHT11",
         "Adafruit DHT Library"
       ],
       "keywords": [
         "ESP32",
-        "DHT22",
+        "DHT11",
         "Temperature",
         "Humidity",
         "Alert",
@@ -3560,17 +3560,17 @@
         }
       ],
       "auditFile": "audits/esp32-high-temperature-alert-system-with-dht22-sensor.md",
-      "makerEsp32PublishDate": "2026-09-24",
+      "makerEsp32PublishDate": "2026-09-13",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
-          "DHT22 Temperature & Humidity Sensor",
+          "DHT11 Temperature & Humidity Sensor",
           "Buzzer"
         ],
         "notes": "Change DHT pin from GPIO4 to GPIO16. Can use onboard buzzer"
       },
       "preparationDate": "2026-08-28",
-      "publishDate": "2026-09-20"
+      "publishDate": "2026-09-13"
     },
     {
       "id": "esp32-clap-switch",
@@ -3602,7 +3602,7 @@
       },
       "decision": "Keep",
       "revampScope": "Small",
-      "revampStatus": "Revamping",
+      "revampStatus": "Complete",
       "priority": "None",
       "technicalScore": 8,
       "scores": {
@@ -3671,7 +3671,7 @@
       "links": [],
       "auditFile": "audits/esp32-clap-switch.md",
       "revampedOutputFile": "revamped-tutorials/esp32-clap-switch.md",
-      "makerEsp32PublishDate": "2026-09-04",
+      "makerEsp32PublishDate": "2026-09-02",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -3680,7 +3680,7 @@
         "notes": "Digital sound sensor, controls onboard LED"
       },
       "preparationDate": "2026-08-03",
-      "publishDate": "2026-09-01"
+      "publishDate": "2026-09-02"
     },
     {
       "id": "esp32-motion-detector-alert",
@@ -3716,7 +3716,7 @@
       },
       "decision": "Keep",
       "revampScope": "Small",
-      "revampStatus": "Revamping",
+      "revampStatus": "Complete",
       "priority": "None",
       "technicalScore": 8,
       "scores": {
@@ -3790,7 +3790,7 @@
       "links": [],
       "auditFile": "audits/esp32-motion-detector-alert.md",
       "revampedOutputFile": "revamped-tutorials/esp32-motion-detector-alert.md",
-      "makerEsp32PublishDate": "2026-09-05",
+      "makerEsp32PublishDate": "2026-09-06",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -3799,7 +3799,7 @@
         "notes": "Simple motion detection with alert"
       },
       "preparationDate": "2026-08-05",
-      "publishDate": "2026-09-03"
+      "publishDate": "2026-09-06"
     },
     {
       "id": "ws2812-ring-led-clock-with-ntp-server-using-esp32",

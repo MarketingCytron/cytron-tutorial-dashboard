@@ -3,10 +3,31 @@
  * Tutorials List Page JavaScript
  */
 
+// Milestone 7 — effective revampStatus overrides ('Complete'/'Revamping'),
+// fetched from the local bridge's bulk GET /api/tutorial-status when this
+// browser is paired (sessionStorage token present). Best-effort only: if the
+// bridge is unreachable or no token is stored, the dashboard simply falls
+// back to each tutorial's own dataset revampStatus, exactly as before this
+// milestone. This is ONE bulk request, never a per-tutorial fetch.
+const BRIDGE_URL = 'http://127.0.0.1:47821';
+const BRIDGE_TOKEN_KEY = 'revampBridgeToken';
+
+function getBridgeToken() {
+    try {
+        return window.sessionStorage.getItem(BRIDGE_TOKEN_KEY) || '';
+    } catch {
+        return '';
+    }
+}
+
 const TutorialsList = {
     tutorials: [],
     filteredTutorials: [],
-    sortColumn: 'title',
+    statusOverrides: {},
+    // Milestone 7 human rule: sorting must be based on Publish Date
+    // (ascending, earliest first), not Tutorial Name. Missing dates sort
+    // after dated ones (see sortTutorials()'s 'publishDate' case).
+    sortColumn: 'publishDate',
     sortDirection: 'asc',
     currentTab: 'all',
     filters: {
@@ -29,6 +50,8 @@ const TutorialsList = {
         this.tutorials = data.tutorials || [];
         this.filteredTutorials = [...this.tutorials];
 
+        await this.loadStatusOverrides();
+
         this.populateCategoryFilter();
         this.initTabs();
         this.initFilters();
@@ -37,6 +60,32 @@ const TutorialsList = {
         this.applyFilters();
         this.render();
         this.renderFinalOutput();
+    },
+
+    // Milestone 7 — one bulk, best-effort bridge call. Never blocks or
+    // breaks the dashboard: any failure (no token, bridge not running,
+    // network error, bad JSON) just leaves statusOverrides empty.
+    async loadStatusOverrides() {
+        const token = getBridgeToken();
+        if (!token) return;
+        try {
+            const res = await fetch(`${BRIDGE_URL}/api/tutorial-status`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data && data.ok && data.statuses && typeof data.statuses === 'object') {
+                this.statusOverrides = data.statuses;
+            }
+        } catch {
+            // Bridge not reachable — silently fall back to dataset values.
+        }
+    },
+
+    // Effective status: the bridge-derived override (Complete/Revamping)
+    // when present, otherwise the tutorial's own dataset revampStatus.
+    getEffectiveStatus(tutorial) {
+        return (tutorial && this.statusOverrides[tutorial.id]) || (tutorial && tutorial.revampStatus);
     },
 
     initTabs() {
@@ -266,7 +315,7 @@ const TutorialsList = {
 
         switch (filter) {
             case 'overdue':
-                return prepDate < today && tutorial.revampStatus !== 'Completed';
+                return prepDate < today && !Utils.isDoneStatus(tutorial.revampStatus);
             case 'thisWeek':
                 const thisWeek = this.getWeekBounds(0);
                 return prepDate >= thisWeek.start && prepDate <= thisWeek.end;
@@ -333,8 +382,10 @@ const TutorialsList = {
             // Decision filter
             if (this.filters.decision && t.decision !== this.filters.decision) return false;
 
-            // Status filter
-            if (this.filters.status && t.revampStatus !== this.filters.status) return false;
+            // Status filter (matches the bridge-derived effective status when
+            // one is available, so a locally-active/reviewable job shows up
+            // under "Revamping" without data/tutorials.json ever being touched)
+            if (this.filters.status && this.getEffectiveStatus(t) !== this.filters.status) return false;
 
             // Priority filter
             if (this.filters.priority) {
@@ -395,9 +446,9 @@ const TutorialsList = {
                     bVal = priorityOrder[b.priority] || 6;
                     break;
                 case 'revampStatus':
-                    const statusOrder = { 'Not Reviewed': 1, 'Reviewed': 2, 'Planned': 3, 'Revamping': 4, 'Completed': 5, 'Archived': 6 };
-                    aVal = statusOrder[a.revampStatus] || 7;
-                    bVal = statusOrder[b.revampStatus] || 7;
+                    const statusOrder = { 'Not Reviewed': 1, 'Reviewed': 2, 'Planned': 3, 'Revamping': 4, 'Complete': 5, 'Completed': 5, 'Archived': 6 };
+                    aVal = statusOrder[this.getEffectiveStatus(a)] || 7;
+                    bVal = statusOrder[this.getEffectiveStatus(b)] || 7;
                     break;
                 case 'technicalScore':
                     aVal = a.technicalScore || 0;
@@ -422,6 +473,16 @@ const TutorialsList = {
 
             if (aVal < bVal) return this.sortDirection === 'asc' ? -1 : 1;
             if (aVal > bVal) return this.sortDirection === 'asc' ? 1 : -1;
+
+            // Deterministic stable fallback for the primary Publish Date sort:
+            // equal (or equally-missing) dates break the tie by title only —
+            // title is never the primary key, per the Milestone 7 human rule.
+            if (this.sortColumn === 'publishDate') {
+                const aTitle = a.title?.toLowerCase() || '';
+                const bTitle = b.title?.toLowerCase() || '';
+                if (aTitle < bTitle) return -1;
+                if (aTitle > bTitle) return 1;
+            }
             return 0;
         });
     },
@@ -478,7 +539,7 @@ const TutorialsList = {
 
     // Helper: Check if date is overdue
     isOverdue(dateStr, status) {
-        if (!dateStr || status === 'Completed') return false;
+        if (!dateStr || Utils.isDoneStatus(status)) return false;
         const date = new Date(dateStr);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -515,10 +576,11 @@ const TutorialsList = {
         emptyState.style.display = 'none';
 
         tbody.innerHTML = this.filteredTutorials.map(t => {
+            const effectiveStatus = this.getEffectiveStatus(t);
             const validityClass = Utils.getValidityClass(t.validity?.grade);
             const decisionClass = Utils.getDecisionClass(t.decision);
             const priorityClass = Utils.getPriorityClass(t.priority);
-            const statusClass = Utils.getStatusClass(t.revampStatus);
+            const statusClass = Utils.getStatusClass(effectiveStatus);
             const levelClass = Utils.getLevelClass(t.targetLevel);
 
             // Hardware info
@@ -529,8 +591,8 @@ const TutorialsList = {
                 (components === 'None' ? board : `${board}<br><small class="text-muted">${Utils.escapeHtml(components)}</small>`);
 
             // Date formatting with overdue indicators
-            const prepDateDisplay = this.formatDateWithStatus(t.preparationDate, t.revampStatus, 'Preparation');
-            const pubDateDisplay = this.formatDateWithStatus(t.publishDate, t.revampStatus, 'Publish');
+            const prepDateDisplay = this.formatDateWithStatus(t.preparationDate, effectiveStatus, 'Preparation');
+            const pubDateDisplay = this.formatDateWithStatus(t.publishDate, effectiveStatus, 'Publish');
 
             return `
                 <tr>
@@ -560,7 +622,7 @@ const TutorialsList = {
                 }
                     </td>
                     <td>
-                        <span class="status-badge ${statusClass}">${Utils.escapeHtml(t.revampStatus || 'Not Reviewed')}</span>
+                        <span class="status-badge ${statusClass}">${Utils.escapeHtml(effectiveStatus || 'Not Reviewed')}</span>
                     </td>
                     <td>${prepDateDisplay}</td>
                     <td>${pubDateDisplay}</td>
@@ -572,8 +634,24 @@ const TutorialsList = {
         }).join('');
     },
 
+    // Milestone 7: chronological ascending by Publish Date (missing dates
+    // last, title as the only tie-breaker) — the same rule as the main list.
+    sortByPublishDate(list) {
+        return [...list].sort((a, b) => {
+            const aVal = a.publishDate || '9999-12-31';
+            const bVal = b.publishDate || '9999-12-31';
+            if (aVal < bVal) return -1;
+            if (aVal > bVal) return 1;
+            const aTitle = a.title?.toLowerCase() || '';
+            const bTitle = b.title?.toLowerCase() || '';
+            if (aTitle < bTitle) return -1;
+            if (aTitle > bTitle) return 1;
+            return 0;
+        });
+    },
+
     renderFinalOutput() {
-        const finalTutorials = this.tutorials.filter(t => t.revampedOutputFile);
+        const finalTutorials = this.sortByPublishDate(this.tutorials.filter(t => t.revampedOutputFile));
         const countBadge = document.getElementById('finalOutputBadge');
         const summaryEl = document.getElementById('finalOutputSummary');
         const tableContainer = document.getElementById('finalOutputTableContainer');
@@ -602,9 +680,10 @@ const TutorialsList = {
         if (emptyState) emptyState.style.display = 'none';
 
         tbody.innerHTML = finalTutorials.map(t => {
+            const effectiveStatus = this.getEffectiveStatus(t);
             const validityClass = Utils.getValidityClass(t.validity?.grade);
             const decisionClass = Utils.getDecisionClass(t.decision);
-            const statusClass = Utils.getStatusClass(t.revampStatus);
+            const statusClass = Utils.getStatusClass(effectiveStatus);
             const levelClass = Utils.getLevelClass(t.targetLevel);
             const pubDateDisplay = Utils.formatDate(t.publishDate);
 
@@ -628,7 +707,7 @@ const TutorialsList = {
                         <span class="decision-badge ${decisionClass}">${Utils.escapeHtml(t.decision || 'Not Decided')}</span>
                     </td>
                     <td>
-                        <span class="status-badge ${statusClass}">${Utils.escapeHtml(t.revampStatus || 'Not Reviewed')}</span>
+                        <span class="status-badge ${statusClass}">${Utils.escapeHtml(effectiveStatus || 'Not Reviewed')}</span>
                     </td>
                     <td>${pubDateDisplay}</td>
                     <td>

@@ -27,13 +27,13 @@ Revamp Date: 2026-08-30
 | Categories | ESP32, Displays, IoT & Smart Living | Store and blog categories |
 | Related Products | Maker ESP32, OLED I2C 0.96Inch 128x64 Blue Display | Direct product cross-links |
 | Related Tutorials | Getting Started with Maker ESP32, ESP32 Clap Switch | Project progression links |
-| Publish Date | September 2026 | Scheduled release window |
+| Publish Date | 2026-09-01 | Human-approved Maker ESP32 publish schedule |
 
 ---
 
 ## Introduction
 
-Digital clocks often use an external Real-Time Clock (RTC) module with a backup battery to keep time when the main power is removed. For an internet-connected project, Maker ESP32 can instead obtain the current time automatically from an NTP server over WiFi, reducing the amount of additional hardware required.
+Digital clocks often use an external Real-Time Clock (RTC) module with a backup battery to keep time when the main power is removed. For an internet-connected project, [Maker ESP32](https://my.cytron.io/p-maker-esp32) can instead obtain the current time automatically from an NTP server over WiFi, reducing the amount of additional hardware required.
 
 In this project, you will build a standalone digital clock using [Maker ESP32](https://my.cytron.io/p-maker-esp32) and a 0.96-inch I2C OLED display. Once connected to your local Wi-Fi, the clock automatically synchronizes with Network Time Protocol (NTP) time servers and maintains accurate timekeeping on the OLED screen.
 
@@ -41,7 +41,7 @@ In this project, you will build a standalone digital clock using [Maker ESP32](h
 
 ## Prerequisites
 
-If this is your first time using Maker ESP32, follow the [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32) tutorial before continuing.
+If this is your first time using [Maker ESP32](https://my.cytron.io/p-maker-esp32), follow the [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32) tutorial before continuing.
 
 ---
 
@@ -62,20 +62,20 @@ Build an internet-synchronized digital clock that connects to WiFi, obtains the 
 
 ## System Diagram & Wiring
 
-The 0.96-inch OLED display communicates with Maker ESP32 via the I2C bus (SDA on GPIO21 and SCL on GPIO22).
+The 0.96-inch OLED display communicates with [Maker ESP32](https://my.cytron.io/p-maker-esp32) via the I2C bus (SDA on GPIO21 and SCL on GPIO22).
 
 **[EDITOR PLACEHOLDER: Insert Maker ESP32 to 0.96" I2C OLED wiring diagram here]**
 
 ### Wiring Table
 
-| OLED Display Pin | Maker ESP32 Pin | Function | Notes |
+| OLED Display Pin | [Maker ESP32](https://my.cytron.io/p-maker-esp32) Pin | Function | Notes |
 |---|---|---|---|
 | **VCC** | **3.3V** | Power Supply | 3.3V DC power rail |
 | **GND** | **GND** | Ground | Common system ground (0V) |
 | **SDA** | **GPIO21** | I2C Data | Maker Port SDA / GPIO21 |
 | **SCL** | **GPIO22** | I2C Clock | Maker Port SCL / GPIO22 |
 
-**Note:** You can connect the OLED using standard female-to-female jumper wires to the Maker ESP32 header pins, or plug a STEMMA QT / Qwiic JST-SH 4-pin female socket cable directly into the onboard **Maker Port** (Pin 1: GND, Pin 2: 3.3V, Pin 3: SDA/GPIO21, Pin 4: SCL/GPIO22).
+**Note:** You can connect the OLED using standard female-to-female jumper wires to the [Maker ESP32](https://my.cytron.io/p-maker-esp32) header pins, or plug a STEMMA QT / Qwiic JST-SH 4-pin female socket cable directly into the onboard **Maker Port** (Pin 1: GND, Pin 2: 3.3V, Pin 3: SDA/GPIO21, Pin 4: SCL/GPIO22).
 
 ---
 
@@ -122,7 +122,7 @@ If you are in another timezone, change `gmtOffset_sec` to match your UTC offset.
 
 ## Sample Code
 
-Upload the following sketch to your Maker ESP32:
+Upload the following sketch to your [Maker ESP32](https://my.cytron.io/p-maker-esp32):
 
 ```cpp
 /*
@@ -263,8 +263,8 @@ void loop() {
 
 ## Testing & Validation
 
-1. Connect the OLED display to Maker ESP32 according to the wiring table.
-2. Connect Maker ESP32 to your computer using a USB-C data cable.
+1. Connect the OLED display to [Maker ESP32](https://my.cytron.io/p-maker-esp32) according to the wiring table.
+2. Connect [Maker ESP32](https://my.cytron.io/p-maker-esp32) to your computer using a USB-C data cable.
 3. Open Arduino IDE, select your board (**ESP32 Dev Module**) and correct COM port.
 4. Update `ssid` and `password` with your Wi-Fi details.
 5. Click **Upload** and open **Serial Monitor** at **115200 baud**.
@@ -296,12 +296,12 @@ The clock stays accurate automatically via background NTP synchronization withou
 
 - Ensure your Wi-Fi SSID and password are typed correctly (passwords are case-sensitive).
 - Make sure your router broadcasts a **2.4 GHz** Wi-Fi band.
-- Move the Maker ESP32 closer to your Wi-Fi router.
+- Move the [Maker ESP32](https://my.cytron.io/p-maker-esp32) closer to your Wi-Fi router.
 
 ### Time Shows 00:00:00 or 1970
 
 - Verify that your local Wi-Fi network has active internet access to reach the NTP server (`pool.ntp.org`).
-- Press the onboard **EN (Reset)** button on Maker ESP32 to restart the connection and sync process.
+- Press the onboard **EN (Reset)** button on [Maker ESP32](https://my.cytron.io/p-maker-esp32) to restart the connection and sync process.
 
 ### Time Displays the Wrong Hour
 
@@ -316,13 +316,13 @@ The clock stays accurate automatically via background NTP synchronization withou
 ## Downloads & Assets
 
 - Code / GitHub Gist: Add the verified public Gist embed link before publishing.
-- Wiring diagram: Add the final Maker ESP32 + 0.96" I2C OLED wiring graphic.
+- Wiring diagram: Add the final [Maker ESP32](https://my.cytron.io/p-maker-esp32) + 0.96" I2C OLED wiring graphic.
 
 ---
 
 ## Community / Related Tutorials
 
-**[EDITOR PLACEHOLDER: Insert Arduino / Maker Boards Telegram Community Banner]**
+[ESP32 Makers Community](https://t.me/ESPmakersMY)
 
 ### Related Tutorials
 - [Getting Started with Maker ESP32](https://my.cytron.io/tutorial/getting-started-with-maker-esp32)
@@ -355,7 +355,7 @@ The clock stays accurate automatically via background NTP synchronization withou
 - Generation and embedding of a public GitHub Gist for the final verified code.
 - Creation and insertion of official Maker ESP32 + 0.96" OLED system wiring diagram graphic.
 - High-resolution project photograph and 16:9 thumbnail creation.
-- Insertion of the approved Maker Boards / Arduino Telegram community banner.
+- Community link now uses the human-approved canonical ESP32 Makers Telegram URL (`https://t.me/ESPmakersMY`) as a text link; an approved banner IMAGE asset can replace it later if one becomes available.
 
 ## Media Replacement Plan
 

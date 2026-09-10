@@ -140,35 +140,10 @@ function applyFinalOutputPromotion(rawText, tutorialId, { revampedOutputFile, re
   return lines.join('\n');
 }
 
-/**
- * Scans the (unmodified, already-parsed) dataset for the revampStatus value
- * used by existing Final Output records, so a new promotion can follow the
- * SAME established convention instead of inventing one. Returns null if no
- * precedent exists yet — callers must not invent a value in that case.
- */
-function detectEstablishedRevampStatus(data) {
-  const counts = new Map();
-  for (const t of (data.tutorials || [])) {
-    if (t && t.revampedOutputFile && t.revampStatus) {
-      counts.set(t.revampStatus, (counts.get(t.revampStatus) || 0) + 1);
-    }
-  }
-  let best = null;
-  let bestCount = 0;
-  for (const [status, count] of counts) {
-    if (count > bestCount) {
-      best = status;
-      bestCount = count;
-    }
-  }
-  return best;
-}
-
 module.exports = {
   findRecordBounds,
   findFieldLine,
   readTutorialRecordFields,
   applyFinalOutputPromotion,
-  detectEstablishedRevampStatus,
   detectEol,
 };

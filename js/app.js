@@ -84,10 +84,23 @@ const Utils = {
             'Reviewed': 'status-reviewed',
             'Planned': 'status-planned',
             'Revamping': 'status-revamping',
+            // Milestone 7: 'Complete' is the new human-approved canonical
+            // status for a tutorial already promoted into Final Output.
+            // Reuses the existing 'status-completed' visual style — it's the
+            // same "done" meaning as the older 'Completed' spelling.
+            'Complete': 'status-completed',
             'Completed': 'status-completed',
             'Archived': 'status-archived'
         };
         return classes[status] || 'status-not-reviewed';
+    },
+
+    // Milestone 7: true for either spelling of the "done" status
+    // ('Complete' is the new canonical Final-Output-lifecycle value;
+    // 'Completed' is the older general-purpose value — both mean the same
+    // "no further action" state for filtering/sorting purposes).
+    isDoneStatus(status) {
+        return status === 'Complete' || status === 'Completed';
     },
 
     // Get level class
@@ -110,7 +123,7 @@ const Utils = {
     // Check if tutorial needs action
     needsAction(tutorial) {
         if (!tutorial.reviewed) return false;
-        if (tutorial.revampStatus === 'Completed' || tutorial.revampStatus === 'Archived') return false;
+        if (this.isDoneStatus(tutorial.revampStatus) || tutorial.revampStatus === 'Archived') return false;
         if (tutorial.decision === 'Keep' && (!tutorial.priority || tutorial.priority === 'None' || tutorial.priority === 'P3')) return false;
         return true;
     },
@@ -552,20 +565,20 @@ const Dashboard = {
         const withPubDate = tutorials.filter(t => t.publishDate);
 
         // Prep stats
-        const preppedCount = withPrepDate.filter(t => t.revampStatus === 'Completed').length;
+        const preppedCount = withPrepDate.filter(t => Utils.isDoneStatus(t.revampStatus)).length;
         const overduePrepCount = withPrepDate.filter(t =>
-            t.preparationDate < todayStr && t.revampStatus !== 'Completed'
+            t.preparationDate < todayStr && !Utils.isDoneStatus(t.revampStatus)
         ).length;
         const pendingPrepCount = withPrepDate.filter(t =>
-            t.preparationDate >= todayStr && t.revampStatus !== 'Completed'
+            t.preparationDate >= todayStr && !Utils.isDoneStatus(t.revampStatus)
         ).length;
 
         // Publish stats
         const publishedCount = withPubDate.filter(t =>
-            t.publishDate <= todayStr && t.revampStatus === 'Completed'
+            t.publishDate <= todayStr && Utils.isDoneStatus(t.revampStatus)
         ).length;
         const overduePublishCount = withPubDate.filter(t =>
-            t.publishDate < todayStr && t.revampStatus !== 'Completed'
+            t.publishDate < todayStr && !Utils.isDoneStatus(t.revampStatus)
         ).length;
         const upcomingPublishCount = withPubDate.filter(t =>
             t.publishDate >= todayStr
@@ -659,7 +672,7 @@ const Dashboard = {
         // Status distribution
         const statusBars = document.getElementById('statusBars');
         if (statusBars) {
-            const statuses = ['Not Reviewed', 'Reviewed', 'Planned', 'Revamping', 'Completed', 'Archived'];
+            const statuses = ['Not Reviewed', 'Reviewed', 'Planned', 'Revamping', 'Complete', 'Completed', 'Archived'];
             const total = tutorials.length || 1;
 
             statusBars.innerHTML = statuses.map(status => {

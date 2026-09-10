@@ -37,6 +37,9 @@
  *   GET  /api/revamp/:jobId/revisions               — authenticated, Milestone 6: safe revision-history summary
  *                                                     (jobId/revisionNumber/parentJobId/state/createdAt/validationSummary
  *                                                     only — no filesystem paths) for the whole chain `jobId` belongs to.
+ *   GET  /api/tutorial-status                       — authenticated, Milestone 7: bulk effective revampStatus overrides
+ *                                                     (Complete/Revamping) derived from job state, without writing to
+ *                                                     data/tutorials.json (see service/tutorialStatusService.js)
  *   POST /api/dev/antigravity-harness/start        — authenticated, DEV ONLY, creates an isolated agy CLI test job
  *
  * Run with: node service/server.js
@@ -55,6 +58,7 @@ const tutorialWriterPilot = require('./tutorialWriterPilot');
 const agyHarness = require('./agyHarness');
 const tutorialPublisher = require('./tutorialPublisher');
 const revisionManager = require('./revisionManager');
+const tutorialStatusService = require('./tutorialStatusService');
 const logger = require('./logger');
 
 // ---------------------------------------------------------------------------
@@ -657,6 +661,37 @@ function handleRevampRevisions(req, res, cors, jobId) {
 }
 
 // ---------------------------------------------------------------------------
+// Route handlers — Milestone 7 (effective revamp-status summary)
+//
+// One bulk, authenticated, read-only endpoint — never dozens of per-tutorial
+// browser requests. Reads data/tutorials.json fresh (cheap, same pattern as
+// findTutorialById) and jobStore's in-memory job map only; never writes
+// anything. See service/tutorialStatusService.js for the Complete/Revamping
+// derivation rule.
+// ---------------------------------------------------------------------------
+
+function handleTutorialStatus(req, res, cors) {
+  if (!isAuthorized(req)) {
+    sendJson(res, 401, { error: { code: 'unauthorized', message: 'Missing or invalid pairing token.' } }, cors);
+    return;
+  }
+
+  let tutorials;
+  try {
+    const raw = fs.readFileSync(config.tutorialsJsonPath, 'utf8');
+    const data = JSON.parse(raw);
+    tutorials = Array.isArray(data.tutorials) ? data.tutorials : [];
+  } catch (err) {
+    console.error('[bridge] Failed to read data/tutorials.json:', err.message);
+    sendJson(res, 500, { error: { code: 'internal_error', message: 'Could not read tutorial data.' } }, cors);
+    return;
+  }
+
+  const statuses = tutorialStatusService.computeEffectiveStatuses(tutorials);
+  sendJson(res, 200, { ok: true, statuses }, cors);
+}
+
+// ---------------------------------------------------------------------------
 // Route handlers — Milestone 3A (dev-only Antigravity integration harness)
 //
 // No tutorialId, no instructions, no path, no filename — the browser sends
@@ -837,6 +872,15 @@ const server = http.createServer((req, res) => {
       return;
     }
     handleRevampGet(req, res, cors, jobMatch[1]);
+    return;
+  }
+
+  if (pathname === '/api/tutorial-status') {
+    if (req.method !== 'GET') {
+      sendJson(res, 405, { error: { code: 'method_not_allowed', message: 'Use GET.' } }, { ...cors, Allow: 'GET, OPTIONS' });
+      return;
+    }
+    handleTutorialStatus(req, res, cors);
     return;
   }
 

@@ -38,6 +38,16 @@ const STATE_SEQUENCE = ['Queued', 'Preparing Context', 'Writing', 'Validating', 
 const TERMINAL_STATES = new Set(['Ready for Review', 'Failed', 'Cancelled', 'Needs Human Review']);
 const ACTIVE_STATES = new Set(STATE_SEQUENCE.filter((s) => !TERMINAL_STATES.has(s)));
 
+// Milestone 7 — the set of 'revamp' job states that mean "still needs human
+// approval" for the effective dashboard status (see tutorialStatusService.js).
+// Deliberately STATE_SEQUENCE (Queued..Ready for Review) plus 'Needs Human
+// Review' — i.e. everything except the two truly-done-with-no-further-action
+// terminal states, 'Failed' and 'Cancelled'. A Failed/Cancelled job alone
+// must never keep a tutorial marked "Revamping" (see docs/TUTORIAL_REVAMP_
+// AGENT_MILESTONE_7... human rule: "A failed or cancelled job by itself
+// should not permanently mark a tutorial Revamping").
+const REVAMPING_ELIGIBLE_STATES = new Set([...STATE_SEQUENCE, 'Needs Human Review']);
+
 const JOB_TYPES = { REVAMP: 'revamp', ANTIGRAVITY_HARNESS: 'antigravity-harness', WRITER_PILOT: 'writer-pilot' };
 
 const jobs = new Map(); // jobId -> full job record (may include internal-only fields)
@@ -333,6 +343,32 @@ function isActive(job) {
   return !TERMINAL_STATES.has(job.state);
 }
 
+// Milestone 7 — "does tutorialId currently have any 'revamp' job (root or
+// revision) that still needs human approval?" A plain in-memory scan (same
+// scale/pattern as getLatestJobForTutorial above) — no filesystem access, no
+// data/tutorials.json write. Used by tutorialStatusService.js to derive the
+// EFFECTIVE dashboard status without ever touching the dataset on disk.
+function hasReviewableOrActiveJob(tutorialId) {
+  for (const job of jobs.values()) {
+    if (job.type !== JOB_TYPES.REVAMP) continue;
+    if (job.tutorialId !== tutorialId) continue;
+    if (REVAMPING_ELIGIBLE_STATES.has(job.state)) return true;
+  }
+  return false;
+}
+
+// Every distinct tutorialId that has at least one 'revamp' job on record
+// (any state) — used to scope a bulk status-summary response to tutorials
+// that could possibly have an override, instead of scanning all jobs once
+// per tutorial from the caller.
+function listTutorialIdsWithJobs() {
+  const ids = new Set();
+  for (const job of jobs.values()) {
+    if (job.type === JOB_TYPES.REVAMP && job.tutorialId) ids.add(job.tutorialId);
+  }
+  return [...ids];
+}
+
 // Only ever expose this fixed, deliberately-safe set of fields — no
 // filesystem paths, process IDs, or executable paths ever leave this module.
 function toSafeJson(job) {
@@ -491,6 +527,9 @@ module.exports = {
   STATE_SEQUENCE,
   TERMINAL_STATES,
   ACTIVE_STATES,
+  REVAMPING_ELIGIBLE_STATES,
+  hasReviewableOrActiveJob,
+  listTutorialIdsWithJobs,
   createJob,
   getActiveJobForTutorial,
   getLatestJobForTutorial,
