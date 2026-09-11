@@ -1276,7 +1276,7 @@
       },
       "decision": "Minor Update",
       "revampScope": "Small",
-      "revampStatus": "Reviewed",
+      "revampStatus": "Complete",
       "priority": "P2",
       "technicalScore": 8,
       "scores": {
@@ -1438,6 +1438,7 @@
         }
       ],
       "auditFile": "audits/esp32-smart-light-control-with-app.md",
+      "revampedOutputFile": "revamped-tutorials/esp32-smart-light-control-with-app.md",
       "makerEsp32PublishDate": "2026-09-11",
       "hardwareUsed": {
         "board": "Maker ESP32",
