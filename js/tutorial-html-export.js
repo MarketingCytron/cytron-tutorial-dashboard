@@ -246,7 +246,10 @@
             s = s.replace(/`([^`]+)`/g, '<em>$1</em>');
             // Images before links — the image syntax is a superset match.
             s = s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
-            s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+            // Every exported tutorial link opens in a new tab (human rule).
+            // This is the sole place `<a>` tags are generated, so there is
+            // no pre-existing target/rel attribute to collide with.
+            s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
             return s;
         };
 

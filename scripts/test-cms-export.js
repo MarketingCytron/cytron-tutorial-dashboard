@@ -115,7 +115,26 @@ completeTutorials.forEach((t) => {
     // Section L — Maker ESP32 canonical link preserved wherever it appears.
     if (contains(markdown.slice(0, markdown.length), 'https://my.cytron.io/p-maker-esp32')) {
         check(`[${t.id}] Maker ESP32 link preserved`, contains(html, 'href="https://my.cytron.io/p-maker-esp32"'));
+        check(`[${t.id}] Maker ESP32 link opens in a new tab`, contains(html, '<a href="https://my.cytron.io/p-maker-esp32" target="_blank" rel="noopener noreferrer">Maker ESP32</a>'));
     }
+    // Only asserted when the link actually survived into the exported
+    // range — some tutorials mention "Getting Started" only in the
+    // excluded Admin & SEO / Community sections, which is correct.
+    if (contains(html, 'getting-started-with-maker-esp32')) {
+        check(`[${t.id}] Getting Started link opens in a new tab`, contains(html, 'href="https://my.cytron.io/tutorial/getting-started-with-maker-esp32" target="_blank" rel="noopener noreferrer"'));
+    }
+
+    // New-window link rule: EVERY exported <a> gets target="_blank" +
+    // rel="noopener noreferrer", exactly once each — no exceptions, no
+    // duplicates, and no injected JS.
+    const anchorCount = (html.match(/<a href=/g) || []).length;
+    const targetBlankCount = (html.match(/target="_blank"/g) || []).length;
+    const relCount = (html.match(/rel="noopener noreferrer"/g) || []).length;
+    check(`[${t.id}] every <a> has target="_blank"`, anchorCount === targetBlankCount, `<a>=${anchorCount} target=${targetBlankCount}`);
+    check(`[${t.id}] every <a> has rel="noopener noreferrer"`, anchorCount === relCount, `<a>=${anchorCount} rel=${relCount}`);
+    check(`[${t.id}] no duplicate target attribute on any single <a>`, !/target="_blank"[^>]*target=/.test(html));
+    check(`[${t.id}] no duplicate rel attribute on any single <a>`, !/rel="noopener noreferrer"[^>]*rel=/.test(html));
+    check(`[${t.id}] no onclick/window.open/script introduced`, !/onclick=|window\.open|<script/i.test(html));
 
     // Section M — tables preserved as real <table>.
     if (/^\|.*\|$/m.test(markdown)) {
@@ -293,6 +312,49 @@ const introFallbackMd = [
         check('Multi-block Sample Code: no leftover code', !contains(result.html, 'void setup') && !contains(result.html, 'void loop'));
         check('Multi-block Sample Code: subsection prose preserved', contains(result.html, 'How the Code Works'));
         check('Multi-block Sample Code: inline code -> <em>', contains(result.html, '<em>inline code</em>'));
+    }
+}
+
+// -----------------------------------------------------------------------
+// New-window link rule — synthetic check covering links in a paragraph,
+// a list, and a table in one pass.
+// -----------------------------------------------------------------------
+
+{
+    const linkMd = [
+        '## Introduction',
+        '',
+        'Build this with [Maker ESP32](https://my.cytron.io/p-maker-esp32) and a sensor.',
+        '',
+        '## List of Components',
+        '',
+        '1. [Maker ESP32](https://my.cytron.io/p-maker-esp32) x1',
+        '2. [DHT11 Sensor](https://my.cytron.io/p-dht11) x1',
+        '',
+        '## System Diagram & Wiring',
+        '',
+        '| Pin | [Maker ESP32](https://my.cytron.io/p-maker-esp32) Pin |',
+        '|---|---|',
+        '| VCC | 3.3V |',
+        '',
+        '## Troubleshooting & Extra Tips',
+        '',
+        'Join the [ESP32 Makers Community](https://t.me/ESPmakersMY) for help.',
+    ].join('\n');
+    const result = TutorialHtmlExport.exportCmsHtml(linkMd);
+    check('Links: export succeeds', result.ok === true);
+    if (result.ok) {
+        const html = result.html;
+        const anchorCount = (html.match(/<a href=/g) || []).length;
+        check('Links: found all 5 expected anchors', anchorCount === 5, `found ${anchorCount}`);
+        check('Links: paragraph link has target=_blank + rel', /<p[^>]*>Build this with <a href="https:\/\/my\.cytron\.io\/p-maker-esp32" target="_blank" rel="noopener noreferrer">Maker ESP32<\/a>/.test(html));
+        check('Links: list-item link has target=_blank + rel', /<li><a href="https:\/\/my\.cytron\.io\/p-maker-esp32" target="_blank" rel="noopener noreferrer">Maker ESP32<\/a> x1/.test(html));
+        check('Links: table-header link has target=_blank + rel', /<th><a href="https:\/\/my\.cytron\.io\/p-maker-esp32" target="_blank" rel="noopener noreferrer">Maker ESP32<\/a> Pin<\/th>/.test(html));
+        check('Links: community link has target=_blank + rel', /<a href="https:\/\/t\.me\/ESPmakersMY" target="_blank" rel="noopener noreferrer">ESP32 Makers Community<\/a>/.test(html));
+        const targetCount = (html.match(/target="_blank"/g) || []).length;
+        const relCount = (html.match(/rel="noopener noreferrer"/g) || []).length;
+        check('Links: every anchor has exactly one target + one rel, no more', targetCount === anchorCount && relCount === anchorCount);
+        check('Links: no JS introduced', !/onclick=|window\.open|<script/i.test(html));
     }
 }
 
