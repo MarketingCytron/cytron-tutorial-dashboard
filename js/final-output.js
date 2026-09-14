@@ -150,7 +150,9 @@
                 if (!response.ok) throw new Error('Failed to load markdown file');
 
                 const markdown = await response.text();
+                this.rawMarkdown = markdown;
                 container.innerHTML = Utils.renderMarkdown(markdown);
+                this.renderCmsExportActions();
             } catch (err) {
                 console.error('Error loading revamped markdown:', err);
                 container.innerHTML = `
@@ -159,6 +161,148 @@
                     </div>
                 `;
             }
+        },
+
+        // -----------------------------------------------------------------
+        // Milestone 9 — CMS HTML Export (static/published Final Output only)
+        //
+        // Read-only, static-mode-only presentation feature. Exports the
+        // Introduction -> end-of-Troubleshooting range of the already-
+        // approved permanent Markdown (this.rawMarkdown) via
+        // js/tutorial-html-export.js. Never shown in draft mode (?jobId=),
+        // and never writes back to the Markdown source or dataset.
+        // -----------------------------------------------------------------
+
+        renderCmsExportActions() {
+            const area = document.getElementById('cmsExportArea');
+            if (!area) return;
+
+            if (this.jobId || !this.rawMarkdown || typeof TutorialHtmlExport === 'undefined') {
+                area.style.display = 'none';
+                return;
+            }
+
+            area.style.display = 'flex';
+            const copyBtn = document.getElementById('cmsCopyBtn');
+            const previewBtn = document.getElementById('cmsPreviewBtn');
+            if (copyBtn) copyBtn.addEventListener('click', () => this.copyCmsHtml());
+            if (previewBtn) previewBtn.addEventListener('click', () => this.openCmsPreviewModal());
+        },
+
+        getCmsExportResult() {
+            if (!this.cmsExportResult) {
+                this.cmsExportResult = TutorialHtmlExport.exportCmsHtml(this.rawMarkdown);
+            }
+            return this.cmsExportResult;
+        },
+
+        showCmsExportFeedback(message, isError) {
+            const feedback = document.getElementById('cmsExportFeedback');
+            if (!feedback) return;
+            feedback.textContent = message;
+            feedback.className = `cms-export-feedback${isError ? ' error' : ' success'}`;
+        },
+
+        async copyCmsHtml() {
+            const result = this.getCmsExportResult();
+            if (!result.ok) {
+                this.showCmsExportFeedback(result.error, true);
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(result.html);
+                this.showCmsExportFeedback('CMS HTML copied', false);
+                return;
+            } catch {
+                // Fall through to the manual-selection fallback below.
+            }
+
+            try {
+                const textarea = document.createElement('textarea');
+                textarea.value = result.html;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                const copied = document.execCommand('copy');
+                document.body.removeChild(textarea);
+                if (copied) {
+                    this.showCmsExportFeedback('CMS HTML copied', false);
+                    return;
+                }
+            } catch {
+                // Ignore and fall through to the error path below.
+            }
+
+            this.showCmsExportFeedback('Could not copy automatically — use Preview CMS HTML to select and copy the HTML source manually.', true);
+            this.openCmsPreviewModal();
+        },
+
+        openCmsPreviewModal() {
+            const overlay = document.getElementById('cmsPreviewModalOverlay');
+            const body = document.getElementById('cmsPreviewModalBody');
+            if (!overlay || !body) return;
+
+            const result = this.getCmsExportResult();
+
+            if (!result.ok) {
+                body.innerHTML = `
+                    <div class="revamp-modal-header"><h2 id="cmsPreviewModalTitle">Preview CMS HTML</h2>
+                        <button type="button" class="revamp-modal-close" id="cmsPreviewCloseBtn" aria-label="Close">&times;</button>
+                    </div>
+                    <div class="revamp-error">${Utils.escapeHtml(result.error)}</div>
+                `;
+                overlay.style.display = 'flex';
+                document.getElementById('cmsPreviewCloseBtn').addEventListener('click', () => { overlay.style.display = 'none'; });
+                overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.style.display = 'none'; }, { once: true });
+                return;
+            }
+
+            body.innerHTML = `
+                <div class="revamp-modal-header"><h2 id="cmsPreviewModalTitle">Preview CMS HTML</h2>
+                    <button type="button" class="revamp-modal-close" id="cmsPreviewCloseBtn" aria-label="Close">&times;</button>
+                </div>
+                <div class="cms-preview-tabs">
+                    <button type="button" class="cms-preview-tab active" id="cmsTabPreviewBtn">Preview</button>
+                    <button type="button" class="cms-preview-tab" id="cmsTabSourceBtn">HTML Source</button>
+                </div>
+                <div class="cms-preview-pane" id="cmsPreviewPane"></div>
+                <pre class="cms-source-pane" id="cmsSourcePane" style="display:none;" tabindex="0"></pre>
+                <div class="revamp-actions">
+                    <button type="button" class="btn btn-secondary" id="cmsPreviewCloseBtn2">Close</button>
+                    <button type="button" class="btn btn-primary" id="cmsPreviewCopyBtn">Copy CMS HTML</button>
+                </div>
+            `;
+
+            // Rendered preview: our converter only ever emits the
+            // whitelisted semantic tags (h2-h4, p, ul/ol/li, table, a,
+            // strong, em, pre, code, img) from escaped source text, so
+            // there is no script content to execute.
+            document.getElementById('cmsPreviewPane').innerHTML = result.html;
+            document.getElementById('cmsSourcePane').textContent = result.html;
+
+            overlay.style.display = 'flex';
+
+            const closeModal = () => { overlay.style.display = 'none'; };
+            document.getElementById('cmsPreviewCloseBtn').addEventListener('click', closeModal);
+            document.getElementById('cmsPreviewCloseBtn2').addEventListener('click', closeModal);
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); }, { once: true });
+
+            document.getElementById('cmsTabPreviewBtn').addEventListener('click', () => {
+                document.getElementById('cmsTabPreviewBtn').classList.add('active');
+                document.getElementById('cmsTabSourceBtn').classList.remove('active');
+                document.getElementById('cmsPreviewPane').style.display = '';
+                document.getElementById('cmsSourcePane').style.display = 'none';
+            });
+            document.getElementById('cmsTabSourceBtn').addEventListener('click', () => {
+                document.getElementById('cmsTabSourceBtn').classList.add('active');
+                document.getElementById('cmsTabPreviewBtn').classList.remove('active');
+                document.getElementById('cmsSourcePane').style.display = '';
+                document.getElementById('cmsPreviewPane').style.display = 'none';
+            });
+            document.getElementById('cmsPreviewCopyBtn').addEventListener('click', () => this.copyCmsHtml());
         },
 
         // -----------------------------------------------------------------
