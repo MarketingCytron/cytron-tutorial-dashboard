@@ -3458,7 +3458,7 @@
       },
       "decision": "Minor Update",
       "revampScope": "Small",
-      "revampStatus": "Reviewed",
+      "revampStatus": "Complete",
       "priority": "P3",
       "technicalScore": 7,
       "scores": {
@@ -3562,6 +3562,7 @@
         }
       ],
       "auditFile": "audits/esp32-high-temperature-alert-system-with-dht22-sensor.md",
+      "revampedOutputFile": "revamped-tutorials/esp32-high-temperature-alert-system-with-dht22-sensor.md",
       "makerEsp32PublishDate": "2026-09-13",
       "hardwareUsed": {
         "board": "Maker ESP32",
