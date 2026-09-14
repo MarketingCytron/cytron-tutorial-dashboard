@@ -3251,7 +3251,7 @@
       },
       "decision": "Minor Update",
       "revampScope": "Small",
-      "revampStatus": "Reviewed",
+      "revampStatus": "Complete",
       "priority": "P2",
       "technicalScore": 8,
       "scores": {
@@ -3413,6 +3413,7 @@
         }
       ],
       "auditFile": "audits/wifi-weather-station-esp32.md",
+      "revampedOutputFile": "revamped-tutorials/wifi-weather-station-esp32.md",
       "makerEsp32PublishDate": "2026-09-12",
       "hardwareUsed": {
         "board": "Maker ESP32",
