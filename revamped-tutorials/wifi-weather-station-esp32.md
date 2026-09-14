@@ -183,8 +183,7 @@ In your web browser, navigating to `http://192.168.1.150` loads the weather dash
 
 ## Downloads & Assets
 
-- [Maker ESP32 Getting Started guide](https://my.cytron.io/tutorial/getting-started-with-maker-esp32)
-- [ESP32 Makers Community](https://t.me/ESPmakersMY)
+[ESP32 Makers Community](https://t.me/ESPmakersMY)
 
 ## Community / Related Tutorials
 

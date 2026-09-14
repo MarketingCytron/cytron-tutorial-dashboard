@@ -315,8 +315,7 @@ The clock stays accurate automatically via background NTP synchronization withou
 
 ## Downloads & Assets
 
-- Code / GitHub Gist: Add the verified public Gist embed link before publishing.
-- Wiring diagram: Add the final [Maker ESP32](https://my.cytron.io/p-maker-esp32) + 0.96" I2C OLED wiring graphic.
+[ESP32 Makers Community](https://t.me/ESPmakersMY)
 
 ---
 

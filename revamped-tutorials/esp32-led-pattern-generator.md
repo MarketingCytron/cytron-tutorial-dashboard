@@ -205,7 +205,7 @@ On the board, all 14 indicator LEDs trace each animation smoothly across the GPI
 
 ## Downloads & Assets
 
-- [ESP32 LED Pattern Generator Video Demonstration](https://www.youtube.com/shorts/OrHVqVMyxYc)
+[ESP32 Makers Community](https://t.me/ESPmakersMY)
 
 ## Community / Related Tutorials
 

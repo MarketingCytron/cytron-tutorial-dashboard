@@ -240,7 +240,7 @@ Ensure `ledPin` is assigned to GPIO `2` and configured as `OUTPUT`. Onboard GPIO
 
 ## Downloads & Assets
 
-- [Universal Arduino Telegram Bot Library](https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot)
+[ESP32 Makers Community](https://t.me/ESPmakersMY)
 
 ## Community / Related Tutorials
 

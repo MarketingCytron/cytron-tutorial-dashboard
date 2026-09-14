@@ -245,8 +245,7 @@ Navigating to `http://192.168.1.150` on any local device displays the clean web 
 
 ## Downloads & Assets
 
-- Complete Arduino sketch provided in the Sample Code section above.
-- Pinout and schematic details available via the [Maker ESP32 Getting Started guide](https://my.cytron.io/tutorial/getting-started-with-maker-esp32).
+[ESP32 Makers Community](https://t.me/ESPmakersMY)
 
 ## Community / Related Tutorials
 

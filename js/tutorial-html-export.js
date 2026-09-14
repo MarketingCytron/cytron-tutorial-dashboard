@@ -33,6 +33,7 @@
         /^troubleshooting$/i,
     ];
     const SAMPLE_CODE_HEADING_PATTERN = /^sample code$/i;
+    const SYSTEM_DIAGRAM_HEADING_PATTERN = /^system diagram\s*&\s*wiring$/i;
 
     function escapeHtml(str) {
         return String(str == null ? '' : str)
@@ -104,7 +105,16 @@
         }
 
         const endLine = findSectionEndLine(headings, troubleshooting, lines.length);
-        return { ok: true, lines: lines.slice(intro.index, endLine), topLevel: intro.level };
+        const sectionLines = lines.slice(intro.index, endLine);
+
+        // CMS presentation normalization only (human correction): whichever
+        // canonical variant the approved Markdown uses — "Overview /
+        // Introduction" or already "Introduction" — the CMS heading is
+        // always plain "Introduction". The permanent Markdown itself is
+        // never rewritten; this only touches the in-memory export line.
+        sectionLines[0] = `${'#'.repeat(intro.level)} Introduction`;
+
+        return { ok: true, lines: sectionLines, topLevel: intro.level };
     }
 
     // Reviewer-only inline annotations such as
@@ -257,6 +267,12 @@
         const listStack = []; // [{ type: 'ul'|'ol', indent: number }]
         let tableLines = [];
         let paragraphLines = [];
+        // System Diagram & Wiring human rule: exactly one spacer between the
+        // section's introductory prose and its first table, and only when
+        // prose actually immediately precedes that table — never invented
+        // if the section has no table at all.
+        let inSystemDiagramSection = false;
+        let systemDiagramFirstTableHandled = false;
 
         const flushParagraph = () => {
             if (paragraphLines.length) {
@@ -267,6 +283,13 @@
         };
         const flushTable = () => {
             if (tableLines.length) {
+                if (inSystemDiagramSection && !systemDiagramFirstTableHandled) {
+                    systemDiagramFirstTableHandled = true;
+                    const prev = output[output.length - 1];
+                    if (prev && prev.startsWith('<p style="text-align: justify;">')) {
+                        output.push(SECTION_SPACER_HTML);
+                    }
+                }
                 output.push(renderTable(tableLines, formatInline));
                 tableLines = [];
             }
@@ -284,9 +307,26 @@
             const rawLine = rawLines[i];
             const trimmed = rawLine.trim();
 
-            // Passthrough tokens (fenced code, Gist placeholder) — never
-            // wrapped in a paragraph, never justified.
-            if (/^@@CMS_CODE_BLOCK_\d+@@$/.test(trimmed) || trimmed === GIST_PLACEHOLDER_TOKEN) {
+            // Sample Code Gist placeholder: one spacer before it (only if
+            // explanatory prose immediately precedes it) and one spacer
+            // after it (before whatever heading comes next, regardless of
+            // level — the general dedupe pass below collapses this with a
+            // top-level spacer if one would land in the same place, and
+            // trims it if the placeholder turns out to be the last thing).
+            if (trimmed === GIST_PLACEHOLDER_TOKEN) {
+                flushAll();
+                const prev = output[output.length - 1];
+                if (prev && prev.startsWith('<p style="text-align: justify;">')) {
+                    output.push(SECTION_SPACER_HTML);
+                }
+                output.push(trimmed);
+                output.push(SECTION_SPACER_HTML);
+                continue;
+            }
+
+            // Passthrough tokens (other fenced code) — never wrapped in a
+            // paragraph, never justified.
+            if (/^@@CMS_CODE_BLOCK_\d+@@$/.test(trimmed)) {
                 flushAll();
                 output.push(trimmed);
                 continue;
@@ -315,6 +355,8 @@
                 if (level === topLevel) {
                     if (sawTopLevelHeading) output.push(SECTION_SPACER_HTML);
                     sawTopLevelHeading = true;
+                    inSystemDiagramSection = SYSTEM_DIAGRAM_HEADING_PATTERN.test(headingMatch[2].trim());
+                    systemDiagramFirstTableHandled = false;
                 }
                 output.push(`<h${level}>${formatInline(headingMatch[2])}</h${level}>`);
                 continue;

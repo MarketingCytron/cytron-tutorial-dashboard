@@ -226,7 +226,7 @@ The web dashboard updates on page refresh, displaying the numeric gas level and 
 
 ## Downloads & Assets
 
-- Sensor wiring diagram and visual assets are available in the Cytron project repository.
+[ESP32 Makers Community](https://t.me/ESPmakersMY)
 
 ## Community / Related Tutorials
 

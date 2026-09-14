@@ -218,8 +218,7 @@ Public MQTT brokers transmit messages in plaintext and allow any client to subsc
 
 ## Downloads & Assets
 
-- IoT MQTT Panel App (available on Google Play Store and Apple App Store).
-- All required code is provided directly in the Sample Code section above.
+[ESP32 Makers Community](https://t.me/ESPmakersMY)
 
 ## Community / Related Tutorials
 

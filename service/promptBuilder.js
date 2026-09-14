@@ -299,6 +299,14 @@ function buildPrompt({ tutorialId, userInstructions, jobId, revision }) {
   ));
 
   parts.push(section(
+    'DOWNLOADS & ASSETS — MAKER ESP32 GLOBAL RULE',
+    `HUMAN-APPROVED GLOBAL RULE (highest authority — supersedes anything a previous draft already contains): for a Maker ESP32 revamp tutorial, the public \`## Downloads & Assets\` section must contain ONLY this one line, and nothing else:\n\n` +
+    `${approvedLinks.TELEGRAM_ESP32_MAKERS_COMMUNITY_MARKDOWN}\n\n` +
+    'Do NOT add, by default, any of: an Arduino sketch / .ino download, a GitHub Gist link, a ZIP file, a "code provided in Sample Code above" note, a demo/video link, a wiring-diagram-pending note, a generic product download, or any other link — even if such a link is present and approved elsewhere in the supplied sources. The Sample Code itself already lives in the Sample Code section; the human handles distributing it via their own GitHub Gist separately, outside this draft. Only add an extra Downloads & Assets link when the human explicitly requests one for this specific tutorial in HUMAN-APPROVED REVAMP INSTRUCTIONS or HUMAN-APPROVED REVIEW FEEDBACK above — never by default and never merely because a link happens to be available in an approved source.\n\n' +
+    'If this is a REVISION (see PREVIOUS REVIEW DRAFT above) and the previous draft\'s Downloads & Assets section contains extra links from an older convention (a Gist placeholder note, a video link, a "code above" note, etc.), normalize it down to just the one line above even if the human\'s revision feedback did not mention Downloads & Assets at all — this global rule is newer than, and overrides, whatever the previous draft already did there.'
+  ));
+
+  parts.push(section(
     'WIRING — MAKER PORT PREFERENCE',
     '(This section is the GENERAL rule for tutorials targeting Maker ESP32. If a PROJECT-SPECIFIC HARDWARE DECISIONS section above disables Maker Port for this specific tutorial, that override wins — do not use Maker Port for this project regardless of what follows here.)\n\n' +
     'When the approved technical references confirm that a sensor/interface is electrically and signal-compatible with the Maker ESP32 onboard Maker Port, prefer showing the Maker Port connection as the primary, simple wiring method over manual header/jumper wiring.\n\n' +

@@ -154,6 +154,15 @@ Common pitfalls, fixes, and performance tips — e.g. power issues, baud rates, 
 
 *Source: Template PDF page 4, "13) Downloads & Assets".*
 
+**Human-approved global rule for Maker ESP32 revamp tutorials (supersedes the template's general guidance below for this project):** this section contains ONLY the Telegram community link —
+
+```
+[ESP32 Makers Community](https://t.me/ESPmakersMY)
+```
+
+— and nothing else by default. Do NOT add an Arduino sketch / `.ino` download, a GitHub Gist link, a ZIP file, a "code provided in Sample Code above" note, a demo/video link, a wiring-diagram-pending note, or any other generic download link, even if one is available in an approved source. The Sample Code section already contains the code; the human distributes it separately via their own GitHub Gist as part of the Milestone 9 CMS HTML export workflow (see `docs/TUTORIAL_REVAMP_AGENT_MILESTONE_9_CMS_HTML_EXPORT.md`). Only add an extra Downloads & Assets link when the human explicitly asks for one on that specific tutorial — never by default, and a **Request Changes** revision must normalize an older draft's Downloads & Assets down to just this one line even if the revision feedback didn't mention it.
+
+Template's general guidance (for reference / non-Maker-ESP32 projects only):
 - ZIP of diagrams/configs (optional).
 - Links to repositories, datasets, or example flows.
 - STL file or 3D model, if applicable.

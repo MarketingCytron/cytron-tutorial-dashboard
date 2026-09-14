@@ -165,7 +165,7 @@ Gas Sensor Value: 530
 
 ## Downloads & Assets
 
-- The complete sketch is provided directly in the [Sample Code](#sample-code) section above.
+[ESP32 Makers Community](https://t.me/ESPmakersMY)
 
 ## Community / Related Tutorials
 

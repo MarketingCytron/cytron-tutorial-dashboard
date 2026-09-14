@@ -198,8 +198,7 @@ Each clap above the configured threshold changes both onboard Robo ESP32 NeoPixe
 
 ## Downloads & Assets
 
-- Code / GitHub Gist: Add the verified public Gist link before publishing.
-- Wiring diagram: Add the final [Maker ESP32](https://my.cytron.io/p-maker-esp32) + Robo ESP32 wiring diagram when available.
+[ESP32 Makers Community](https://t.me/ESPmakersMY)
 
 ## Community / Related Tutorials
 

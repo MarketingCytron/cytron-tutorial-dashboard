@@ -240,7 +240,7 @@ The HC-SR501 has two orange potentiometers on the back:
 
 ## Downloads & Assets
 
-- Arduino sketch code provided in the Sample Code section above.
+[ESP32 Makers Community](https://t.me/ESPmakersMY)
 
 ---
 
