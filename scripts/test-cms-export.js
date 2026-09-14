@@ -129,6 +129,18 @@ completeTutorials.forEach((t) => {
 
     // No fragment/document boilerplate (section 8).
     check(`[${t.id}] no <html>/<head>/<body> boilerplate`, !/<!DOCTYPE|<html|<head|<body|<style|<script/i.test(html));
+
+    // Cytron admin section-spacer convention (human correction): plain
+    // headings, exactly one <p>&nbsp;</p> between top-level sections, none
+    // before the first or after the last, none around subsections, no <hr>.
+    const topLevelHeadingCount = (html.match(/<h2>/g) || []).length;
+    const spacerCount = (html.match(/<p>&nbsp;<\/p>/g) || []).length;
+    check(`[${t.id}] exactly one spacer between each pair of top-level sections`, spacerCount === Math.max(0, topLevelHeadingCount - 1), `h2=${topLevelHeadingCount} spacers=${spacerCount}`);
+    check(`[${t.id}] no spacer before the first heading`, !html.startsWith('<p>&nbsp;</p>'));
+    check(`[${t.id}] no spacer after the final content`, !html.endsWith('<p>&nbsp;</p>'));
+    check(`[${t.id}] no style attribute on any heading`, !/<h[2-6][^>]*style=/.test(html));
+    check(`[${t.id}] no <hr> elements`, !contains(html, '<hr'));
+    check(`[${t.id}] no spacer immediately before an h3/h4 subsection`, !/<p>&nbsp;<\/p>\n<h[34]>/.test(html));
 });
 
 // -----------------------------------------------------------------------
@@ -281,6 +293,62 @@ const introFallbackMd = [
         check('Multi-block Sample Code: no leftover code', !contains(result.html, 'void setup') && !contains(result.html, 'void loop'));
         check('Multi-block Sample Code: subsection prose preserved', contains(result.html, 'How the Code Works'));
         check('Multi-block Sample Code: inline code -> <em>', contains(result.html, '<em>inline code</em>'));
+    }
+}
+
+// -----------------------------------------------------------------------
+// Cytron admin section-spacer convention — synthetic end-to-end check.
+// -----------------------------------------------------------------------
+
+{
+    const spacerMd = [
+        '## Introduction',
+        '',
+        'Intro body.',
+        '',
+        '## Prerequisites',
+        '',
+        'Prereq body.',
+        '',
+        '## Objective',
+        '',
+        'Objective body.',
+        '',
+        '## Sample Code',
+        '',
+        'Upload this:',
+        '',
+        '```cpp',
+        'void setup() {}',
+        '```',
+        '',
+        '### How the Code Works',
+        '',
+        'Explanation text.',
+        '',
+        '## Troubleshooting & Extra Tips',
+        '',
+        '### Sensor Not Responding',
+        '',
+        'Fix it.',
+        '',
+        '### Upload Failed',
+        '',
+        'Fix that too.',
+    ].join('\n');
+    const result = TutorialHtmlExport.exportCmsHtml(spacerMd);
+    check('Spacer: export succeeds', result.ok === true);
+    if (result.ok) {
+        const html = result.html;
+        check('Spacer: first heading has no spacer before it', html.startsWith('<h2>Introduction</h2>'));
+        check('Spacer: exactly 4 spacers for 5 top-level sections', (html.match(/<p>&nbsp;<\/p>/g) || []).length === 4);
+        check('Spacer: none before h3 "How the Code Works"', !/<p>&nbsp;<\/p>\n<h3>How the Code Works<\/h3>/.test(html));
+        check('Spacer: none between the two Troubleshooting h3 subsections', !/<h3>Sensor Not Responding<\/h3>[\s\S]*?<p>&nbsp;<\/p>\n<h3>Upload Failed<\/h3>/.test(html));
+        check('Spacer: no trailing spacer after the last content', !html.endsWith('<p>&nbsp;</p>'));
+        check('Spacer: headings carry no style attribute', !/<h[2-6][^>]*style=/.test(html));
+        check('Spacer: no <hr>', !html.includes('<hr'));
+        check('Spacer: paragraph justification untouched', html.includes('style="text-align: justify;"'));
+        check('Spacer: Sample Code Gist placeholder untouched', html.includes('<!-- INSERT GITHUB GIST EMBED HERE -->'));
     }
 }
 

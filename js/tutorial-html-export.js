@@ -104,7 +104,7 @@
         }
 
         const endLine = findSectionEndLine(headings, troubleshooting, lines.length);
-        return { ok: true, lines: lines.slice(intro.index, endLine) };
+        return { ok: true, lines: lines.slice(intro.index, endLine), topLevel: intro.level };
     }
 
     // Reviewer-only inline annotations such as
@@ -157,6 +157,13 @@
         return before.concat(newBody, after);
     }
 
+    // Cytron admin convention (human-corrected, supersedes any earlier
+    // margin/style-based spacing): exactly one <p>&nbsp;</p> between
+    // consecutive TOP-LEVEL sections, never before the first one, never
+    // after the last, and never before an h3/h4 subsection. Headings get
+    // no style attribute at all — the admin system controls their look.
+    const SECTION_SPACER_HTML = '<p>&nbsp;</p>';
+
     // ---------------------------------------------------------------------
     // Minimal Markdown -> semantic HTML conversion, CMS-flavored:
     //   - normal prose paragraphs get inline text-align:justify (portable,
@@ -166,6 +173,8 @@
     //     Sample Code program block already stripped above)
     //   - images/links become real <img>/<a>, tables become real <table>
     //   - no dashboard-only wrapper divs/classes
+    //   - plain <h2>-<h6> (no style attribute); one <p>&nbsp;</p> spacer
+    //     between top-level sections (see SECTION_SPACER_HTML above)
     // ---------------------------------------------------------------------
 
     function renderTable(tableLines, formatInline) {
@@ -197,7 +206,7 @@
         return html;
     }
 
-    function convertMarkdownToHtml(text) {
+    function convertMarkdownToHtml(text, topLevel) {
         if (!text) return '';
 
         // 1. Pull out fenced code blocks (outside Sample Code, these are
@@ -208,6 +217,15 @@
             codeBlocks.push({ lang, code: escapeHtml(code.replace(/\r\n/g, '\n').replace(/\n$/, '')) });
             return token;
         });
+
+        // Top-level section heading level (e.g. 2 for "##"), used to decide
+        // where the section spacer goes. If not supplied, infer it from the
+        // first heading actually present.
+        if (!topLevel) {
+            const firstHeadingMatch = /^(#{1,6})\s+/m.exec(processed);
+            topLevel = firstHeadingMatch ? firstHeadingMatch[1].length : null;
+        }
+        let sawTopLevelHeading = false;
 
         // 2. Strip blockquote markers up front — the only blockquote usage
         //    in approved tutorials is a plain "Note:" callout, which reads
@@ -283,11 +301,18 @@
                 flushTable();
             }
 
-            // Headings
+            // Headings — plain, no style attribute (the admin system
+            // controls heading appearance). Exactly one <p>&nbsp;</p>
+            // spacer goes before each top-level section after the first;
+            // subsections (deeper than topLevel) never get one.
             const headingMatch = /^(#{1,6})\s+(.*)$/.exec(trimmed);
             if (headingMatch) {
                 flushAll();
                 const level = headingMatch[1].length;
+                if (level === topLevel) {
+                    if (sawTopLevelHeading) output.push(SECTION_SPACER_HTML);
+                    sawTopLevelHeading = true;
+                }
                 output.push(`<h${level}>${formatInline(headingMatch[2])}</h${level}>`);
                 continue;
             }
@@ -354,7 +379,24 @@
 
         flushAll();
 
-        let html = output.join('\n');
+        // Defensive normalization: collapse any run of consecutive section
+        // spacers down to exactly one, and drop a spacer if it ended up
+        // first (before any heading) — this should never happen given the
+        // logic above, but keeps the output correct even if it did.
+        const normalized = [];
+        for (let i = 0; i < output.length; i++) {
+            const block = output[i];
+            if (block === SECTION_SPACER_HTML) {
+                if (normalized.length === 0) continue;
+                if (normalized[normalized.length - 1] === SECTION_SPACER_HTML) continue;
+            }
+            normalized.push(block);
+        }
+        while (normalized.length && normalized[normalized.length - 1] === SECTION_SPACER_HTML) {
+            normalized.pop();
+        }
+
+        let html = normalized.join('\n');
         codeBlocks.forEach((item, idx) => {
             const langClass = item.lang ? ` class="language-${item.lang}"` : '';
             html = html.split(`@@CMS_CODE_BLOCK_${idx}@@`).join(`<pre><code${langClass}>${item.code}</code></pre>`);
@@ -382,7 +424,7 @@
 
         const withoutSampleCode = stripSampleCodeBlocks(extraction.lines);
         const withoutPlaceholders = stripEditorPlaceholderLines(withoutSampleCode);
-        const html = convertMarkdownToHtml(withoutPlaceholders.join('\n'));
+        const html = convertMarkdownToHtml(withoutPlaceholders.join('\n'), extraction.topLevel);
         return { ok: true, html };
     }
 
