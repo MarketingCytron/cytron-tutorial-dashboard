@@ -5129,7 +5129,7 @@
       },
       "decision": "Minor Update",
       "revampScope": "Small",
-      "revampStatus": "Reviewed",
+      "revampStatus": "Complete",
       "priority": "P2",
       "technicalScore": 7,
       "scores": {
@@ -5288,6 +5288,7 @@
         }
       ],
       "auditFile": "audits/esp32-smart-home-dashboard-with-real-time-sensor-data.md",
+      "revampedOutputFile": "revamped-tutorials/esp32-smart-home-dashboard-with-real-time-sensor-data.md",
       "makerEsp32PublishDate": "2026-09-16",
       "hardwareUsed": {
         "board": "Maker ESP32",
