@@ -58,14 +58,16 @@
  *     Telegram content whatsoever — unlike the DHT11/DHT22 and Weather
  *     Station precedents above, this is not a same-tutorial legacy-ID
  *     mismatch, it is a different tutorial's subject matter entirely.
- *     Applying it would have written a false publish-date/context
- *     association into an unrelated tutorial's record. Left unresolved in
- *     UNRESOLVED_SCHEDULE_ENTRIES pending a corrected mapping or title.
+ *     A subsequent human decision then explicitly confirmed this title is
+ *     to be IGNORED for now rather than mapped to any existing record —
+ *     it is deliberately absent from both PUBLISH_SCHEDULE and
+ *     UNRESOLVED_SCHEDULE_ENTRIES (not a blocker, not a warning). If a
+ *     genuinely matching tutorial is identified later, add it as a normal
+ *     new PUBLISH_SCHEDULE entry then.
  *
- * 26 of the (11 + 8 + 5 + 2) human-supplied schedule entries are now
- * resolved; the 1 remaining above stays open pending a follow-up human
- * decision that supplies a mapping actually supported by that tutorial's
- * own content.
+ * 26 of the (11 + 8 + 5 + 2) human-supplied schedule entries are resolved;
+ * "Program Telegram Bot on ESP32 Board" is intentionally not scheduled and
+ * not tracked as outstanding (human decision above).
  *
  * Dates are stored as ISO (YYYY-MM-DD), matching every other date field in
  * this dataset (see data/tutorials.json `publishDate` / `makerEsp32Publish
@@ -110,16 +112,12 @@ const PUBLISH_SCHEDULE = {
   'interface-water-flow-sensor-using-esp32-board': '2026-09-27',
 };
 
-// 1 human-supplied schedule entry remains unresolved (see module doc
-// comment above) — the proposed mapping did not match the target record's
-// actual content, so it was not applied rather than guessed.
-const UNRESOLVED_SCHEDULE_ENTRIES = [
-  {
-    requestedTitle: 'Program Telegram Bot on ESP32 Board',
-    requestedDate: '2026-10-01',
-    reason: 'Proposed mapping to interface-water-flow-sensor-using-esp32-board-2 rejected: that record is a water-flow-sensor tutorial (YF-S201/Hall Effect) with no Telegram-related content — not a legacy-naming match, a different tutorial entirely.',
-  },
-];
+// No outstanding unresolved entries (see module doc comment above) —
+// "Program Telegram Bot on ESP32 Board" was explicitly deemed out of scope
+// by human decision rather than left as a pending blocker. Kept as an
+// empty array, not removed, so a future partial-resolution scenario has an
+// established place to record it again.
+const UNRESOLVED_SCHEDULE_ENTRIES = [];
 
 function getScheduledPublishDate(tutorialId) {
   return PUBLISH_SCHEDULE[tutorialId] || null;
