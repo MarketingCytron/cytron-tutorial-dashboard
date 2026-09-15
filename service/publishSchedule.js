@@ -35,32 +35,37 @@
  *     wording differs ("with" omitted in the existing title).
  *
  * A further follow-up human decision extended the schedule with 8 more
- * candidate "title -> date" entries. Only 5 were resolved; per the human's
- * explicit instruction not to guess when a title is ambiguous or missing,
- * the remaining 3 were deliberately left OUT of PUBLISH_SCHEDULE and are
- * tracked in UNRESOLVED_SCHEDULE_ENTRIES below instead:
+ * candidate "title -> date" entries. Only 5 were resolved at the time; the
+ * remaining 3 were deliberately left OUT of PUBLISH_SCHEDULE rather than
+ * guessed. A later human decision then explicitly confirmed 2 of those 3
+ * as legacy-naming matches (added below); the 3rd was NOT accepted:
  *
- *   - "Smart Farming with ESP32" -> NOT resolved. The only farming-related
- *     tutorial in the dataset is `farm-automation-system-roboesp32`
- *     ("Farm Automation System using Robo ESP32"), but the title differs
- *     substantially (different noun phrasing, and a specific "Robo ESP32"
- *     product vs. the requested generic "ESP32") — too large a gap to
- *     treat as clearly-equivalent wording, unlike the Node-RED/ESP-NOW
- *     cases above.
- *   - "Monitor Water Flow with ESP32 and a Flow Sensor" -> NOT resolved.
- *     Two equally plausible candidates exist (`interface-water-flow-sensor-
- *     using-esp32-board` and `interface-water-flow-sensor-using-esp32-
- *     board-2`, "... (Part 2)") and the requested title does not
- *     distinguish which one is meant.
- *   - "Program Telegram Bot on ESP32 Board" -> NOT resolved. No tutorial
- *     with this or a clearly-equivalent title exists in the dataset at all
- *     (the two existing Telegram tutorials — `control-esp32-outputs-with-
- *     telegram` and `how-to-create-a-telegram-bot-get-the-api-key-and-
- *     chat-id` — are on different, already-scheduled topics).
+ *   - "Smart Farming with ESP32" -> human-confirmed mapping to
+ *     `farm-automation-system-roboesp32` ("Farm Automation System using
+ *     Robo ESP32") despite the title/product wording difference — same
+ *     underlying farm-automation tutorial.
+ *   - "Monitor Water Flow with ESP32 and a Flow Sensor" -> human-confirmed
+ *     mapping to `interface-water-flow-sensor-using-esp32-board` (the
+ *     non-"Part 2" record) — the human explicitly picked this one over
+ *     `interface-water-flow-sensor-using-esp32-board-2` to resolve the
+ *     earlier two-candidate ambiguity.
+ *   - "Program Telegram Bot on ESP32 Board" -> a follow-up instruction
+ *     proposed mapping this to `interface-water-flow-sensor-using-esp32-
+ *     board-2`. NOT applied: that record's actual content (products
+ *     `ESP32`/`YF-S201`, technologies `Water Flow Sensor`/`Hall Effect`,
+ *     top issues about YF-S201 voltage-divider wiring and interrupt-driven
+ *     pulse counting) is unambiguously a water-flow-sensor tutorial with no
+ *     Telegram content whatsoever — unlike the DHT11/DHT22 and Weather
+ *     Station precedents above, this is not a same-tutorial legacy-ID
+ *     mismatch, it is a different tutorial's subject matter entirely.
+ *     Applying it would have written a false publish-date/context
+ *     association into an unrelated tutorial's record. Left unresolved in
+ *     UNRESOLVED_SCHEDULE_ENTRIES pending a corrected mapping or title.
  *
- * 24 of the (11 + 8 + 5) human-supplied schedule entries are now resolved;
- * the 3 above remain open pending a follow-up human decision that either
- * confirms a mapping or supplies a corrected title.
+ * 26 of the (11 + 8 + 5 + 2) human-supplied schedule entries are now
+ * resolved; the 1 remaining above stays open pending a follow-up human
+ * decision that supplies a mapping actually supported by that tutorial's
+ * own content.
  *
  * Dates are stored as ISO (YYYY-MM-DD), matching every other date field in
  * this dataset (see data/tutorials.json `publishDate` / `makerEsp32Publish
@@ -101,26 +106,18 @@ const PUBLISH_SCHEDULE = {
   'send-sensors-data-to-thingspeak-using-esp32': '2026-09-28',
   'dot-matrix-clock-ntp-esp32': '2026-09-29',
   'how-to-create-a-telegram-bot-get-the-api-key-and-chat-id': '2026-09-30',
+  'farm-automation-system-roboesp32': '2026-09-25',
+  'interface-water-flow-sensor-using-esp32-board': '2026-09-27',
 };
 
-// 3 human-supplied schedule entries from the latest batch could not be
-// resolved to a single unambiguous tutorial (see module doc comment above)
-// and were deliberately left out of PUBLISH_SCHEDULE rather than guessed.
+// 1 human-supplied schedule entry remains unresolved (see module doc
+// comment above) — the proposed mapping did not match the target record's
+// actual content, so it was not applied rather than guessed.
 const UNRESOLVED_SCHEDULE_ENTRIES = [
-  {
-    requestedTitle: 'Smart Farming with ESP32',
-    requestedDate: '2026-09-25',
-    reason: 'Only candidate ("Farm Automation System using Robo ESP32", id farm-automation-system-roboesp32) differs too much in wording/product to treat as equivalent.',
-  },
-  {
-    requestedTitle: 'Monitor Water Flow with ESP32 and a Flow Sensor',
-    requestedDate: '2026-09-27',
-    reason: 'Two equally plausible candidates: interface-water-flow-sensor-using-esp32-board and interface-water-flow-sensor-using-esp32-board-2.',
-  },
   {
     requestedTitle: 'Program Telegram Bot on ESP32 Board',
     requestedDate: '2026-10-01',
-    reason: 'No matching or clearly-equivalent tutorial exists in the dataset.',
+    reason: 'Proposed mapping to interface-water-flow-sensor-using-esp32-board-2 rejected: that record is a water-flow-sensor tutorial (YF-S201/Hall Effect) with no Telegram-related content — not a legacy-naming match, a different tutorial entirely.',
   },
 ];
 

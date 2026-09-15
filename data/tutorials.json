@@ -2966,7 +2966,7 @@
         }
       ],
       "auditFile": "audits/farm-automation-system-roboesp32.md",
-      "makerEsp32PublishDate": "2026-09-19",
+      "makerEsp32PublishDate": "2026-09-25",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -5082,14 +5082,15 @@
         "notes": "YF-S201 water flow sensor uses interrupt-capable GPIO which is available on Maker ESP32. The 5V voltage level issue applies to all ESP32 boards, not Maker-specific. Voltage divider recommendation remains the same.",
         "requiredChanges": []
       },
-      "makerEsp32PublishDate": "2026-09-13",
+      "makerEsp32PublishDate": "2026-09-27",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
           "YF-S201 Water Flow Sensor"
         ],
         "notes": "Requires voltage divider (5V to 3.3V)"
-      }
+      },
+      "publishDate": "2026-09-27"
     },
     {
       "id": "esp32-smart-home-dashboard-with-real-time-sensor-data",
