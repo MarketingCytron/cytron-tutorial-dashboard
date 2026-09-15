@@ -2309,7 +2309,7 @@
         }
       ],
       "auditFile": "audits/dot-matrix-clock-ntp-esp32.md",
-      "makerEsp32PublishDate": "2026-09-25",
+      "makerEsp32PublishDate": "2026-09-29",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -2318,7 +2318,7 @@
         "notes": "SPI connection - change CS from GPIO26 to GPIO17"
       },
       "preparationDate": "2026-08-26",
-      "publishDate": "2026-09-18"
+      "publishDate": "2026-09-29"
     },
     {
       "id": "esp32-air-quality-monitoring",
@@ -3936,7 +3936,7 @@
         }
       ],
       "auditFile": "audits/ws2812-ring-led-clock-with-ntp-server-using-esp32.md",
-      "makerEsp32PublishDate": "2026-09-18",
+      "makerEsp32PublishDate": "2026-09-24",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -3945,7 +3945,7 @@
         "notes": "External NeoPixel ring for clock display"
       },
       "preparationDate": "2026-09-02",
-      "publishDate": "2026-09-23"
+      "publishDate": "2026-09-24"
     },
     {
       "id": "getting-started-espnow",
@@ -4191,7 +4191,7 @@
         }
       ],
       "auditFile": "audits/send-sensors-data-to-thingspeak-using-esp32.md",
-      "makerEsp32PublishDate": "2026-09-14",
+      "makerEsp32PublishDate": "2026-09-28",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -4200,7 +4200,7 @@
         "notes": "Generic sensor data logging tutorial"
       },
       "preparationDate": "2026-08-25",
-      "publishDate": "2026-09-17"
+      "publishDate": "2026-09-28"
     },
     {
       "id": "how-to-start-up-and-get-auth-token-from-blynk",
@@ -4432,14 +4432,14 @@
         }
       ],
       "auditFile": "audits/how-to-create-a-telegram-bot-get-the-api-key-and-chat-id.md",
-      "makerEsp32PublishDate": "2026-09-02",
+      "makerEsp32PublishDate": "2026-09-30",
       "hardwareUsed": {
         "board": "None",
         "components": [],
         "notes": "Software setup only - no hardware required"
       },
       "preparationDate": "2026-08-07",
-      "publishDate": "2026-09-05"
+      "publishDate": "2026-09-30"
     },
     {
       "id": "interface-water-flow-sensor-using-esp32-board-2",
@@ -4945,7 +4945,7 @@
           "Verify buzzer pin - if using GPIO26, change to another GPIO (e.g., GPIO25 or GPIO27)"
         ]
       },
-      "makerEsp32PublishDate": "2026-09-23",
+      "makerEsp32PublishDate": "2026-09-26",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -4956,7 +4956,7 @@
         "notes": "Can use onboard buzzer. Verify GPIO pins"
       },
       "preparationDate": "2026-09-08",
-      "publishDate": "2026-09-27"
+      "publishDate": "2026-09-26"
     },
     {
       "id": "interface-water-flow-sensor-using-esp32-board",

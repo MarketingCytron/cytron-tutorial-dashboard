@@ -34,7 +34,33 @@
  *     ("Getting Started ESP-NOW") — only ESP-NOW tutorial in the dataset;
  *     wording differs ("with" omitted in the existing title).
  *
- * All 19 schedule entries are now resolved.
+ * A further follow-up human decision extended the schedule with 8 more
+ * candidate "title -> date" entries. Only 5 were resolved; per the human's
+ * explicit instruction not to guess when a title is ambiguous or missing,
+ * the remaining 3 were deliberately left OUT of PUBLISH_SCHEDULE and are
+ * tracked in UNRESOLVED_SCHEDULE_ENTRIES below instead:
+ *
+ *   - "Smart Farming with ESP32" -> NOT resolved. The only farming-related
+ *     tutorial in the dataset is `farm-automation-system-roboesp32`
+ *     ("Farm Automation System using Robo ESP32"), but the title differs
+ *     substantially (different noun phrasing, and a specific "Robo ESP32"
+ *     product vs. the requested generic "ESP32") — too large a gap to
+ *     treat as clearly-equivalent wording, unlike the Node-RED/ESP-NOW
+ *     cases above.
+ *   - "Monitor Water Flow with ESP32 and a Flow Sensor" -> NOT resolved.
+ *     Two equally plausible candidates exist (`interface-water-flow-sensor-
+ *     using-esp32-board` and `interface-water-flow-sensor-using-esp32-
+ *     board-2`, "... (Part 2)") and the requested title does not
+ *     distinguish which one is meant.
+ *   - "Program Telegram Bot on ESP32 Board" -> NOT resolved. No tutorial
+ *     with this or a clearly-equivalent title exists in the dataset at all
+ *     (the two existing Telegram tutorials — `control-esp32-outputs-with-
+ *     telegram` and `how-to-create-a-telegram-bot-get-the-api-key-and-
+ *     chat-id` — are on different, already-scheduled topics).
+ *
+ * 24 of the (11 + 8 + 5) human-supplied schedule entries are now resolved;
+ * the 3 above remain open pending a follow-up human decision that either
+ * confirms a mapping or supplies a corrected title.
  *
  * Dates are stored as ISO (YYYY-MM-DD), matching every other date field in
  * this dataset (see data/tutorials.json `publishDate` / `makerEsp32Publish
@@ -70,13 +96,33 @@ const PUBLISH_SCHEDULE = {
   'getting-started-freertos-esp32': '2026-09-21',
   'getting-started-espnow': '2026-09-22',
   'turn-on-led-finger-esp32-mediapipe': '2026-09-23',
+  'ws2812-ring-led-clock-with-ntp-server-using-esp32': '2026-09-24',
+  'home-security-system-with-esp32': '2026-09-26',
+  'send-sensors-data-to-thingspeak-using-esp32': '2026-09-28',
+  'dot-matrix-clock-ntp-esp32': '2026-09-29',
+  'how-to-create-a-telegram-bot-get-the-api-key-and-chat-id': '2026-09-30',
 };
 
-// All 19 human-approved schedule entries are resolved (see module doc
-// comment above) — nothing left to report. Kept as an empty array, not
-// removed, so any future partial-resolution scenario has an established
-// place to record it again.
-const UNRESOLVED_SCHEDULE_ENTRIES = [];
+// 3 human-supplied schedule entries from the latest batch could not be
+// resolved to a single unambiguous tutorial (see module doc comment above)
+// and were deliberately left out of PUBLISH_SCHEDULE rather than guessed.
+const UNRESOLVED_SCHEDULE_ENTRIES = [
+  {
+    requestedTitle: 'Smart Farming with ESP32',
+    requestedDate: '2026-09-25',
+    reason: 'Only candidate ("Farm Automation System using Robo ESP32", id farm-automation-system-roboesp32) differs too much in wording/product to treat as equivalent.',
+  },
+  {
+    requestedTitle: 'Monitor Water Flow with ESP32 and a Flow Sensor',
+    requestedDate: '2026-09-27',
+    reason: 'Two equally plausible candidates: interface-water-flow-sensor-using-esp32-board and interface-water-flow-sensor-using-esp32-board-2.',
+  },
+  {
+    requestedTitle: 'Program Telegram Bot on ESP32 Board',
+    requestedDate: '2026-10-01',
+    reason: 'No matching or clearly-equivalent tutorial exists in the dataset.',
+  },
+];
 
 function getScheduledPublishDate(tutorialId) {
   return PUBLISH_SCHEDULE[tutorialId] || null;
