@@ -21,7 +21,28 @@
  *     tutorial, which records the DHT11 hardware authority separately from
  *     this legacy identifier).
  *
- * All 11 schedule entries are now resolved.
+ * A follow-up human decision (2026-09-15) extended the schedule with 8 more
+ * entries. 6 matched an existing tutorial title exactly; 2 did not match
+ * exactly but were unambiguous (only one existing tutorial on the topic) and
+ * were resolved as clearly-equivalent titles rather than guessed:
+ *
+ *   - "Getting Started with ESP32 & Node-RED" -> resolved to
+ *     `getting-started-esp32-and-nodered` ("Getting Started ESP32 and
+ *     Node-RED") — only Node-RED getting-started tutorial in the dataset;
+ *     wording differs ("with"/"&" vs "and").
+ *   - "Getting Started with ESP-NOW" -> resolved to `getting-started-espnow`
+ *     ("Getting Started ESP-NOW") — only ESP-NOW tutorial in the dataset;
+ *     wording differs ("with" omitted in the existing title).
+ *
+ * All 19 schedule entries are now resolved.
+ *
+ * Dates are stored as ISO (YYYY-MM-DD), matching every other date field in
+ * this dataset (see data/tutorials.json `publishDate` / `makerEsp32Publish
+ * Date`) and what promptBuilder.js's HUMAN-APPROVED PUBLISH DATE section and
+ * draftValidator.js's `scheduled_publish_date_consistency` check both expect
+ * verbatim. The dashboard's human-facing "D MMM YYYY" (e.g. "14 Sept 2026")
+ * display is produced from this ISO value at render time by `Utils.formatDate`
+ * (js/app.js) — do not hardcode a display-formatted string here.
  *
  * This is intentionally a small, hand-maintained, human-approved map (like
  * tutorialContext.js's PROJECT_HARDWARE_DECISIONS) — not derived from any
@@ -41,9 +62,17 @@ const PUBLISH_SCHEDULE = {
   'esp32-smart-light-control-with-app': '2026-09-11',
   'wifi-weather-station-esp32': '2026-09-12',
   'esp32-high-temperature-alert-system-with-dht22-sensor': '2026-09-13',
+  'esp32-smart-home-dashboard-with-real-time-sensor-data': '2026-09-14',
+  'getting-started-with-esp32-ota': '2026-09-17',
+  'getting-started-esp32-and-blynk': '2026-09-18',
+  'getting-started-thingspeak': '2026-09-19',
+  'getting-started-esp32-and-nodered': '2026-09-20',
+  'getting-started-freertos-esp32': '2026-09-21',
+  'getting-started-espnow': '2026-09-22',
+  'turn-on-led-finger-esp32-mediapipe': '2026-09-23',
 };
 
-// All 11 human-approved schedule entries are resolved (see module doc
+// All 19 human-approved schedule entries are resolved (see module doc
 // comment above) — nothing left to report. Kept as an empty array, not
 // removed, so any future partial-resolution scenario has an established
 // place to record it again.

@@ -15,7 +15,7 @@
 | Categories | IoT / Smart Home |
 | Related Products | [Maker ESP32](https://my.cytron.io/p-maker-esp32) |
 | Related Tutorials | [Maker ESP32 Getting Started guide](https://my.cytron.io/tutorial/getting-started-with-maker-esp32) |
-| Publish Date | 2026-09-15 |
+| Publish Date | 14 Sept 2026 |
 
 ## Overview / Introduction
 

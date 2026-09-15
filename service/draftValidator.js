@@ -22,6 +22,7 @@
  */
 
 const approvedLinks = require('./approvedLinks');
+const dateFormat = require('./dateFormat');
 
 const REQUIRED_STRUCTURE_HEADINGS = [
   /admin\s*&\s*seo/i,
@@ -735,13 +736,19 @@ function validateDraft(markdown, context) {
   // 35. Milestone 7 — when this tutorial has a human-approved scheduled
   // publish date, the Admin & SEO "Publish Date" field must match it exactly
   // (FAIL on mismatch, not a warning — this is an objective, human-approved
-  // requirement, not a heuristic).
+  // requirement, not a heuristic). `context.scheduledPublishDate` is the
+  // canonical internal ISO value (from publishSchedule.js); the public field
+  // must show the human-facing "D MMM YYYY" form (dateFormat.js) — an
+  // otherwise-correct-date candidate still FAILS if it uses ISO or any other
+  // format, since the human-facing format is itself part of this
+  // requirement (human correction, 2026-09-15), not merely the date value.
   if (context.scheduledPublishDate) {
+    const expectedHumanPublishDate = dateFormat.formatPublishDateForTutorial(context.scheduledPublishDate);
     const publishDateValue = extractAdminField(publicBody, 'Publish Date');
-    const matches = publishDateValue === context.scheduledPublishDate;
-    checks.push(check('scheduled_publish_date_consistency', `Admin & SEO "Publish Date" matches the human-approved scheduled date (${context.scheduledPublishDate})`,
+    const matches = publishDateValue === expectedHumanPublishDate;
+    checks.push(check('scheduled_publish_date_consistency', `Admin & SEO "Publish Date" matches the human-approved scheduled date in its required public format (${expectedHumanPublishDate})`,
       matches ? 'pass' : 'fail',
-      matches ? 'matches' : `expected "${context.scheduledPublishDate}", found ${publishDateValue === null ? 'no Publish Date field' : `"${publishDateValue}"`}`));
+      matches ? 'matches' : `expected "${expectedHumanPublishDate}", found ${publishDateValue === null ? 'no Publish Date field' : `"${publishDateValue}"`}`));
   }
 
   const summary = checks.reduce((acc, c) => {

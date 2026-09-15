@@ -20,6 +20,7 @@
 
 const tutorialContext = require('./tutorialContext');
 const approvedLinks = require('./approvedLinks');
+const dateFormat = require('./dateFormat');
 
 const PROMPT_SIZE_WARNING_CHARS = 100 * 1024; // conservative, no truncation — just a flagged warning
 
@@ -336,12 +337,15 @@ function buildPrompt({ tutorialId, userInstructions, jobId, revision }) {
   ));
 
   if (context.scheduledPublishDate) {
+    const humanPublishDate = dateFormat.formatPublishDateForTutorial(context.scheduledPublishDate);
     parts.push(section(
       'HUMAN-APPROVED PUBLISH DATE',
-      `HUMAN-APPROVED PUBLISH DATE: ${context.scheduledPublishDate}\n\n` +
+      `HUMAN-APPROVED PUBLISH DATE: ${humanPublishDate}\n\n` +
       'This date is the authoritative, human-approved publication schedule for this tutorial (see APPROVED GLOBAL LINKS / EVIDENCE & DECISION PRIORITY above — this is HUMAN_APPROVED authority, the highest tier). ' +
-      'The Admin & SEO "Publish Date" field below MUST use exactly this date. ' +
-      'Do NOT use today\'s date, the job creation date, the generation date, or the revision date as the Publish Date when this human-approved schedule is present — use only the date given here, exactly as written (YYYY-MM-DD).'
+      'The Admin & SEO "Publish Date" field below MUST use exactly this human-facing value, in this exact "D MMM YYYY" form (no leading zero on the day, "Sept" for September — never "Sep"). ' +
+      'Do NOT use today\'s date, the job creation date, the generation date, or the revision date as the Publish Date when this human-approved schedule is present — use only the date given here, exactly as written. ' +
+      'Never output the internal ISO scheduling form (e.g. "2026-09-14") as the visible Publish Date — that form is for internal scheduling data only and must never appear in the public tutorial. ' +
+      'If this is a revision and the PREVIOUS REVIEW DRAFT\'s Publish Date used a different date or a different format (including ISO), normalize it to exactly this human-facing value — the previous draft\'s Publish Date is not preserved as an editorial baseline for this field.'
     ));
   }
 

@@ -209,14 +209,14 @@
         }
       ],
       "auditFile": "audits/getting-started-esp32-and-nodered.md",
-      "makerEsp32PublishDate": "2026-09-27",
+      "makerEsp32PublishDate": "2026-09-20",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [],
         "notes": "ESP32 only, no additional hardware required"
       },
       "preparationDate": "2026-09-07",
-      "publishDate": "2026-09-26"
+      "publishDate": "2026-09-20"
     },
     {
       "id": "getting-started-thingspeak",
@@ -413,7 +413,7 @@
         }
       ],
       "auditFile": "audits/getting-started-thingspeak.md",
-      "makerEsp32PublishDate": "2026-09-08",
+      "makerEsp32PublishDate": "2026-09-19",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -422,7 +422,7 @@
         "notes": "Basic IoT sensor setup"
       },
       "preparationDate": "2026-08-20",
-      "publishDate": "2026-09-14"
+      "publishDate": "2026-09-19"
     },
     {
       "id": "getting-started-with-esp32-ota",
@@ -606,14 +606,14 @@
         }
       ],
       "auditFile": "audits/getting-started-with-esp32-ota.md",
-      "makerEsp32PublishDate": "2026-09-06",
+      "makerEsp32PublishDate": "2026-09-17",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [],
         "notes": "ESP32 only, uses onboard LED for demo"
       },
       "preparationDate": "2026-08-21",
-      "publishDate": "2026-09-15"
+      "publishDate": "2026-09-17"
     },
     {
       "id": "getting-started-freertos-esp32",
@@ -811,14 +811,14 @@
         }
       ],
       "auditFile": "audits/getting-started-freertos-esp32.md",
-      "makerEsp32PublishDate": "2026-09-15",
+      "makerEsp32PublishDate": "2026-09-21",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [],
         "notes": "ESP32 only, uses onboard LEDs for multitasking demo"
       },
       "preparationDate": "2026-08-12",
-      "publishDate": "2026-09-08"
+      "publishDate": "2026-09-21"
     },
     {
       "id": "control-esp32-outputs-with-telegram",
@@ -1653,7 +1653,7 @@
         }
       ],
       "auditFile": "audits/turn-on-led-finger-esp32-mediapipe.md",
-      "makerEsp32PublishDate": "2026-09-17",
+      "makerEsp32PublishDate": "2026-09-23",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -1663,7 +1663,7 @@
         "notes": "Requires PC with webcam for hand tracking"
       },
       "preparationDate": "2026-08-27",
-      "publishDate": "2026-09-19"
+      "publishDate": "2026-09-23"
     },
     {
       "id": "getting-started-esp32-and-blynk",
@@ -1872,7 +1872,7 @@
         }
       ],
       "auditFile": "audits/getting-started-esp32-and-blynk.md",
-      "makerEsp32PublishDate": "2026-09-09",
+      "makerEsp32PublishDate": "2026-09-18",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -1881,7 +1881,7 @@
         "notes": "Basic Blynk IoT setup with sensor"
       },
       "preparationDate": "2026-08-19",
-      "publishDate": "2026-09-13"
+      "publishDate": "2026-09-18"
     },
     {
       "id": "esp32-digital-clock",
@@ -4054,14 +4054,14 @@
       ],
       "links": [],
       "auditFile": "audits/getting-started-espnow.md",
-      "makerEsp32PublishDate": "2026-09-01",
+      "makerEsp32PublishDate": "2026-09-22",
       "hardwareUsed": {
         "board": "Maker ESP32 (x2)",
         "components": [],
         "notes": "Requires TWO Maker ESP32 boards for peer-to-peer communication"
       },
       "preparationDate": "2026-08-06",
-      "publishDate": "2026-09-04"
+      "publishDate": "2026-09-22"
     },
     {
       "id": "send-sensors-data-to-thingspeak-using-esp32",
@@ -5289,7 +5289,7 @@
       ],
       "auditFile": "audits/esp32-smart-home-dashboard-with-real-time-sensor-data.md",
       "revampedOutputFile": "revamped-tutorials/esp32-smart-home-dashboard-with-real-time-sensor-data.md",
-      "makerEsp32PublishDate": "2026-09-16",
+      "makerEsp32PublishDate": "2026-09-14",
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
@@ -5299,7 +5299,7 @@
         "notes": "MQ-135 requires voltage divider"
       },
       "preparationDate": "2026-08-31",
-      "publishDate": "2026-09-21"
+      "publishDate": "2026-09-14"
     }
   ],
   "metadata": {
