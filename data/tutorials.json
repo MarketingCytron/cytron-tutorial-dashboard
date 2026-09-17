@@ -459,7 +459,7 @@
       },
       "decision": "Minor Update",
       "revampScope": "Small",
-      "revampStatus": "Reviewed",
+      "revampStatus": "Complete",
       "priority": "P2",
       "technicalScore": 8,
       "scores": {
@@ -606,6 +606,7 @@
         }
       ],
       "auditFile": "audits/getting-started-with-esp32-ota.md",
+      "revampedOutputFile": "revamped-tutorials/getting-started-with-esp32-ota.md",
       "makerEsp32PublishDate": "2026-09-17",
       "hardwareUsed": {
         "board": "Maker ESP32",
