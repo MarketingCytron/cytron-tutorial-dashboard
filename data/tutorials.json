@@ -1492,7 +1492,7 @@
       },
       "decision": "Minor Update",
       "revampScope": "Small",
-      "revampStatus": "Reviewed",
+      "revampStatus": "Complete",
       "priority": "P2",
       "technicalScore": 8,
       "scores": {
@@ -1654,6 +1654,7 @@
         }
       ],
       "auditFile": "audits/turn-on-led-finger-esp32-mediapipe.md",
+      "revampedOutputFile": "revamped-tutorials/turn-on-led-finger-esp32-mediapipe.md",
       "makerEsp32PublishDate": "2026-09-23",
       "hardwareUsed": {
         "board": "Maker ESP32",
