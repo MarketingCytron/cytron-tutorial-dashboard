@@ -2804,7 +2804,7 @@
       },
       "decision": "Minor Update",
       "revampScope": "Medium",
-      "revampStatus": "Reviewed",
+      "revampStatus": "Complete",
       "priority": "P2",
       "technicalScore": 7,
       "scores": {
@@ -2968,6 +2968,7 @@
         }
       ],
       "auditFile": "audits/farm-automation-system-roboesp32.md",
+      "revampedOutputFile": "revamped-tutorials/farm-automation-system-roboesp32.md",
       "makerEsp32PublishDate": "2026-09-25",
       "hardwareUsed": {
         "board": "Maker ESP32",
