@@ -4866,7 +4866,7 @@
       },
       "decision": "Major Revamp",
       "revampScope": "Medium",
-      "revampStatus": "Reviewed",
+      "revampStatus": "Complete",
       "priority": "P1",
       "technicalScore": 5,
       "scores": {
@@ -4941,6 +4941,7 @@
       ],
       "links": [],
       "auditFile": "audits/home-security-system-with-esp32.md",
+      "revampedOutputFile": "revamped-tutorials/home-security-system-with-esp32.md",
       "makerEsp32": {
         "compatibility": "minor",
         "notes": "PIR sensor and reed switch use standard digital GPIOs which are compatible. If tutorial uses buzzer, avoid GPIO26 (Maker ESP32 built-in buzzer). May need to relocate alarm buzzer to different pin.",
