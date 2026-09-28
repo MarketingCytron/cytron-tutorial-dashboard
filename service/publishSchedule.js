@@ -64,6 +64,11 @@
  *     UNRESOLVED_SCHEDULE_ENTRIES (not a blocker, not a warning). If a
  *     genuinely matching tutorial is identified later, add it as a normal
  *     new PUBLISH_SCHEDULE entry then.
+ *     UPDATE 2026-09-28: a re-audit from the live page confirmed that
+ *     `interface-water-flow-sensor-using-esp32-board-2` WAS "Program Telegram
+ *     Bot on ESP32 Board" (the old water-flow audit was based on the URL slug
+ *     only). That tutorial was then retired from the Cytron website and its
+ *     record removed from data/tutorials.json, so nothing is scheduled for it.
  *
  * 26 of the (11 + 8 + 5 + 2) human-supplied schedule entries are resolved;
  * "Program Telegram Bot on ESP32 Board" is intentionally not scheduled and

@@ -28,7 +28,6 @@
 | 20 Sept | Getting Started with ESP32 & Node-RED | Reviewed | C | Major Revamp | Yes | **Overdue** |
 | 21 Sept | Getting Started with FreeRTOS on ESP32 | Reviewed | A | Keep | Yes | **Overdue** |
 | 22 Sept | Getting Started ESP-NOW | Reviewed | A | Keep | Yes | **Overdue** |
-| 22 Sept | Program Telegram Bot on ESP32 Board | Reviewed | E | Replace | No | **Overdue** — decision: Replace (retire/redirect) |
 | 23 Sept | ESP32 Hand Gesture Control with Mediapipe and OpenCV | Complete | B | Minor Update | Yes | Published |
 | 24 Sept | WS2812 Ring LED Clock With NTP Server Using ESP32 | Reviewed | B | Minor Update | Yes | **Overdue** |
 | 25 Sept | Farm Automation System using Robo ESP32 | Complete | C | Major Revamp | Yes | Published |
@@ -41,4 +40,6 @@
 | 30 Sept | How to Create a Telegram Bot, Get the API Key and Chat ID | Reviewed | A | Keep | Yes | Upcoming |
 | 30 Sept | Water Notification for Plants Using Blynk and Moisture Sensor on ESP32 | Reviewed | E | Major Revamp | No | Upcoming |
 
-**Summary:** 17 of 30 published; 8 overdue; 5 due today or upcoming.
+**Summary:** 17 of 29 published; 7 overdue; 5 due today or upcoming.
+
+*Removed 2026-09-28: "Program Telegram Bot on ESP32 Board" (`interface-water-flow-sensor-using-esp32-board-2`), retired from the Cytron website.*

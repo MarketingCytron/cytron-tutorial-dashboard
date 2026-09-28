@@ -15,7 +15,7 @@ When asked to audit a Cytron tutorial, you must update **both**:
 
 ## Workflow for Auditing a Tutorial
 
-1. **Review the tutorial's actual content**, never just its URL or title. Some Cytron URL slugs don't match the page (e.g. `interface-water-flow-sensor-using-esp32-board-2` is "Program Telegram Bot on ESP32 Board").
+1. **Review the tutorial's actual content**, never just its URL or title. Some Cytron URL slugs don't match the page (e.g. `interface-water-flow-sensor-using-esp32-board-2` turned out to be "Program Telegram Bot on ESP32 Board"; that tutorial has since been retired and removed from the dashboard).
    - cytron.io blocks automated fetching from Claude's cloud tools. Use one of these instead:
      - a copy of the page saved into `tmp/` (browser Ctrl+S, "Webpage, HTML only");
      - the revamp bridge snapshot at `service/jobs/<jobId>/sources/original-tutorial.html` / `.md`.
