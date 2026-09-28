@@ -2,34 +2,37 @@
   "tutorials": [
     {
       "id": "getting-started-esp32-and-nodered",
-      "title": "Getting Started ESP32 and Node-RED",
+      "title": "Getting Started with ESP32 & Node-RED",
       "url": "https://my.cytron.io/tutorial/getting-started-esp32-and-nodered",
       "category": "IoT",
       "subcategory": "ESP32 + Node-RED",
       "targetLevel": "Beginner",
       "products": [
-        "ESP32"
+        "Robo ESP32",
+        "DHT11"
       ],
       "technologies": [
         "ESP32",
         "Arduino IDE",
-        "Node-RED",
+        "EspMQTTClient",
         "MQTT",
-        "HiveMQ"
+        "HiveMQ",
+        "Node-RED",
+        "Node.js",
+        "DHT11"
       ],
       "keywords": [
         "ESP32",
         "Node-RED",
         "MQTT",
-        "IoT",
+        "HiveMQ",
         "Dashboard",
-        "Getting Started",
-        "Temperature",
-        "Humidity",
-        "Sensor"
+        "DHT11",
+        "IoT",
+        "Beginner"
       ],
       "reviewed": true,
-      "lastReviewed": "2026-08-10",
+      "lastReviewed": "2026-09-28",
       "validity": {
         "grade": "C",
         "label": "Partially Outdated"
@@ -38,148 +41,134 @@
       "revampScope": "Medium",
       "revampStatus": "Reviewed",
       "priority": "P1",
-      "technicalScore": 6,
+      "technicalScore": 5,
       "scores": {
-        "technicalAccuracy": 6,
-        "currentValidity": 4,
+        "technicalAccuracy": 5,
+        "currentValidity": 5,
         "esp32Compatibility": 8,
-        "nodeRedCompatibility": 4,
         "codeQuality": 7,
         "completeness": 7,
-        "beginnerFriendliness": 8,
+        "beginnerFriendliness": 6,
         "reproducibility": 5
       },
-      "mainRecommendation": "Replace the deprecated node-red-dashboard with FlowFuse Dashboard 2.0, and update MQTT broker recommendations due to HiveMQ public broker reliability issues. Maker ESP32 fully compatible.",
+      "mainRecommendation": "ESP32 code uses broker.mqttdashboard.com while the Node-RED step names broker.hive.mq - use one real hostname (e.g. broker.hivemq.com) on both sides. Replace deprecated node-red-dashboard with FlowFuse Dashboard 2.0, drop the unmaintained node-red-contrib-mqtt-broker step, and use a unique client ID/topics.",
       "makerEsp32": {
         "compatibility": "compatible",
-        "notes": "Fully compatible with Maker ESP32. MQTT and WiFi functionality identical to generic ESP32.",
+        "notes": "DHT11 on GPIO16 (onboard LED) at 3.3V and EspMQTTClient work unchanged on Maker ESP32.",
         "requiredChanges": []
       },
       "topIssues": [
         {
           "priority": "P1",
-          "title": "node-red-dashboard Deprecated",
-          "section": "Dashboard Setup",
-          "description": "The tutorial instructs users to install node-red-dashboard which has been formally deprecated with no further development planned.",
-          "recommendation": "Replace with FlowFuse Dashboard 2.0 (@flowfuse/node-red-dashboard)"
+          "title": "Broker Hostname Mismatch",
+          "section": "Code / Creating Flows",
+          "description": "ESP32 connects to broker.mqttdashboard.com; Node-RED server step names broker.hive.mq (not a HiveMQ hostname). Mismatched brokers = no data.",
+          "recommendation": "Use one real broker hostname (e.g. broker.hivemq.com) on both sides"
         },
         {
           "priority": "P1",
-          "title": "HiveMQ Public Broker Reliability",
-          "section": "MQTT Configuration",
-          "description": "The tutorial uses broker.hivemq.com which has documented reliability issues including rate limiting, random disconnections, and overload problems.",
-          "recommendation": "Recommend HiveMQ Cloud free tier or self-hosted Mosquitto as alternatives"
+          "title": "Deprecated node-red-dashboard",
+          "section": "Setting Up Node-RED",
+          "description": "node-red-dashboard deprecated since 27 Jun 2024; FlowFuse Dashboard recommended as direct replacement.",
+          "recommendation": "Migrate to @flowfuse/node-red-dashboard (Dashboard 2.0)"
         },
         {
           "priority": "P2",
-          "title": "Node-RED Version Requirements Changed",
-          "section": "Installation",
-          "description": "Current Node-RED 5.0 requires Node.js 22.9.0 minimum (24.x recommended), which may conflict with older installation instructions.",
-          "recommendation": "Update version requirements to Node.js 22.9.0+ and Node-RED 5.x"
+          "title": "Unnecessary Unmaintained Broker Package",
+          "section": "Setting Up Node-RED",
+          "description": "node-red-contrib-mqtt-broker runs a broker inside Node-RED and is no longer maintained; not needed for HiveMQ.",
+          "recommendation": "Remove step; built-in mqtt in nodes suffice"
         },
         {
           "priority": "P2",
-          "title": "Unnecessary MQTT Broker Package",
-          "section": "Node-RED Setup",
-          "description": "The tutorial may instruct installing node-red-contrib-mqtt-broker which is unnecessary as MQTT nodes are built into Node-RED.",
-          "recommendation": "Remove or clarify that built-in MQTT nodes are sufficient"
+          "title": "Fixed Client ID and Generic Topics",
+          "section": "Code",
+          "description": "espclientID and esp32/temperature on a shared public broker can collide with other users.",
+          "recommendation": "Unique client ID and topic prefix"
         },
         {
           "priority": "P3",
-          "title": "EspMQTTClient Library Alternatives",
-          "section": "Arduino Libraries",
-          "description": "While EspMQTTClient still works, newer alternatives like ESP32MQTTClient offer better thread-safety and ESP32 Arduino Core 3.x compatibility.",
-          "recommendation": "Optionally mention ESP32MQTTClient as a modern alternative"
+          "title": "Typos and Old Install Flag",
+          "section": "Setup / Flows",
+          "description": "Typos (Addd, mqqt), chart called gauge, npm --unsafe-perm not in official Windows guide.",
+          "recommendation": "Proofread; npm install -g node-red"
         }
       ],
       "keep": [
-        {
-          "section": "ESP32 Hardware Setup",
-          "reason": "The ESP32 board setup and pin connections remain valid"
-        },
-        {
-          "section": "Arduino IDE Configuration",
-          "reason": "ESP32 board package installation process is still current"
-        },
-        {
-          "section": "MQTT Concept Explanation",
-          "reason": "The explanation of MQTT publish/subscribe patterns remains accurate"
-        },
         {
           "section": "Basic Project Flow",
           "reason": "The overall project architecture (ESP32 \u2192 MQTT \u2192 Node-RED \u2192 Dashboard) is still valid"
         },
         {
-          "section": "EspMQTTClient Usage",
-          "reason": "The library still functions correctly for basic MQTT operations"
+          "section": "ESP32 Code",
+          "reason": "EspMQTTClient with non-blocking millis() publishing and NaN checks"
+        },
+        {
+          "section": "Node-RED Setup",
+          "reason": "Windows install steps and Debug-node practice match official guidance"
         }
       ],
       "update": [
         {
-          "section": "Node-RED Dashboard",
-          "reason": "node-red-dashboard has been formally deprecated",
-          "action": "Replace with @flowfuse/node-red-dashboard (FlowFuse Dashboard 2.0)"
+          "section": "Broker",
+          "reason": "Hostnames differ between ESP32 and Node-RED",
+          "action": "One real hostname (e.g. broker.hivemq.com)"
         },
         {
-          "section": "MQTT Broker Configuration",
-          "reason": "HiveMQ public broker has reliability issues",
-          "action": "Recommend HiveMQ Cloud free tier as primary option"
+          "section": "Dashboard",
+          "reason": "node-red-dashboard deprecated",
+          "action": "FlowFuse Dashboard 2.0 with new screenshots/URL"
         },
         {
-          "section": "Node.js/Node-RED Versions",
-          "reason": "Version requirements have changed significantly",
-          "action": "Update to Node.js 22.9.0+ and Node-RED 5.x"
+          "section": "Code",
+          "reason": "Collisions on public broker",
+          "action": "Unique client ID and topics"
         },
         {
-          "section": "Screenshots",
-          "reason": "Dashboard 2.0 has different interface",
-          "action": "Replace all UI screenshots with current versions"
+          "section": "Arduino Libraries",
+          "reason": "DHT dependency missing",
+          "action": "Add Adafruit Unified Sensor"
         }
       ],
       "remove": [
         {
-          "section": "node-red-contrib-mqtt-broker Installation",
-          "reason": "Node-RED has built-in MQTT nodes",
-          "action": "Remove or clarify that this package is unnecessary"
-        },
-        {
-          "section": "Outdated Version Numbers",
-          "reason": "Version numbers are now outdated",
-          "action": "Replace with current versions or use general recommendations"
+          "section": "node-red-contrib-mqtt-broker",
+          "reason": "Unmaintained and not needed for an external broker",
+          "action": "Remove install step"
         }
       ],
       "evidence": [
         {
-          "claim": "node-red-dashboard is current",
-          "currentTutorial": "Instructs to install node-red-dashboard",
-          "finding": "Formally deprecated June 2024",
-          "officialSource": "https://flowfuse.com/blog/2024/06/dashboard-1-deprecated/",
-          "sourceLabel": "FlowFuse Blog",
-          "recommendedChange": "Use @flowfuse/node-red-dashboard"
+          "claim": "Dashboard package is current",
+          "currentTutorial": "Installs node-red-dashboard",
+          "finding": "Deprecated as of 27 Jun 2024; FlowFuse Dashboard recommended",
+          "officialSource": "https://flows.nodered.org/node/node-red-dashboard",
+          "sourceLabel": "Node-RED Flow Library",
+          "recommendedChange": "@flowfuse/node-red-dashboard"
         },
         {
-          "claim": "HiveMQ public broker is reliable",
-          "currentTutorial": "Uses broker.hivemq.com",
-          "finding": "Documented reliability issues, rate limiting, random disconnections",
-          "officialSource": "https://community.hivemq.com/t/public-broker-recently-overloaded/3668",
-          "sourceLabel": "HiveMQ Forum",
-          "recommendedChange": "Recommend HiveMQ Cloud free tier"
+          "claim": "Broker package needed",
+          "currentTutorial": "Installs node-red-contrib-mqtt-broker",
+          "finding": "In-Node-RED broker, not maintained; not needed for external broker",
+          "officialSource": "https://flows.nodered.org/node/node-red-contrib-mqtt-broker",
+          "sourceLabel": "Node-RED Flow Library",
+          "recommendedChange": "Remove"
         },
         {
-          "claim": "Node-RED version requirements",
-          "currentTutorial": "May have older version requirements",
-          "finding": "Node-RED 5.0 requires Node.js 22.9.0+",
-          "officialSource": "https://nodered.org/docs/faq/node-versions",
-          "sourceLabel": "Node-RED Docs",
-          "recommendedChange": "Update version requirements"
+          "claim": "Broker hostname",
+          "currentTutorial": "Code broker.mqttdashboard.com; Node-RED broker.hive.mq",
+          "finding": "HiveMQ public broker page references broker.hivemq.com; the two sides differ",
+          "officialSource": "https://www.hivemq.com/mqtt/public-mqtt-broker/",
+          "sourceLabel": "HiveMQ public broker",
+          "recommendedChange": "One consistent hostname"
         },
         {
-          "claim": "FlowFuse Dashboard 2.0 is replacement",
-          "currentTutorial": "Uses deprecated node-red-dashboard",
-          "finding": "Official successor with new ui-base, ui-page, ui-group structure",
-          "officialSource": "https://dashboard.flowfuse.com/getting-started.html",
-          "sourceLabel": "Dashboard 2.0 Docs",
-          "recommendedChange": "Update tutorial to use Dashboard 2.0"
+          "claim": "Node-RED install",
+          "currentTutorial": "npm install -g --unsafe-perm node-red",
+          "finding": "Official Windows guide uses npm install -g node-red with latest Node.js LTS",
+          "officialSource": "https://nodered.org/docs/getting-started/windows",
+          "sourceLabel": "Node-RED docs",
+          "recommendedChange": "Official command"
         }
       ],
       "links": [
@@ -187,33 +176,41 @@
           "url": "https://my.cytron.io/tutorial/getting-started-esp32-and-nodered",
           "purpose": "Original tutorial",
           "status": "Working",
-          "notes": "Primary tutorial URL"
+          "notes": "Saved copy 2026-09-28; page rewritten 19-20 Sep 2026"
         },
         {
-          "url": "https://broker.hivemq.com",
-          "purpose": "Public MQTT broker",
+          "url": "https://nodejs.org",
+          "purpose": "Node.js download",
           "status": "Working",
-          "notes": "Has reliability issues - rate limiting and random disconnections reported"
+          "notes": "Use LTS"
         },
         {
-          "url": "https://github.com/plapointe6/EspMQTTClient",
-          "purpose": "EspMQTTClient library",
+          "url": "https://www.hivemq.com/",
+          "purpose": "MQTT broker",
           "status": "Working",
-          "notes": "Library is maintained and functional"
+          "notes": "Public broker is shared - not for private data"
         },
         {
-          "url": "https://flowfuse.com/blog/2024/06/dashboard-1-deprecated/",
-          "purpose": "Deprecation announcement",
-          "status": "Working",
-          "notes": "Official deprecation notice for node-red-dashboard"
+          "url": "https://flows.nodered.org/node/node-red-dashboard",
+          "purpose": "Dashboard package",
+          "status": "Deprecated",
+          "notes": "Replace with @flowfuse/node-red-dashboard"
+        },
+        {
+          "url": "https://flows.nodered.org/node/node-red-contrib-mqtt-broker",
+          "purpose": "Broker package",
+          "status": "Deprecated",
+          "notes": "Unmaintained; remove"
         }
       ],
       "auditFile": "audits/getting-started-esp32-and-nodered.md",
       "makerEsp32PublishDate": "2026-09-20",
       "hardwareUsed": {
         "board": "Maker ESP32",
-        "components": [],
-        "notes": "ESP32 only, no additional hardware required"
+        "components": [
+          "DHT11 Temperature & Humidity Sensor"
+        ],
+        "notes": "Original uses Robo ESP32 Grove 1 (D16). DHT11 at 3.3V on GPIO16."
       },
       "preparationDate": "2026-09-07",
       "publishDate": "2026-09-20"
@@ -5089,14 +5086,15 @@
       "subcategory": "Sensors",
       "targetLevel": "Beginner",
       "products": [
-        "ESP32",
-        "YF-S201"
+        "Node32 Lite / NodeMCU ESP32",
+        "YF-S201 Water Flow Sensor"
       ],
       "technologies": [
         "ESP32",
         "Arduino IDE",
         "Water Flow Sensor",
-        "Hall Effect"
+        "Hall Effect",
+        "Interrupts"
       ],
       "keywords": [
         "ESP32",
@@ -5104,10 +5102,11 @@
         "YF-S201",
         "Sensor",
         "Pulse Counting",
+        "Interrupt",
         "Beginner"
       ],
       "reviewed": true,
-      "lastReviewed": "2026-08-13",
+      "lastReviewed": "2026-09-28",
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
@@ -5118,91 +5117,162 @@
       "priority": "P2",
       "technicalScore": 7,
       "scores": {
-        "technicalAccuracy": 7,
+        "technicalAccuracy": 8,
         "currentValidity": 7,
-        "esp32Compatibility": 6,
+        "esp32Compatibility": 8,
         "codeQuality": 7,
-        "completeness": 7,
-        "beginnerFriendliness": 7,
+        "completeness": 5,
+        "beginnerFriendliness": 6,
         "reproducibility": 6
       },
-      "mainRecommendation": "IMPORTANT: YF-S201 outputs 5V pulses which can damage ESP32's 3.3V GPIO pins. Add voltage divider or level shifter requirement.",
+      "mainRecommendation": "Code is sound (interrupt + IRAM_ATTR, factor 4.5 - the old audit's 'polling' and '7.5' claims were wrong). Add a written wiring table (5V/VIN, GND, signal GPIO27), verify the YF-S201 output level and add a divider if it is 5V, align the hardware list (NodeMCU ESP32 out of stock) and explain calibration.",
       "topIssues": [
         {
           "priority": "P2",
-          "title": "Voltage Level Mismatch",
-          "section": "Hardware",
-          "description": "YF-S201 outputs 5V, ESP32 GPIO is 3.3V - potential damage!",
-          "recommendation": "Add voltage divider circuit"
+          "title": "No Written Wiring",
+          "section": "Hardware Preparation",
+          "description": "Page never states power/GND/signal connections; only SENSOR 27 in code and the video.",
+          "recommendation": "Add wiring table"
         },
         {
           "priority": "P2",
-          "title": "Level Shifter Required",
+          "title": "Signal Voltage Level Not Addressed",
           "section": "Wiring",
-          "description": "Need voltage divider or level shifter for safe operation.",
-          "recommendation": "Update wiring with protection"
+          "description": "Sensor powered at 5V; if its output is pulled up to 5V, GPIO27 exceeds 3.6V max. NEEDS VERIFICATION against datasheet.",
+          "recommendation": "Verify; add voltage divider if needed"
+        },
+        {
+          "priority": "P2",
+          "title": "Hardware List Inconsistent",
+          "section": "Hardware Preparation",
+          "description": "Text lists Node32 Lite and 'G 1/2 Water Flow Sensor'; widget shows YF-S201 and NodeMCU ESP32 (Out of Stock).",
+          "recommendation": "One list; Maker ESP32"
         },
         {
           "priority": "P3",
-          "title": "Interrupt Usage",
-          "section": "Code",
-          "description": "Should use hardware interrupts instead of polling.",
-          "recommendation": "Use attachInterrupt with IRAM_ATTR"
+          "title": "Calibration Factor Not Explained",
+          "section": "Sample Program",
+          "description": "4.5 is a typical YF-S201 factor but varies per sensor.",
+          "recommendation": "Add known-volume calibration step"
+        },
+        {
+          "priority": "P3",
+          "title": "Minor Code Tidy-Ups",
+          "section": "Sample Program",
+          "description": "Unused LED_BUILTIN/ledState; pulseCount read/reset not protected from ISR.",
+          "recommendation": "Tidy or use GPIO2 LED as pulse indicator"
         }
       ],
       "keep": [
         {
-          "section": "Sensor Concept",
-          "reason": "Hall effect flow measurement is valid"
+          "section": "Pulse Counting",
+          "reason": "volatile counter, IRAM_ATTR ISR, attachInterrupt FALLING, INPUT_PULLUP - correct ESP32 pattern"
         },
         {
           "section": "Flow Calculation",
-          "reason": "Mathematical formulas are correct"
+          "reason": "Uses elapsed time and cumulative total correctly"
         }
       ],
       "update": [
         {
-          "section": "Signal Line Wiring",
-          "reason": "5V damages 3.3V GPIO",
-          "action": "Add voltage divider (10k\u00ce\u00a9 + 20k\u00ce\u00a9)"
+          "section": "Wiring",
+          "reason": "Missing from text",
+          "action": "Add table; divider if datasheet confirms 5V output"
         },
         {
-          "section": "Warning",
-          "reason": "Safety concern",
-          "action": "Add clear warning about voltage mismatch"
+          "section": "Hardware Preparation",
+          "reason": "Inconsistent/out of stock",
+          "action": "Maker ESP32; single list"
+        },
+        {
+          "section": "Calibration",
+          "reason": "Factor unexplained",
+          "action": "Explain 4.5 and calibration test"
         }
       ],
-      "remove": [],
+      "remove": [
+        {
+          "section": "Hardware Preparation",
+          "reason": "Node32 Lite / NodeMCU ESP32 out of stock",
+          "action": "Replace with Maker ESP32"
+        }
+      ],
       "evidence": [
         {
-          "claim": "Direct connection works",
-          "currentTutorial": "May show direct wiring",
-          "finding": "5V damages 3.3V GPIO",
-          "officialSource": "https://www.tinkered.ai/components/yf-s201-water-flow-sensor",
-          "sourceLabel": "Tinkered.ai",
-          "recommendedChange": "Add level shifting"
+          "claim": "Old audit: may use polling",
+          "currentTutorial": "attachInterrupt + IRAM_ATTR",
+          "finding": "Code already uses interrupts correctly",
+          "officialSource": "https://gist.github.com/IdrisCytron/1b23265ede09577c19ef6acc27ee848d",
+          "sourceLabel": "Tutorial Gist",
+          "recommendedChange": "Withdrawn"
         },
         {
-          "claim": "Interrupt counting",
-          "currentTutorial": "May use polling",
-          "finding": "Interrupts essential for accuracy",
-          "officialSource": "https://pcbsync.com/water-flow-sensor-arduino/",
-          "sourceLabel": "PCBSync",
-          "recommendedChange": "Use attachInterrupt"
+          "claim": "Old audit: calibration factor 7.5",
+          "currentTutorial": "calibrationFactor = 4.5",
+          "finding": "Code uses 4.5",
+          "officialSource": "https://gist.github.com/IdrisCytron/1b23265ede09577c19ef6acc27ee848d",
+          "sourceLabel": "Tutorial Gist",
+          "recommendedChange": "Explain calibration"
+        },
+        {
+          "claim": "GPIO input limit",
+          "currentTutorial": "Not mentioned",
+          "finding": "Maker ESP32 VIH max 3.6V; 3.3V logic only",
+          "officialSource": "https://docs.google.com/document/d/1gvGrlrWyXXZk_k-CQ-no0y23ifWEjb_XfbZtomaShDo/edit",
+          "sourceLabel": "Maker ESP32 Datasheet Rev 1.1",
+          "recommendedChange": "Verify sensor output; divider if 5V"
+        },
+        {
+          "claim": "Board availability",
+          "currentTutorial": "NodeMCU ESP32",
+          "finding": "Out Of Stock on the saved page (2026-09-28)",
+          "officialSource": "https://my.cytron.io/tutorial/interface-water-flow-sensor-using-esp32-board",
+          "sourceLabel": "Cytron page (saved copy)",
+          "recommendedChange": "Maker ESP32"
         }
       ],
       "links": [
         {
-          "url": "https://github.com/galihru/YFS201",
-          "purpose": "YFS201 library",
+          "url": "https://my.cytron.io/tutorial/interface-water-flow-sensor-using-esp32-board",
+          "purpose": "Original tutorial",
           "status": "Working",
-          "notes": "Arduino library for YF-S201"
+          "notes": "Saved copy 2026-09-28"
+        },
+        {
+          "url": "https://gist.github.com/IdrisCytron/1b23265ede09577c19ef6acc27ee848d",
+          "purpose": "Tutorial code (Gist)",
+          "status": "Working",
+          "notes": "Matches page code"
+        },
+        {
+          "url": "https://my.cytron.io/p-g1-2-half-effect-water-flow-sensor-yf-s201",
+          "purpose": "YF-S201 sensor",
+          "status": "Working",
+          "notes": "In stock 2026-09-28"
+        },
+        {
+          "url": "https://my.cytron.io/p-nodemcu-esp32",
+          "purpose": "Board",
+          "status": "Working",
+          "notes": "Out of Stock 2026-09-28"
+        },
+        {
+          "url": "https://my.cytron.io/attachment?attachment_id=11371",
+          "purpose": "Sensor datasheet",
+          "status": "Unknown",
+          "notes": "Needed to confirm output voltage"
+        },
+        {
+          "url": "https://www.youtube.com/watch?v=vy1f8WxRScg",
+          "purpose": "Tutorial video",
+          "status": "Unknown",
+          "notes": "Not reviewed"
         }
       ],
       "auditFile": "audits/interface-water-flow-sensor-using-esp32-board.md",
       "makerEsp32": {
         "compatibility": "compatible",
-        "notes": "YF-S201 water flow sensor uses interrupt-capable GPIO which is available on Maker ESP32. The 5V voltage level issue applies to all ESP32 boards, not Maker-specific. Voltage divider recommendation remains the same.",
+        "notes": "GPIO27 works (its onboard LED blinks with pulses). Power the sensor from VIN, which outputs 5V on USB power. Avoid GPIO4 (button) and GPIO26 (buzzer).",
         "requiredChanges": []
       },
       "makerEsp32PublishDate": "2026-09-27",
@@ -5211,7 +5281,7 @@
         "components": [
           "YF-S201 Water Flow Sensor"
         ],
-        "notes": "Requires voltage divider (5V to 3.3V)"
+        "notes": "Signal on GPIO27; sensor 5V from VIN. Output level NEEDS VERIFICATION - add divider if 5V."
       },
       "publishDate": "2026-09-27"
     },

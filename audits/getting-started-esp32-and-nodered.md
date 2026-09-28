@@ -2,27 +2,50 @@
 
 ## Tutorial Information
 
-**Title:** Getting Started ESP32 and Node-RED
+**Title:** Getting Started with ESP32 & Node-RED
 
 **URL:** https://my.cytron.io/tutorial/getting-started-esp32-and-nodered
 
-**Audit Date:** 2026-08-10
+**Audit Date:** 2026-09-28 (re-audit)
 
-**Target Level:** Beginner
+**Target Level:** Beginner (as stated on the page)
 
-**Category:** IoT
+**Category:** IoT / Node-RED + MQTT
+
+**Dates (page):** Published 19 Sep 2026, modified 20 Sep 2026. The page was rewritten after the first audit.
+
+> **Audit history:** The previous audit (2026-08) was written before this page was rewritten, and partly from guesses.
+> - It said the code "uses broker.hivemq.com". The code actually uses `broker.mqttdashboard.com`.
+> - It said Node-RED 5.0 requires Node.js 22.9+. That isn't stated in the official Windows guide (withdrawn).
+> - Its two main findings **still hold**: `node-red-dashboard` is deprecated, and `node-red-contrib-mqtt-broker` is unnecessary.
+> - This audit replaces it. Source: a saved copy of the live page (`tmp/Getting Started with ESP32 & Node-RED.html`, 2026-09-28).
 
 ---
 
 ## Tutorial Objective
 
-This tutorial teaches beginners how to set up Node-RED, connect it to an MQTT broker (HiveMQ), and receive real-time temperature and humidity data from an ESP32. Users learn to visualize sensor readings on a live dashboard and use Debug nodes to monitor data flow.
+Publish DHT11 temperature and humidity readings from a Robo ESP32 over MQTT, using a free HiveMQ public broker. Then receive them in **Node-RED** on Windows and show them on a dashboard: a humidity gauge and a temperature chart.
+
+---
+
+## What the Page and Code Actually Contain
+
+| Item | Page / Code |
+|---|---|
+| Hardware | Robo ESP32 + DHT11. VCC 3.3V, GND, DATA **D16 (Grove 1)** |
+| Arduino libraries | **EspMQTTClient** (Patrick Lapointe), DHT |
+| MQTT (ESP32 code) | Broker **`broker.mqttdashboard.com`**, port 1883, client ID **`espclientID`**, topics `esp32/temperature` and `esp32/humidity` every 2 s |
+| MQTT (Node-RED step) | Text says "HiveMQ", and the server is named **`broker.hive.mq`**, port 1883 |
+| Node-RED install | Node.js LTS, then `npm install -g --unsafe-perm node-red`, then `node-red`; browse to `localhost:1880` |
+| Palette installs | **`node-red-dashboard`** and **`node-red-contrib-mqtt-broker`** |
+| Dashboard | `http://127.0.0.1:1880/ui` |
+| Credentials | Example strings ("CytronVeryFastWiFi" / "CytronVerySecuredPassword"), clearly placeholders ✓ |
 
 ---
 
 ## Overall Validity
 
-**Grade:** C - Partially Outdated
+**Grade:** C
 
 **Decision:** Major Revamp
 
@@ -30,7 +53,12 @@ This tutorial teaches beginners how to set up Node-RED, connect it to an MQTT br
 
 **Revamp Scope:** Medium
 
-**Main Recommendation:** Replace the deprecated node-red-dashboard with FlowFuse Dashboard 2.0, and update MQTT broker recommendations due to HiveMQ public broker reliability issues.
+**Main Recommendation:**
+
+- Make the ESP32 and Node-RED use the **same, real broker hostname** (e.g. `broker.hivemq.com`). The code uses `broker.mqttdashboard.com`, while the Node-RED step says `broker.hive.mq`.
+- Replace the deprecated `node-red-dashboard` with FlowFuse Dashboard 2.0 (`@flowfuse/node-red-dashboard`). That changes the dashboard section substantially.
+- Drop the unmaintained `node-red-contrib-mqtt-broker` step, since the built-in MQTT nodes are enough.
+- Use a unique client ID and topics on the public broker.
 
 ---
 
@@ -38,201 +66,92 @@ This tutorial teaches beginners how to set up Node-RED, connect it to an MQTT br
 
 | Metric | Score |
 | ------ | ----- |
-| Technical Accuracy | 6/10 |
-| Current Validity | 4/10 |
+| Technical Accuracy | 5/10 |
+| Current Validity | 5/10 |
 | ESP32 Compatibility | 8/10 |
-| Node-RED Compatibility | 4/10 |
 | Code Quality | 7/10 |
 | Completeness | 7/10 |
-| Beginner Friendliness | 8/10 |
+| Beginner Friendliness | 6/10 |
 | Reproducibility | 5/10 |
 
 ---
 
 ## Top 5 Issues
 
-1. **[P1] node-red-dashboard Deprecated** - The tutorial instructs users to install `node-red-dashboard` which has been formally deprecated with no further development planned.
-
-2. **[P1] HiveMQ Public Broker Reliability** - The tutorial uses `broker.hivemq.com` which has documented reliability issues including rate limiting, random disconnections, and overload problems.
-
-3. **[P2] Node-RED Version Requirements Changed** - Current Node-RED 5.0 requires Node.js 22.9.0 minimum (24.x recommended), which may conflict with older installation instructions.
-
-4. **[P2] Unnecessary MQTT Broker Package** - The tutorial may instruct installing `node-red-contrib-mqtt-broker` which is unnecessary as MQTT nodes are built into Node-RED.
-
-5. **[P3] EspMQTTClient Library Alternatives** - While EspMQTTClient still works, newer alternatives like ESP32MQTTClient offer better thread-safety and ESP32 Arduino Core 3.x compatibility.
+1. **[P1] Broker hostname mismatch.** The ESP32 code connects to `broker.mqttdashboard.com`, but the Node-RED server step names `broker.hive.mq`. That isn't a HiveMQ hostname: HiveMQ's public broker page points to `broker.hivemq.com`. If both sides aren't on the same broker, the dashboard gets no data.
+2. **[P1] Deprecated dashboard package.** `node-red-dashboard` has been deprecated since 27 Jun 2024. The maintainers recommend **FlowFuse Dashboard** (`@flowfuse/node-red-dashboard`) as the direct replacement.
+3. **[P2] Unnecessary, unmaintained broker package.** `node-red-contrib-mqtt-broker` runs a broker *inside* Node-RED and is no longer maintained (its page recommends `node-red-contrib-aedes`). It isn't needed to connect to HiveMQ, because the built-in `mqtt in` nodes do that.
+4. **[P2] Fixed client ID and generic topics on a public broker.** `espclientID` and `esp32/temperature` on a shared public broker can collide with other users. HiveMQ says the broker is "public and shared, so it is not intended for private or production data".
+5. **[P3] Small text errors.** Typos ("Addd", "mqqt"). The chart is called a "gauge node" in step 5. The install uses `--unsafe-perm`, which the official Windows guide no longer uses (`npm install -g node-red`).
 
 ---
 
 ## Technical Validation
 
-### ESP32
+### ESP32 side
 
-The ESP32 hardware and basic Arduino IDE setup remain valid. The ESP32 continues to be well-supported in the Arduino ecosystem with active development.
+- EspMQTTClient with Wi-Fi + MQTT in one constructor, `client.loop()` and non-blocking 2 s publishing using `millis()` ✓.
+- DHT11 on GPIO16 ✓. NaN checks are present ✓.
 
-**Status:** Valid
+### Broker
 
-### Arduino IDE
-
-Arduino IDE integration with ESP32 remains current. The ESP32 board package continues to receive updates.
-
-**Status:** Valid
-
-### Libraries
-
-**EspMQTTClient (by Patrick Lapointe/plapointe6):**
-- Library is still maintained and functional
-- Depends on PubSubClient library
-- Handles WiFi and MQTT connections automatically
-- Works with ESP8266 and ESP32
-
-**Alternatives to consider:**
-- `ESP32MQTTClient` by cyijun - Thread-safe, based on ESP-IDF MQTT, works with Arduino Core 3.x
-- `espMqttClient` by bertmelis - Non-blocking MQTT 3.1.1 client
-
-**Status:** Mostly Valid - works but alternatives exist
+- A public HiveMQ broker is fine for learning. The hostname must be consistent and real on both sides (issue 1).
+- Whether `broker.mqttdashboard.com` still reaches the HiveMQ public broker is **NEEDS VERIFICATION**. The HiveMQ page references `broker.hivemq.com`.
 
 ### Node-RED
 
-**Critical Issue:** The tutorial uses `node-red-dashboard` which has been formally deprecated.
+- Install flow (Node.js LTS → npm global install → `node-red` → `localhost:1880`) matches the official Windows guide, apart from the `--unsafe-perm` flag.
+- Dashboard: needs migrating to FlowFuse Dashboard 2.0. Its node names, groups and URL differ from Dashboard 1's `/ui`, so screenshots and steps need replacing.
+- Debug nodes are used as a "Serial Monitor". Good teaching practice ✓.
 
-From official FlowFuse announcement (June 2024):
-> "Node-RED Dashboard has been formally deprecated, meaning there will be no further development activity on the project."
+### Maker ESP32 note
 
-**Current Recommended Solution:** FlowFuse Dashboard 2.0 (`@flowfuse/node-red-dashboard`)
-
-**Node-RED Version Requirements:**
-- Node-RED 5.0 requires Node.js 22.9.0 minimum
-- Node.js 24.x (LTS) recommended
-- Tutorial may have outdated version requirements
-
-**Status:** Outdated - requires significant updates
-
-### MQTT / Communication
-
-**HiveMQ Public Broker Issues:**
-
-The tutorial uses `broker.hivemq.com:1883` which has documented problems:
-
-1. **Rate Limiting:** Users report `CONNECTION_RATE_EXCEEDED` errors
-2. **Random Disconnections:** Broker disconnects clients without reason at random intervals
-3. **Overload Issues:** Users report inability to connect due to broker overload
-4. **No SLA:** HiveMQ explicitly states no uptime commitment for the public broker
-
-**From HiveMQ Official Documentation:**
-> "The purpose of this free MQTT broker is for you to learn about and test the MQTT protocol, and it must not be used in Production, Dev, Staging or UAT environments."
-
-**Recommended Alternatives:**
-- HiveMQ Cloud (free tier - up to 100 clients)
-- Mosquitto (self-hosted)
-- EMQX Cloud (free tier available)
-
-**Status:** Partially Valid - works but unreliable
+- Works on Maker ESP32: DHT11 on GPIO16 (which has an onboard LED), 3.3V.
+- EspMQTTClient and Wi-Fi need no changes.
 
 ### Installation
 
-**node-red-dashboard Installation:**
-The tutorial's instruction to install `node-red-dashboard` via Manage Palette is outdated.
-
-**node-red-contrib-mqtt-broker:**
-This package may not be necessary as Node-RED includes built-in MQTT nodes.
-
-**Status:** Outdated
+- Arduino: EspMQTTClient and the DHT library (plus the Adafruit Unified Sensor dependency, not listed).
+- Node-RED palette: replace both listed packages (issues 2–3).
 
 ### External Links
 
-| URL | Status | Notes |
-| --- | ------ | ----- |
-| my.cytron.io tutorial | Unknown | Primary tutorial link |
-| broker.hivemq.com | Working | Public MQTT broker (reliability issues) |
-| Node-RED official docs | Working | May reference newer versions |
-
-### UI / Screenshots
-
-Screenshots likely show the deprecated `node-red-dashboard` interface. FlowFuse Dashboard 2.0 has a different UI structure with:
-- ui-base, ui-page, ui-group hierarchy
-- Different widget configuration
-- Updated visual styling
-
-**Status:** Outdated - screenshots need replacement
-
-### Beginner Usability
-
-The tutorial structure is beginner-friendly with step-by-step instructions. However, beginners following the tutorial today may encounter:
-- Deprecation warnings when installing node-red-dashboard
-- Connection issues with HiveMQ public broker
-- Confusion if Node-RED version doesn't match screenshots
-
-**Status:** Partially Valid
+| Link | Status | Notes |
+|---|---|---|
+| https://nodejs.org | Working | Official |
+| https://www.hivemq.com | Working | Public broker is shared, not for private data |
+| node-red-dashboard | Deprecated | Replace with @flowfuse/node-red-dashboard |
+| node-red-contrib-mqtt-broker | Deprecated (unmaintained) | Remove the step |
+| QR link (my.cytron.io/qr.link/SRWMn3) | Unknown | Check manually |
 
 ### Security
 
-**Concerns:**
-- HiveMQ public broker requires no authentication (by design for testing)
-- Tutorial should emphasize this is for learning only, not production
-- No mention of secure MQTT (TLS/SSL) options
-
-**Status:** Acceptable for learning purposes, but should note limitations
-
----
-
-## Priority Issues
-
-| Priority | Tutorial Section | Problem | Severity | Recommended Change |
-| -------- | ---------------- | ------- | -------- | ------------------ |
-| P1 | Dashboard Setup | node-red-dashboard deprecated | High | Replace with FlowFuse Dashboard 2.0 |
-| P1 | MQTT Broker | HiveMQ public broker unreliable | High | Recommend HiveMQ Cloud free tier or alternatives |
-| P2 | Installation | Outdated Node.js/Node-RED versions | Medium | Update version requirements |
-| P2 | Node-RED Setup | Unnecessary mqtt-broker package | Medium | Remove or clarify built-in MQTT nodes |
-| P3 | ESP32 Libraries | Newer alternatives available | Low | Optionally mention ESP32MQTTClient |
+- Example credentials are placeholders ✓. Public broker, so no private data should be sent.
 
 ---
 
 ## KEEP
 
-- **ESP32 Hardware Setup:** The ESP32 board setup and pin connections remain valid
-- **Arduino IDE Configuration:** ESP32 board package installation process is still current
-- **MQTT Concept Explanation:** The explanation of MQTT publish/subscribe patterns remains accurate
-- **Basic Project Flow:** The overall project architecture (ESP32 → MQTT → Node-RED → Dashboard) is still valid
-- **EspMQTTClient Usage:** The library still functions correctly for basic MQTT operations
+- **Overall architecture:** ESP32 → MQTT → Node-RED → Dashboard is still valid
+- **EspMQTTClient ESP32 code:** clean and non-blocking
+- **Windows Node-RED setup steps and Debug-node practice**
 
 ---
 
 ## UPDATE
 
-- **Node-RED Dashboard:** Replace `node-red-dashboard` with `@flowfuse/node-red-dashboard` (FlowFuse Dashboard 2.0)
-  - Update all dashboard node configurations
-  - Update screenshots to show new Dashboard 2.0 interface
-  - Explain new ui-base, ui-page, ui-group hierarchy
-
-- **MQTT Broker Configuration:** Replace HiveMQ public broker recommendation
-  - Primary: HiveMQ Cloud free tier (more reliable, still free)
-  - Alternative: Local Mosquitto broker for advanced users
-  - Update connection strings and port numbers
-
-- **Node.js/Node-RED Versions:** Update version requirements
-  - Node.js 22.9.0+ required (24.x LTS recommended)
-  - Node-RED 5.x current stable
-  - Update installation instructions
-
-- **Screenshots:** Replace all UI screenshots
-  - Node-RED editor may have visual changes
-  - Dashboard 2.0 has different interface
-  - HiveMQ Cloud setup (if using)
-
-- **Security Notes:** Add section about production considerations
-  - Emphasize tutorial is for learning
-  - Mention TLS/SSL for production MQTT
-  - Note authentication requirements
+- **Broker:** one real hostname (e.g. `broker.hivemq.com`) in both the ESP32 code and the Node-RED server config
+- **Dashboard:** FlowFuse Dashboard 2.0 (`@flowfuse/node-red-dashboard`), with new screenshots and URL
+- **Client ID and topics:** unique values, e.g. `cytron-<name>/esp32/temperature`
+- **Install command:** `npm install -g node-red`
+- **Arduino libraries:** add Adafruit Unified Sensor
 
 ---
 
 ## REMOVE / REPLACE
 
-- **node-red-contrib-mqtt-broker Installation:** Remove if referring to unnecessary package; Node-RED has built-in MQTT nodes
-
-- **broker.hivemq.com as Primary Broker:** Replace with HiveMQ Cloud or note reliability limitations prominently
-
-- **Outdated Version Numbers:** Remove specific version numbers that are now outdated or replace with current versions
+- **`node-red-contrib-mqtt-broker` install step:** remove (the built-in MQTT nodes are enough)
+- **`node-red-dashboard`:** replace with FlowFuse Dashboard
 
 ---
 
@@ -240,29 +159,10 @@ The tutorial structure is beginner-friendly with step-by-step instructions. Howe
 
 | Claim | Current Tutorial | Finding | Official Source | Recommended Change |
 | ----- | ---------------- | ------- | --------------- | ------------------ |
-| node-red-dashboard is current | Instructs to install node-red-dashboard | Formally deprecated June 2024 | [FlowFuse Blog](https://flowfuse.com/blog/2024/06/dashboard-1-deprecated/) | Use @flowfuse/node-red-dashboard |
-| HiveMQ public broker is reliable | Uses broker.hivemq.com | Documented reliability issues, rate limiting | [HiveMQ Forum](https://community.hivemq.com/t/public-broker-recently-overloaded/3668) | Recommend HiveMQ Cloud free tier |
-| Node-RED version requirements | May have older versions | Node-RED 5.0 requires Node.js 22.9.0+ | [Node-RED Docs](https://nodered.org/docs/faq/node-versions) | Update version requirements |
-| FlowFuse Dashboard 2.0 is replacement | N/A | Official successor to node-red-dashboard | [Dashboard 2.0 Docs](https://dashboard.flowfuse.com/getting-started.html) | Update tutorial to use Dashboard 2.0 |
-
----
-
-## Recommended Updated Tutorial Flow
-
-1. **Introduction** - Explain project goals and MQTT concepts
-2. **Prerequisites** - List updated hardware and software requirements
-   - Node.js 22.9.0+ (24.x LTS recommended)
-   - Node-RED 5.x
-   - Arduino IDE with ESP32 board package
-3. **ESP32 Setup** - Configure Arduino IDE and install EspMQTTClient library
-4. **MQTT Broker Setup** - Guide users to create HiveMQ Cloud free account (more reliable than public broker)
-5. **ESP32 Code** - Upload sketch to publish temperature/humidity data
-6. **Node-RED Installation** - Install Node-RED with current instructions
-7. **FlowFuse Dashboard 2.0 Setup** - Install @flowfuse/node-red-dashboard via Palette Manager
-8. **Node-RED Flow Configuration** - Create MQTT input nodes and dashboard widgets using new Dashboard 2.0 structure
-9. **Testing** - Verify data flow from ESP32 to dashboard
-10. **Troubleshooting** - Common issues and solutions
-11. **Next Steps** - Production considerations, security notes
+| Dashboard package is current | Installs node-red-dashboard | Deprecated as of 27 Jun 2024; FlowFuse Dashboard recommended | [flows.nodered.org: node-red-dashboard](https://flows.nodered.org/node/node-red-dashboard) | Use @flowfuse/node-red-dashboard |
+| Broker package needed | Installs node-red-contrib-mqtt-broker | In-Node-RED broker, unmaintained; not needed for an external broker | [flows.nodered.org: node-red-contrib-mqtt-broker](https://flows.nodered.org/node/node-red-contrib-mqtt-broker) | Remove |
+| Broker hostname | Code: broker.mqttdashboard.com; Node-RED: broker.hive.mq | The HiveMQ public broker page references broker.hivemq.com; the two sides differ | [HiveMQ public broker](https://www.hivemq.com/mqtt/public-mqtt-broker/) | One consistent hostname |
+| Node-RED install | `npm install -g --unsafe-perm node-red` | Official Windows guide: `npm install -g node-red`, latest Node.js LTS | [Node-RED on Windows](https://nodered.org/docs/getting-started/windows) | Use the official command |
 
 ---
 
@@ -274,31 +174,16 @@ The tutorial structure is beginner-friendly with step-by-step instructions. Howe
 
 **Top 5 Issues:**
 
-1. node-red-dashboard is deprecated - must replace with FlowFuse Dashboard 2.0
-2. HiveMQ public broker has reliability issues - recommend HiveMQ Cloud
-3. Node-RED/Node.js version requirements have changed significantly
-4. All dashboard-related screenshots need replacement
-5. Installation instructions need updating for current package names
+1. ESP32 and Node-RED broker hostnames don't match (`broker.hive.mq` isn't a HiveMQ host)
+2. `node-red-dashboard` deprecated → FlowFuse Dashboard 2.0
+3. Unmaintained `node-red-contrib-mqtt-broker` step not needed
+4. Fixed client ID and generic topics on a public broker
+5. Typos and the outdated `--unsafe-perm` flag
 
 **Estimated Revamp Scope:** Medium
-- Dashboard section requires complete rewrite
-- MQTT broker section needs updates
-- Screenshots need replacement
-- Core ESP32 code remains largely valid
 
-**Most Important Action:** Replace node-red-dashboard with FlowFuse Dashboard 2.0 (@flowfuse/node-red-dashboard) and update all related instructions and screenshots.
+**Most Important Action:** Use one real broker hostname on both sides, and move the dashboard to FlowFuse Dashboard 2.0.
 
 ---
 
-## Sources
-
-- [FlowFuse: Node-RED Dashboard Formally Deprecated](https://flowfuse.com/blog/2024/06/dashboard-1-deprecated/)
-- [FlowFuse Dashboard 2.0 Getting Started](https://dashboard.flowfuse.com/getting-started.html)
-- [Node-RED Supported Node Versions](https://nodered.org/docs/faq/node-versions)
-- [HiveMQ Public Broker](https://www.hivemq.com/mqtt/public-mqtt-broker/)
-- [EspMQTTClient GitHub](https://github.com/plapointe6/EspMQTTClient)
-- [ESP32MQTTClient GitHub](https://github.com/cyijun/ESP32MQTTClient)
-
----
-
-*Audit completed by Claude Code on 2026-08-10.*
+*Re-audit completed by Claude on 2026-09-28 from a saved copy of the live page (rewritten by Cytron on 19–20 Sep 2026). Supersedes the earlier audit.*

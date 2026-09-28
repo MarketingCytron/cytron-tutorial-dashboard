@@ -25,7 +25,7 @@
 | 17 Sept | Getting Started with ESP32 and Over-The-Air Programming (OTA) | Complete | B | Minor Update | Yes | Published |
 | 18 Sept | Getting Started with ESP32 & Blynk | Reviewed | B | Minor Update | Yes | **Overdue** |
 | 19 Sept | Getting Started with ESP32 & ThingSpeak | Reviewed | B | Minor Update | Yes | **Overdue** |
-| 20 Sept | Getting Started ESP32 and Node-RED | Reviewed | C | Major Revamp | Yes | **Overdue** |
+| 20 Sept | Getting Started with ESP32 & Node-RED | Reviewed | C | Major Revamp | Yes | **Overdue** |
 | 21 Sept | Getting Started with FreeRTOS on ESP32 | Reviewed | A | Keep | Yes | **Overdue** |
 | 22 Sept | Getting Started ESP-NOW | Reviewed | A | Keep | Yes | **Overdue** |
 | 22 Sept | Program Telegram Bot on ESP32 Board | Reviewed | E | Replace | No | **Overdue** — decision: Replace (retire/redirect) |
