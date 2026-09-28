@@ -4447,127 +4447,204 @@
     },
     {
       "id": "interface-water-flow-sensor-using-esp32-board-2",
-      "title": "Interface Water Flow Sensor Using ESP32 Board (Part 2)",
+      "title": "Program Telegram Bot on ESP32 Board",
       "url": "https://my.cytron.io/tutorial/interface-water-flow-sensor-using-esp32-board-2",
       "category": "IoT",
-      "subcategory": "Sensors",
-      "targetLevel": "Intermediate",
+      "subcategory": "Messaging",
+      "targetLevel": "Beginner",
       "products": [
-        "ESP32",
-        "YF-S201"
+        "NodeMCU ESP32"
       ],
       "technologies": [
         "ESP32",
-        "Arduino IDE",
-        "Water Flow Sensor",
-        "Hall Effect"
+        "Telegram Bot"
       ],
       "keywords": [
         "ESP32",
-        "Water Flow",
-        "YF-S201",
-        "Sensor",
-        "Pulse Counting",
-        "Intermediate"
+        "Telegram",
+        "Telegram Bot",
+        "IoT",
+        "NodeMCU ESP32",
+        "Beginner"
       ],
       "reviewed": true,
-      "lastReviewed": "2026-08-13",
+      "lastReviewed": "2026-09-28",
       "validity": {
-        "grade": "B",
-        "label": "Mostly Valid"
+        "grade": "E",
+        "label": "Invalid"
       },
-      "decision": "Minor Update",
+      "decision": "Replace",
       "revampScope": "Small",
       "revampStatus": "Reviewed",
-      "priority": "P2",
-      "technicalScore": 7,
+      "priority": "P1",
+      "technicalScore": 2,
       "scores": {
-        "technicalAccuracy": 7,
-        "currentValidity": 7,
-        "esp32Compatibility": 6,
-        "codeQuality": 7,
-        "completeness": 7,
-        "beginnerFriendliness": 6,
-        "reproducibility": 6
+        "technicalAccuracy": 5,
+        "currentValidity": 3,
+        "esp32Compatibility": 5,
+        "codeQuality": 1,
+        "completeness": 1,
+        "beginnerFriendliness": 2,
+        "reproducibility": 1
       },
-      "mainRecommendation": "IMPORTANT: YF-S201 outputs 5V pulses which can damage ESP32's 3.3V GPIO pins. Maker ESP32 compatible with voltage divider.",
+      "mainRecommendation": "URL slug says water flow sensor but the page is \"Program Telegram Bot on ESP32 Board\" - a video-only page with no written steps or code. Retire it and redirect to the revamped Control ESP32 Outputs with Telegram (Maker ESP32).",
       "makerEsp32": {
         "compatibility": "compatible",
-        "notes": "Compatible with voltage divider. YF-S201 5V output needs level shifting to protect Maker ESP32 GPIO pins (same as any ESP32).",
+        "notes": "Telegram bot is board-independent; works on Maker ESP32 with onboard GPIO LEDs (e.g. GPIO2). Replacement tutorial Control ESP32 Outputs with Telegram already targets Maker ESP32.",
         "requiredChanges": []
       },
       "topIssues": [
         {
-          "priority": "P2",
-          "title": "Voltage Level Mismatch",
-          "section": "Hardware",
-          "description": "YF-S201 outputs 5V, ESP32 GPIO is 3.3V - potential damage!",
-          "recommendation": "Add voltage divider/level shifter"
+          "priority": "P1",
+          "title": "No Written Instructions or Code",
+          "section": "Whole page",
+          "description": "Page has only an intro, an embedded video, one hardware item and references - no code, libraries, BotFather/Chat ID steps or testing.",
+          "recommendation": "Retire and redirect to Control ESP32 Outputs with Telegram"
+        },
+        {
+          "priority": "P1",
+          "title": "URL Slug / Title Mismatch",
+          "section": "URL",
+          "description": "Slug is interface-water-flow-sensor-using-esp32-board-2 but the page is Program Telegram Bot on ESP32 Board. Caused the earlier wrong audit and schedule mapping.",
+          "recommendation": "301 redirect, or give it a correct slug if kept"
         },
         {
           "priority": "P2",
-          "title": "Level Shifter Required",
-          "section": "Wiring",
-          "description": "Need voltage divider or level shifter for safe operation.",
-          "recommendation": "Update wiring diagram"
+          "title": "Video-Only Content (2019, Bahasa Malaysia)",
+          "section": "Video",
+          "description": "All instructions are in a 2019 YouTube video marked [BM]; not reviewed in this audit.",
+          "recommendation": "Do not rely on the video as the only instructions"
+        },
+        {
+          "priority": "P2",
+          "title": "Duplicates Revamped Telegram Tutorial",
+          "section": "Overall",
+          "description": "Control ESP32 Outputs with Telegram (Complete, Maker ESP32) and How to Create a Telegram Bot cover the same goal fully.",
+          "recommendation": "Consolidate into the revamped tutorial"
         },
         {
           "priority": "P3",
-          "title": "Interrupt Usage",
-          "section": "Code",
-          "description": "Should use hardware interrupts, not polling.",
-          "recommendation": "Use attachInterrupt with IRAM_ATTR"
+          "title": "Unrelated Prerequisites / Old Hardware",
+          "section": "Introduction / Hardware",
+          "description": "Read-first links are Favoriot data logging and SmartDrive40; hardware is NodeMCU ESP32.",
+          "recommendation": "Remove links if kept; use Maker ESP32 in any replacement"
         }
       ],
       "keep": [
         {
-          "section": "Sensor Concept",
-          "reason": "Hall effect flow measurement principle is valid"
+          "section": "Objective",
+          "reason": "Beginner Telegram bot on ESP32 is still a valid, popular project (now covered by Control ESP32 Outputs with Telegram)"
         },
         {
-          "section": "Flow Calculation",
-          "reason": "Mathematical approach is sound"
+          "section": "Video",
+          "reason": "Can remain an optional Bahasa Malaysia resource once watched and confirmed still working"
         }
       ],
       "update": [
         {
-          "section": "Voltage Protection",
-          "reason": "5V signal damages 3.3V GPIO",
-          "action": "Add voltage divider requirement"
-        },
-        {
-          "section": "Wiring Diagram",
-          "reason": "Safety concern",
-          "action": "Show level shifting components"
+          "section": "URL / Redirect",
+          "reason": "Slug does not match the topic",
+          "action": "301 redirect to https://my.cytron.io/tutorial/control-esp32-outputs-with-telegram"
         }
       ],
-      "remove": [],
+      "remove": [
+        {
+          "section": "Whole page",
+          "reason": "Cannot be followed without the video; duplicates a newer complete tutorial",
+          "action": "Replace with Control ESP32 Outputs with Telegram (Maker ESP32 revamp)"
+        },
+        {
+          "section": "Prerequisite links",
+          "reason": "Favoriot and SmartDrive40 tutorials are unrelated to Telegram",
+          "action": "Remove if the page is kept"
+        }
+      ],
       "evidence": [
         {
-          "claim": "Direct connection works",
-          "currentTutorial": "May show direct wiring",
-          "finding": "5V output damages 3.3V GPIO",
-          "officialSource": "https://www.tinkered.ai/components/yf-s201-water-flow-sensor",
-          "sourceLabel": "Tinkered.ai",
-          "recommendedChange": "Add level shifting"
+          "claim": "Page topic matches URL",
+          "currentTutorial": "Slug says water flow sensor part 2",
+          "finding": "Page title, og:title and article tag are Program Telegram Bot on ESP32 Board / Telegram Bot",
+          "officialSource": "https://www.cytron.io/tutorial/interface-water-flow-sensor-using-esp32-board-2",
+          "sourceLabel": "Cytron page (saved copy 2026-09-28, tmp/)",
+          "recommendedChange": "Redirect or correct slug"
+        },
+        {
+          "claim": "Tutorial can be followed from the page",
+          "currentTutorial": "Intro, video, hardware, references only",
+          "finding": "No code, libraries, BotFather steps or testing on the page",
+          "officialSource": "https://www.cytron.io/tutorial/interface-water-flow-sensor-using-esp32-board-2",
+          "sourceLabel": "Cytron page (saved copy 2026-09-28)",
+          "recommendedChange": "Replace"
+        },
+        {
+          "claim": "Bot creation process",
+          "currentTutorial": "Not described",
+          "finding": "@BotFather /newbot issues the bot token; keep token secret",
+          "officialSource": "https://core.telegram.org/bots/tutorial",
+          "sourceLabel": "Telegram Bot tutorial",
+          "recommendedChange": "Covered by How to Create a Telegram Bot tutorial"
+        },
+        {
+          "claim": "ESP32 Telegram library",
+          "currentTutorial": "Not named",
+          "finding": "UniversalTelegramBot V1.3.0 (Nov 2020) with ESP32 examples; requires ArduinoJson",
+          "officialSource": "https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot",
+          "sourceLabel": "Universal-Arduino-Telegram-Bot (GitHub)",
+          "recommendedChange": "Use in replacement (already used by revamped tutorial)"
+        },
+        {
+          "claim": "Video language",
+          "currentTutorial": "Video only",
+          "finding": "YouTube title marked [BM]",
+          "officialSource": "https://www.youtube.com/watch?v=5hyflMni6HM",
+          "sourceLabel": "YouTube",
+          "recommendedChange": "Do not use as sole English instructions"
         }
       ],
       "links": [
         {
-          "url": "https://github.com/galihru/YFS201",
-          "purpose": "YFS201 library",
+          "url": "https://www.youtube.com/watch?v=5hyflMni6HM",
+          "purpose": "Embedded tutorial video",
           "status": "Working",
-          "notes": "Arduino library for YF-S201"
+          "notes": "Listed as Program Telegram Bot on ESP32 Board [BM]; content not reviewed"
+        },
+        {
+          "url": "https://my.cytron.io/p-nodemcu-esp32",
+          "purpose": "Hardware: NodeMCU ESP32",
+          "status": "Unknown",
+          "notes": "cytron.io blocks automated checks - verify manually"
+        },
+        {
+          "url": "https://my.cytron.io/tutorial/data-logging-using-favoriot-iot-platform-and-esp32",
+          "purpose": "Read-first prerequisite",
+          "status": "Unknown",
+          "notes": "Unrelated to Telegram"
+        },
+        {
+          "url": "https://my.cytron.io/tutorial/controlling-smartdrive40-using-3-3v-microcontroller",
+          "purpose": "Read-first prerequisite",
+          "status": "Unknown",
+          "notes": "Unrelated to Telegram"
+        },
+        {
+          "url": "https://www.instructables.com/id/Automation-With-Telegram-and-ESP32/",
+          "purpose": "Reference",
+          "status": "Working",
+          "notes": "Third-party; page reachable"
+        },
+        {
+          "url": "https://forum.cytron.io/",
+          "purpose": "Support forum",
+          "status": "Unknown",
+          "notes": "Verify manually"
         }
       ],
       "auditFile": "audits/interface-water-flow-sensor-using-esp32-board-2.md",
       "makerEsp32PublishDate": "2026-09-20",
       "hardwareUsed": {
         "board": "Maker ESP32",
-        "components": [
-          "YF-S201 Water Flow Sensor"
-        ],
-        "notes": "Requires voltage divider (5V to 3.3V)"
+        "components": [],
+        "notes": "Original page uses NodeMCU ESP32 only; no external components. Replacement (Control ESP32 Outputs with Telegram) uses Maker ESP32 onboard LEDs."
       },
       "preparationDate": "2026-09-01",
       "publishDate": "2026-09-22"
