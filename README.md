@@ -62,35 +62,45 @@ Install the "Live Server" extension and right-click `index.html` > "Open with Li
 ```
 cytron-tutorial-dashboard/
 ├── index.html              # Main dashboard page
-├── tutorials.html          # All tutorials list with filters
-├── tutorial.html           # Individual tutorial detail page
+├── tutorials.html          # All tutorials list with filters (+ ?tab=final-output)
+├── tutorial.html           # Tutorial detail page (audit view + Revamp Tutorial button)
+├── final-output.html       # Renders a Final Output (and bridge drafts); CMS HTML export
 ├── revamp.html             # Revamp queue page
 ├── methodology.html        # Validation methodology documentation
 ├── README.md               # This file
-├── CLAUDE.md               # Instructions for Claude Code
+├── CLAUDE.md               # Instructions for Claude (audits)
+├── AGENTS.md               # Revamp workflow spec (used by the revamp writer)
 │
-├── css/
-│   └── style.css           # All styles
-│
+├── css/style.css           # All styles
 ├── js/
-│   ├── app.js              # Core application logic
+│   ├── app.js              # Shared Utils (data loading, Markdown rendering)
 │   ├── tutorials.js        # Tutorials list page logic
 │   ├── tutorial.js         # Tutorial detail page logic
-│   └── revamp.js           # Revamp queue page logic
+│   ├── revamp.js           # Revamp queue page logic
+│   ├── revamp-agent.js     # Revamp modal: pairing, jobs, review, publish
+│   ├── final-output.js     # Final Output page logic
+│   └── tutorial-html-export.js # Markdown -> CMS HTML fragment exporter
 │
-├── data/
-│   └── tutorials.json      # Tutorial data (structured)
-│
-├── audits/
-│   ├── _TEMPLATE.md        # Template for new audits
-│   └── [tutorial-slug].md  # Full audit reports
-│
-├── scripts/
-│   └── validate-data.js    # Data validation script
-│
-└── docs/
-    └── ADDING_AUDIT.md     # Guide for adding new audits
+├── data/tutorials.json     # Tutorial data (structured) - source of truth
+├── audits/                 # Full audit reports ([tutorial-slug].md, _TEMPLATE.md)
+├── revamped-tutorials/     # Published Final Output drafts ([tutorial-slug].md)
+├── service/                # Local Revamp Bridge (Node, 127.0.0.1:47821) - see service/README.md
+├── scripts/                # validate-data.js, CMS export tests
+├── docs/                   # Milestone docs, decision log, authoring standard, schedule
+├── references/             # (local, untracked) Tutorial Template PDF, Maker ESP32 Datasheet
+└── tmp/                    # (local, untracked) scratch, saved tutorial pages for audits
 ```
+
+## Local Revamp Bridge (optional)
+
+The dashboard itself is static. Revamping, reviewing and publishing tutorials uses the local bridge in `service/`:
+
+1. Run `node service/server.js` on the Windows PC and copy the pairing token it prints.
+2. Open a tutorial page on the live dashboard and paste the token into the **Local Revamp Bridge** panel.
+3. Click **Revamp Tutorial**. The bridge fetches the original page, builds the prompt from `AGENTS.md`, the audit and the Maker ESP32 AI Coding Pack, and runs the headless `agy` writer.
+4. Review the draft, request revisions if needed, then **Approve & Publish**. This writes `revamped-tutorials/<id>.md`, sets `revampStatus: "Complete"` and commits and pushes.
+
+See `service/README.md` and `docs/TUTORIAL_REVAMP_AGENT_*.md` for details.
 
 ## Adding a New Tutorial Audit
 
@@ -158,9 +168,17 @@ Each tutorial in `tutorials.json` uses this structure:
   "remove": [...],
   "evidence": [...],
   "links": [...],
-  "auditFile": "audits/unique-slug.md"
+  "auditFile": "audits/unique-slug.md",
+  "makerEsp32": { "compatibility": "compatible|minor|conflict|significant", "notes": "...", "requiredChanges": [] },
+  "hardwareUsed": { "board": "Maker ESP32", "components": [], "notes": "..." },
+  "preparationDate": "YYYY-MM-DD",
+  "publishDate": "YYYY-MM-DD",
+  "makerEsp32PublishDate": "YYYY-MM-DD",
+  "revampedOutputFile": "revamped-tutorials/unique-slug.md"
 }
 ```
+
+`revampedOutputFile` is present only once a Final Output is published.
 
 ## Key Definitions
 
@@ -200,7 +218,8 @@ Each tutorial in `tutorials.json` uses this structure:
 | Reviewed | Audit complete, findings documented |
 | Planned | Revamp work scheduled |
 | Revamping | Currently being updated |
-| Completed | Revamp finished and published |
+| Complete | Final Output published through the revamp bridge (current value) |
+| Completed | Older spelling, still accepted |
 | Archived | Tutorial retired |
 
 ## Validation Script

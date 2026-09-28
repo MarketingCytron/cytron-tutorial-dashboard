@@ -107,7 +107,7 @@
         },
         {
           "section": "Basic Project Flow",
-          "reason": "The overall project architecture (ESP32 \u00e2\u2020\u2019 MQTT \u00e2\u2020\u2019 Node-RED \u00e2\u2020\u2019 Dashboard) is still valid"
+          "reason": "The overall project architecture (ESP32 \u2192 MQTT \u2192 Node-RED \u2192 Dashboard) is still valid"
         },
         {
           "section": "EspMQTTClient Usage",
@@ -1247,15 +1247,18 @@
       "subcategory": "Smart Home",
       "targetLevel": "Beginner",
       "products": [
-        "ESP32"
+        "Robo ESP32",
+        "NodeMCU ESP32"
       ],
       "technologies": [
         "ESP32",
         "Arduino IDE",
         "MQTT",
-        "WiFi",
+        "PubSubClient",
+        "HiveMQ",
         "IoT MQTT Panel",
-        "PubSubClient"
+        "NeoPixel",
+        "WiFi"
       ],
       "keywords": [
         "ESP32",
@@ -1270,7 +1273,7 @@
         "Wireless Control"
       ],
       "reviewed": true,
-      "lastReviewed": "2026-08-11",
+      "lastReviewed": "2026-09-28",
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
@@ -1279,137 +1282,119 @@
       "revampScope": "Small",
       "revampStatus": "Complete",
       "priority": "P2",
-      "technicalScore": 8,
+      "technicalScore": 7,
       "scores": {
-        "technicalAccuracy": 8,
-        "currentValidity": 8,
-        "esp32Compatibility": 9,
-        "arduinoIdeCompatibility": 9,
+        "technicalAccuracy": 7,
+        "currentValidity": 7,
+        "esp32Compatibility": 7,
         "codeQuality": 6,
-        "completeness": 7,
-        "beginnerFriendliness": 8,
-        "reproducibility": 7
+        "completeness": 6,
+        "beginnerFriendliness": 7,
+        "reproducibility": 5
       },
-      "mainRecommendation": "Add WiFi/MQTT reconnection handling code, document MQTT broker limitations, and include security considerations. Maker ESP32 fully compatible.",
+      "mainRecommendation": "Add the missing PubSubClient install step, replace the Wi-Fi credentials exposed in the Gist, use a unique client ID and topic on the public HiveMQ broker, add a learning-only security note, and fix the 'change colors' claim.",
       "makerEsp32": {
         "compatibility": "compatible",
-        "notes": "Fully compatible. MQTT and WiFi work identically. Use any GPIO for light control (avoid GPIO4/GPIO26).",
-        "requiredChanges": []
+        "notes": "MQTT works identically. Maker ESP32 has no onboard NeoPixel - use an onboard GPIO LED (e.g. GPIO2).",
+        "requiredChanges": [
+          "Replace NeoPixel (GPIO15) with an onboard GPIO LED"
+        ]
       },
       "topIssues": [
         {
           "priority": "P2",
-          "title": "WiFi/MQTT Reconnection Handling",
-          "section": "Code",
-          "description": "Tutorial likely lacks robust reconnection logic. ESP32 should automatically reconnect if WiFi or MQTT connection drops.",
-          "recommendation": "Add robust reconnection logic for WiFi and MQTT"
+          "title": "PubSubClient Install Missing",
+          "section": "Step 1",
+          "description": "Code includes PubSubClient.h but only Adafruit_NeoPixel is listed.",
+          "recommendation": "Add PubSubClient to library install step"
         },
         {
           "priority": "P2",
-          "title": "Public MQTT Broker Reliability",
-          "section": "MQTT Setup",
-          "description": "If using HiveMQ public broker, reliability issues should be documented. Free tier has limitations and no uptime guarantee.",
-          "recommendation": "Document public broker limitations and alternatives"
+          "title": "Wi-Fi Credentials Exposed in Gist",
+          "section": "Sample Code",
+          "description": "Public Gist hard-codes a real-looking SSID and password.",
+          "recommendation": "Use placeholders"
         },
         {
           "priority": "P2",
-          "title": "Security Considerations Missing",
-          "section": "Security",
-          "description": "MQTT without TLS transmits data in plaintext. Tutorial should mention this is for learning only, not production.",
-          "recommendation": "Add security considerations section"
+          "title": "Fixed Client ID and Generic Topic on Public Broker",
+          "section": "Sample Code",
+          "description": "'ESP32Client' and 'home/lamp' on broker.hivemq.com can collide with other users.",
+          "recommendation": "Unique client ID (e.g. MAC-based) and unique topic"
         },
         {
           "priority": "P3",
-          "title": "MQTT Client ID Uniqueness",
-          "section": "Code",
-          "description": "Should use unique client IDs (e.g., based on MAC address) to avoid connection conflicts.",
-          "recommendation": "Use MAC-based unique client ID"
+          "title": "No Security Note",
+          "section": "Overview",
+          "description": "Public broker, no auth/TLS - anyone can publish to the topic.",
+          "recommendation": "State learning-only use"
         },
         {
           "priority": "P3",
-          "title": "Error Handling",
-          "section": "Troubleshooting",
-          "description": "Code should include error handling for connection failures and provide user feedback.",
-          "recommendation": "Add error handling and troubleshooting section"
+          "title": "Feature Claim Mismatch",
+          "section": "Objective",
+          "description": "Objective says users can change colors; code only does white ON/OFF. No Wi-Fi reconnect.",
+          "recommendation": "Align text or add colour payloads"
         }
       ],
       "keep": [
         {
-          "section": "Project Concept",
-          "reason": "Smart light control via MQTT is practical and educational"
+          "section": "IoT MQTT Panel Walkthrough",
+          "reason": "Clear screenshots; tells user to match the topic"
         },
         {
-          "section": "IoT MQTT Panel App",
-          "reason": "Well-chosen app, actively maintained (v3.02.12, March 2026)"
-        },
-        {
-          "section": "PubSubClient Library",
-          "reason": "Standard, reliable MQTT library for Arduino"
-        },
-        {
-          "section": "Basic Setup",
-          "reason": "ESP32 and Arduino IDE configuration is accurate"
-        },
-        {
-          "section": "Topic Structure",
-          "reason": "MQTT topic explanation is valid"
+          "section": "MQTT Reconnect Loop",
+          "reason": "reconnect() already retries every 2 s"
         }
       ],
       "update": [
         {
-          "section": "Reconnection Logic",
-          "reason": "IoT devices need to handle connection drops",
-          "action": "Add WiFi and MQTT reconnection code"
+          "section": "Step 1",
+          "reason": "PubSubClient missing",
+          "action": "Add PubSubClient (Nick O'Leary)"
         },
         {
-          "section": "Broker Limitations",
-          "reason": "Public brokers have reliability issues",
-          "action": "Document limitations and suggest HiveMQ Cloud"
+          "section": "Sample Code",
+          "reason": "Credentials, client ID, topic",
+          "action": "Placeholders, unique client ID and topic"
         },
         {
-          "section": "Security Section",
-          "reason": "Plain MQTT is unencrypted",
-          "action": "Add note about TLS for production use"
-        },
-        {
-          "section": "Client ID",
-          "reason": "Generic IDs cause conflicts",
-          "action": "Use ESP32 MAC address for unique ID"
+          "section": "Objective",
+          "reason": "Overstates colour control",
+          "action": "Match actual features"
         }
       ],
-      "remove": [],
+      "remove": [
+        {
+          "section": "Sample Code",
+          "reason": "Real Wi-Fi credentials published",
+          "action": "Replace with placeholders"
+        }
+      ],
       "evidence": [
         {
-          "claim": "PubSubClient library",
-          "currentTutorial": "Uses the library",
-          "finding": "Actively maintained, MQTT 3.1.1 compatible",
+          "claim": "Required libraries",
+          "currentTutorial": "Adafruit_NeoPixel only",
+          "finding": "Code includes PubSubClient",
           "officialSource": "https://docs.arduino.cc/libraries/pubsubclient/",
-          "sourceLabel": "Arduino Docs",
-          "recommendedChange": "No change needed"
+          "sourceLabel": "PubSubClient (Arduino)",
+          "recommendedChange": "Add install step"
         },
         {
-          "claim": "IoT MQTT Panel app",
-          "currentTutorial": "Uses the app",
-          "finding": "Current v3.02.12, updated March 2026, 4.63 rating",
-          "officialSource": "https://play.google.com/store/apps/details?id=snr.lab.iotmqttpanel.prod",
-          "sourceLabel": "Google Play",
-          "recommendedChange": "No change needed"
-        },
-        {
-          "claim": "Public MQTT brokers",
-          "currentTutorial": "May use HiveMQ public",
-          "finding": "Rate limiting and reliability issues documented",
+          "claim": "Public broker",
+          "currentTutorial": "broker.hivemq.com:1883",
+          "finding": "Public broker with no authentication, shared by everyone",
           "officialSource": "https://www.hivemq.com/mqtt/public-mqtt-broker/",
-          "sourceLabel": "HiveMQ",
-          "recommendedChange": "Add reliability warning"
+          "sourceLabel": "HiveMQ public broker",
+          "recommendedChange": "Unique topic and learning-only note"
         },
         {
-          "claim": "WiFi reconnection",
-          "currentTutorial": "May not handle drops",
-          "finding": "ESP32 WiFi can drop, needs reconnection logic",
-          "officialSource": "https://randomnerdtutorials.com/solved-reconnect-esp32-to-wifi/",
-          "sourceLabel": "Random Nerd Tutorials",
-          "recommendedChange": "Add reconnection code"
+          "claim": "Code content",
+          "currentTutorial": "Gist sketch",
+          "finding": "Fixed client ID 'ESP32Client', topic 'home/lamp', ON/OFF only, hard-coded credentials",
+          "officialSource": "https://gist.github.com/interns24-bit/93e09e8b25b8d7050dd5bd15648beac0",
+          "sourceLabel": "Tutorial Gist",
+          "recommendedChange": "See update list"
         }
       ],
       "links": [
@@ -1417,25 +1402,25 @@
           "url": "https://my.cytron.io/tutorial/esp32-smart-light-control-with-app",
           "purpose": "Original tutorial",
           "status": "Working",
-          "notes": "Primary tutorial URL"
+          "notes": "Snapshot fetched 2026-09-11 by the revamp bridge"
+        },
+        {
+          "url": "https://gist.github.com/interns24-bit/93e09e8b25b8d7050dd5bd15648beac0",
+          "purpose": "Tutorial code (Gist)",
+          "status": "Working",
+          "notes": "Contains hard-coded Wi-Fi credentials"
         },
         {
           "url": "https://github.com/knolleary/pubsubclient",
           "purpose": "PubSubClient library",
           "status": "Working",
-          "notes": "Most popular Arduino MQTT library"
-        },
-        {
-          "url": "https://play.google.com/store/apps/details?id=snr.lab.iotmqttpanel.prod",
-          "purpose": "IoT MQTT Panel app",
-          "status": "Working",
-          "notes": "Android app for MQTT control"
+          "notes": "Required but not listed in tutorial"
         },
         {
           "url": "https://www.hivemq.com/mqtt/public-mqtt-broker/",
-          "purpose": "HiveMQ public broker",
+          "purpose": "Public MQTT broker",
           "status": "Working",
-          "notes": "Free MQTT broker for testing"
+          "notes": "No authentication - learning use only"
         }
       ],
       "auditFile": "audits/esp32-smart-light-control-with-app.md",
@@ -1443,10 +1428,8 @@
       "makerEsp32PublishDate": "2026-09-11",
       "hardwareUsed": {
         "board": "Maker ESP32",
-        "components": [
-          "Relay Module"
-        ],
-        "notes": "Optional: Add relay for controlling AC lights"
+        "components": [],
+        "notes": "Original used the Robo ESP32 onboard NeoPixel (GPIO15); Final Output uses the Maker ESP32 onboard GPIO2 LED. No relay."
       },
       "preparationDate": "2026-08-17",
       "publishDate": "2026-09-11"
@@ -2330,31 +2313,34 @@
       "subcategory": "Environmental Monitoring",
       "targetLevel": "Beginner",
       "products": [
-        "ESP32",
-        "MQ135 Gas Sensor"
+        "Robo ESP32",
+        "NodeMCU ESP32",
+        "MQ2 Gas Sensor"
       ],
       "technologies": [
         "ESP32",
         "Arduino IDE",
-        "MQ135",
+        "MQ2",
         "WiFi",
         "Web Server",
+        "Chart.js",
+        "NeoPixel",
         "ADC"
       ],
       "keywords": [
         "ESP32",
         "Air Quality",
-        "MQ135",
+        "MQ2",
         "Gas Sensor",
-        "Environmental",
-        "Monitoring",
+        "Web Dashboard",
+        "Chart.js",
+        "NeoPixel",
         "WiFi",
-        "Web Interface",
-        "Pollution",
-        "IoT"
+        "IoT",
+        "Beginner"
       ],
       "reviewed": true,
-      "lastReviewed": "2026-08-13",
+      "lastReviewed": "2026-09-28",
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
@@ -2362,138 +2348,134 @@
       "decision": "Minor Update",
       "revampScope": "Small",
       "revampStatus": "Complete",
-      "priority": "P2",
-      "technicalScore": 7,
+      "priority": "P1",
+      "technicalScore": 6,
       "scores": {
-        "technicalAccuracy": 7,
-        "currentValidity": 8,
-        "esp32Compatibility": 8,
-        "arduinoIdeCompatibility": 8,
-        "codeQuality": 7,
+        "technicalAccuracy": 6,
+        "currentValidity": 7,
+        "esp32Compatibility": 6,
+        "codeQuality": 6,
         "completeness": 6,
-        "beginnerFriendliness": 7,
-        "reproducibility": 6
+        "beginnerFriendliness": 6,
+        "reproducibility": 5
       },
-      "mainRecommendation": "Add sensor calibration guidance (preheat time, R0 calibration), document ESP32 ADC voltage level considerations (3.3V vs 5V), and clarify the meaning of raw ADC values vs actual PPM readings. Maker ESP32 compatible - use ADC1 pins (GPIO32-33).",
+      "mainRecommendation": "Wiring table puts MQ2 on D25 (ADC2 - fails with Wi-Fi) but code reads GPIO33 (ADC1); align on an ADC1 pin, replace the Wi-Fi credentials exposed in the Gist, fix the MQ2/MQ135 link, and add an MQ2 5V output warning. Note: the published Final Output uses GPIO15 (ADC2) - needs a human-approved fix.",
       "makerEsp32": {
-        "compatibility": "compatible",
-        "notes": "Fully compatible. Use ADC1 pins (GPIO32, GPIO33) for MQ135 analog reading. Voltage divider still required for 5V sensor output.",
-        "requiredChanges": []
+        "compatibility": "minor",
+        "notes": "Maker ESP32 has no onboard NeoPixel (use GPIO LEDs). Use an ADC1 pin (GPIO32/33/34/35/36/39) for MQ2 because ADC2 does not work with Wi-Fi.",
+        "requiredChanges": [
+          "Replace NeoPixel (GPIO15) with onboard GPIO LEDs",
+          "Read MQ2 on an ADC1 pin (e.g. GPIO33)"
+        ]
       },
       "topIssues": [
         {
-          "priority": "P2",
-          "title": "Sensor Calibration Not Documented",
-          "section": "Sensor Setup",
-          "description": "MQ135 requires proper calibration (R0 value in clean air) for accurate PPM readings. Without calibration, readings are meaningless. New sensors need 24-48 hours burn-in.",
-          "recommendation": "Add R0 calibration process in clean air"
+          "priority": "P1",
+          "title": "Wiring Pin Is ADC2 (Fails With Wi-Fi)",
+          "section": "Circuit Diagram",
+          "description": "Table wires MQ2 to D25 (ADC2); ADC2 cannot be read while Wi-Fi is active. Code actually reads GPIO33 (ADC1).",
+          "recommendation": "Use GPIO33 (or another ADC1 pin) in the table and code comment"
+        },
+        {
+          "priority": "P1",
+          "title": "Wi-Fi Credentials Exposed in Gist",
+          "section": "Sample Code",
+          "description": "Public Gist hard-codes a real-looking SSID and password.",
+          "recommendation": "Use YOUR_WIFI_SSID / YOUR_WIFI_PASSWORD placeholders"
         },
         {
           "priority": "P2",
-          "title": "Preheat Time Not Mentioned",
-          "section": "Hardware Setup",
-          "description": "MQ sensors require warm-up time (20-60 minutes for routine use, 24-48 hours for new sensors) before giving stable readings.",
-          "recommendation": "Add prominent preheat warning"
+          "title": "MQ2 5V Output vs 3.3V ADC",
+          "section": "Circuit Diagram",
+          "description": "No warning that a 5V-powered MQ2 module can output above 3.3V.",
+          "recommendation": "Add voltage divider guidance"
         },
         {
           "priority": "P2",
-          "title": "ADC Voltage Level Consideration",
-          "section": "Wiring",
-          "description": "MQ135 outputs 0-5V but ESP32 ADC accepts 0-3.3V max. Connecting directly can damage ESP32.",
-          "recommendation": "Add voltage divider circuit diagram"
-        },
-        {
-          "priority": "P2",
-          "title": "Raw Values vs PPM Confusion",
-          "section": "Code",
-          "description": "Thresholds of 500-1500 appear to be raw ADC values, not calibrated PPM readings. Users may misinterpret these values.",
-          "recommendation": "Clarify value interpretation and conversion"
+          "title": "Broken Component Link",
+          "section": "List of Components",
+          "description": "'MQ' links to the MQ135 product and '2 Smoke LPG CO Sensor Module' to MQ2.",
+          "recommendation": "Link the MQ2 module only"
         },
         {
           "priority": "P3",
-          "title": "Web Server Library Not Specified",
-          "section": "Libraries",
-          "description": "Should document whether using standard WebServer or ESPAsyncWebServer library for the interactive display.",
-          "recommendation": "Document library requirements"
+          "title": "Raw Thresholds, No Preheat Note",
+          "section": "Testing",
+          "description": "500/1500 are raw 12-bit ADC values; no warm-up note; Chart.js page needs internet on the viewer.",
+          "recommendation": "State values are raw/relative and add preheat note"
         }
       ],
       "keep": [
         {
           "section": "Project Concept",
-          "reason": "Air quality monitoring is practical and relevant"
+          "reason": "Web dashboard plus colour-coded LED for gas level is a good Beginner IoT project"
         },
         {
-          "section": "Web Interface",
-          "reason": "Real-time browser display is user-friendly"
-        },
-        {
-          "section": "Visual Indicators",
-          "reason": "Color-coded warnings (yellow/red) are intuitive"
-        },
-        {
-          "section": "WiFi Connectivity",
-          "reason": "Accessible from any device on network"
-        },
-        {
-          "section": "ESP32 Choice",
-          "reason": "Good platform for IoT monitoring"
+          "section": "Code Structure",
+          "reason": "/data endpoint polled by Chart.js works; GPIO33 (ADC1) is a Wi-Fi-safe choice"
         }
       ],
       "update": [
         {
-          "section": "Sensor Calibration",
-          "reason": "Required for accurate readings",
-          "action": "Add R0 calibration process in clean air environment"
+          "section": "Circuit Diagram",
+          "reason": "Table pin D25 is ADC2 and differs from code",
+          "action": "Use GPIO33 / ADC1 and add 5V output warning"
         },
         {
-          "section": "Preheat Warning",
-          "reason": "Critical for sensor accuracy",
-          "action": "Add prominent warning about 24-48 hour burn-in for new sensors"
+          "section": "List of Components",
+          "reason": "Split MQ2/MQ135 link",
+          "action": "Single MQ2 product link"
         },
         {
-          "section": "Voltage Divider",
-          "reason": "Prevents hardware damage",
-          "action": "Add circuit diagram for 5V to 3.3V conversion"
+          "section": "Software Setup",
+          "reason": "WiFi and WebServer are built into the ESP32 core",
+          "action": "List only Adafruit NeoPixel as an install"
         },
         {
-          "section": "Value Interpretation",
-          "reason": "Users need to understand readings",
-          "action": "Clarify raw ADC values vs calibrated PPM"
+          "section": "Sample Code",
+          "reason": "Hard-coded credentials; comment says pin 25",
+          "action": "Placeholders and correct comment"
         }
       ],
-      "remove": [],
+      "remove": [
+        {
+          "section": "Sample Code",
+          "reason": "Real Wi-Fi credentials published",
+          "action": "Replace with placeholders"
+        }
+      ],
       "evidence": [
         {
-          "claim": "MQ135 calibration",
-          "currentTutorial": "May not mention calibration",
-          "finding": "Requires R0 calibration in clean air for accurate PPM",
-          "officialSource": "https://dronebotworkshop.com/air-quality/",
-          "sourceLabel": "DroneBot Workshop",
-          "recommendedChange": "Add calibration section"
+          "claim": "Sensor pin works with Wi-Fi",
+          "currentTutorial": "Table D25, code GPIO33",
+          "finding": "D25 is ADC2 (unusable while Wi-Fi is on); GPIO33 is ADC1",
+          "officialSource": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/gpio.html",
+          "sourceLabel": "Espressif ESP32 GPIO docs",
+          "recommendedChange": "Use ADC1 pin"
         },
         {
-          "claim": "Preheat time",
-          "currentTutorial": "May mention 20 seconds",
-          "finding": "24-48 hours for new sensors, 30-60 min routine",
-          "officialSource": "https://pcbsync.com/mq-135-air-quality-sensor-arduino/",
-          "sourceLabel": "PCBSync Guide",
-          "recommendedChange": "Document warm-up requirements"
+          "claim": "Sensor model",
+          "currentTutorial": "MQ2 text, MQ135 link",
+          "finding": "Page heading and code use MQ2",
+          "officialSource": "https://gist.github.com/interns24-bit/18f5ac049d6bf3693f2513c965a1f7ec",
+          "sourceLabel": "Tutorial Gist",
+          "recommendedChange": "Fix product link"
         },
         {
-          "claim": "Voltage levels",
-          "currentTutorial": "May not address",
-          "finding": "ESP32 ADC is 3.3V max, MQ135 outputs 5V",
-          "officialSource": "https://embeddedprep.com/esp32-with-mq135/",
-          "sourceLabel": "EmbeddedPrep",
-          "recommendedChange": "Add voltage divider"
+          "claim": "Libraries to install",
+          "currentTutorial": "WiFi, Adafruit_NeoPixel, WebServer",
+          "finding": "WiFi and WebServer ship with the ESP32 Arduino core",
+          "officialSource": "https://github.com/espressif/arduino-esp32/tree/master/libraries",
+          "sourceLabel": "arduino-esp32 libraries",
+          "recommendedChange": "List only Adafruit NeoPixel"
         },
         {
-          "claim": "MQ135 library",
-          "currentTutorial": "May use library",
-          "finding": "Version 1.1.1 current (July 2023)",
-          "officialSource": "https://www.arduinolibraries.info/libraries/mq135",
-          "sourceLabel": "Arduino Libraries",
-          "recommendedChange": "No change needed"
+          "claim": "Onboard NeoPixel",
+          "currentTutorial": "GPIO15 NeoPixel",
+          "finding": "Maker ESP32 has 14 GPIO LEDs and no NeoPixel",
+          "officialSource": "https://docs.google.com/document/d/1gvGrlrWyXXZk_k-CQ-no0y23ifWEjb_XfbZtomaShDo/edit",
+          "sourceLabel": "Maker ESP32 Datasheet Rev 1.1",
+          "recommendedChange": "Use GPIO LEDs on Maker ESP32"
         }
       ],
       "links": [
@@ -2501,25 +2483,31 @@
           "url": "https://my.cytron.io/tutorial/esp32-air-quality-monitoring",
           "purpose": "Original tutorial",
           "status": "Working",
-          "notes": "Primary tutorial URL"
+          "notes": "Snapshot fetched 2026-09-10 by the revamp bridge"
         },
         {
-          "url": "https://www.cytron.io/p-mq135-air-quality-sensor-module",
-          "purpose": "Cytron MQ135 product page",
+          "url": "https://gist.github.com/interns24-bit/18f5ac049d6bf3693f2513c965a1f7ec",
+          "purpose": "Tutorial code (Gist)",
           "status": "Working",
-          "notes": "Hardware reference"
+          "notes": "Contains hard-coded Wi-Fi credentials"
         },
         {
-          "url": "https://www.arduinolibraries.info/libraries/mq135",
-          "purpose": "MQ135 library info",
-          "status": "Working",
-          "notes": "Version 1.1.1 current"
+          "url": "https://my.cytron.io/p-mq135-air-quality-sensor-module",
+          "purpose": "Component link on 'MQ'",
+          "status": "Unknown",
+          "notes": "Points to MQ135, but tutorial uses MQ2"
         },
         {
-          "url": "https://embeddedprep.com/esp32-with-mq135/",
-          "purpose": "ESP32 MQ135 reference guide",
+          "url": "https://my.cytron.io/p-mq2-smoke-lpg-co-sensor-module",
+          "purpose": "MQ2 sensor product",
+          "status": "Unknown",
+          "notes": "cytron.io blocks automated checks"
+        },
+        {
+          "url": "https://cdn.jsdelivr.net/npm/chart.js",
+          "purpose": "Chart.js used by web page",
           "status": "Working",
-          "notes": "Comprehensive tutorial with calibration"
+          "notes": "Viewer device needs internet"
         }
       ],
       "auditFile": "audits/esp32-air-quality-monitoring.md",
@@ -2528,9 +2516,9 @@
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
-          "MQ-135 Air Quality Sensor"
+          "MQ-2 Gas Sensor"
         ],
-        "notes": "Requires voltage divider for 5V sensor output"
+        "notes": "Original: Robo ESP32 onboard NeoPixel + MQ2. MQ2 AO may exceed 3.3V at 5V supply; must use an ADC1 pin with Wi-Fi"
       },
       "preparationDate": "2026-08-14",
       "publishDate": "2026-09-10"
@@ -2772,9 +2760,8 @@
         "Robo ESP32",
         "Maker Soil Moisture Sensor",
         "DHT11",
-        "HC-SR04 Ultrasonic",
-        "Relay Module",
-        "Water Pump"
+        "Ultrasonic Sensor",
+        "Motor Pump"
       ],
       "technologies": [
         "ESP32",
@@ -2782,7 +2769,7 @@
         "Blynk IoT",
         "WiFi",
         "ADC",
-        "Relay Control"
+        "Robo ESP32 Motor Driver"
       ],
       "keywords": [
         "ESP32",
@@ -2790,155 +2777,152 @@
         "Smart Irrigation",
         "Soil Moisture",
         "DHT11",
-        "Water Level",
         "Blynk",
-        "Relay",
         "Pump Control",
+        "Robo ESP32",
         "IoT Agriculture"
       ],
       "reviewed": true,
-      "lastReviewed": "2026-08-13",
+      "lastReviewed": "2026-09-28",
       "validity": {
-        "grade": "B",
-        "label": "Mostly Valid"
+        "grade": "C",
+        "label": "Partially Outdated"
       },
-      "decision": "Minor Update",
+      "decision": "Major Revamp",
       "revampScope": "Medium",
       "revampStatus": "Complete",
-      "priority": "P2",
-      "technicalScore": 7,
+      "priority": "P1",
+      "technicalScore": 5,
       "scores": {
-        "technicalAccuracy": 8,
+        "technicalAccuracy": 5,
         "currentValidity": 7,
-        "esp32Compatibility": 9,
-        "arduinoIdeCompatibility": 8,
-        "codeQuality": 7,
-        "completeness": 7,
-        "beginnerFriendliness": 6,
-        "reproducibility": 7
+        "esp32Compatibility": 6,
+        "codeQuality": 5,
+        "completeness": 4,
+        "beginnerFriendliness": 5,
+        "reproducibility": 4
       },
-      "mainRecommendation": "Ensure Blynk 2.0 code structure is used (Template ID, Template Name, Auth Token), add sensor calibration guidance for soil moisture, include electrical safety warnings for relay/pump circuits. Maker ESP32 compatible with pin adjustments.",
+      "mainRecommendation": "Page advertises an ultrasonic water-level gauge (V5) and low-water protection that the code never implements; DHT pin differs (page GPIO17, code GPIO16); a real Blynk auth token is published in the Gist (revoke it); and delay(10000) in the Blynk timer blocks the connection. Blynk IoT structure itself is already current.",
       "makerEsp32": {
-        "compatibility": "compatible",
-        "notes": "Compatible with Maker ESP32. Avoid GPIO4 (user button) and GPIO26 (buzzer) for sensors. ADC and relay control work identically.",
+        "compatibility": "minor",
+        "notes": "Needs Robo ESP32 for the motor driver. On Maker ESP32 alone, GPIO26 (ultrasonic Echo in the table) is the buzzer.",
         "requiredChanges": [
-          "Use GPIO16/17 instead of GPIO4 for DHT sensor if applicable"
+          "Keep Robo ESP32 as carrier for the pump motor driver",
+          "Avoid GPIO26 for sensors on Maker ESP32"
         ]
       },
       "topIssues": [
         {
-          "priority": "P2",
-          "title": "Blynk 2.0 Code Structure",
-          "section": "Code",
-          "description": "Must use BLYNK_TEMPLATE_ID, BLYNK_TEMPLATE_NAME, and BLYNK_AUTH_TOKEN macros. Legacy single auth token approach no longer works.",
-          "recommendation": "Update to three-macro Blynk 2.0 structure"
+          "priority": "P1",
+          "title": "Water-Level Feature Advertised But Not Coded",
+          "section": "Circuit Diagram / Blynk Dashboard / Features",
+          "description": "Ultrasonic wired on GPIO25/26 and a V5 water-level gauge plus low-water protection are promised; code has no ultrasonic, V5 or protection.",
+          "recommendation": "Implement or remove from the page"
+        },
+        {
+          "priority": "P1",
+          "title": "Blynk Auth Token Exposed",
+          "section": "Sample Code",
+          "description": "Public Gist contains a real-looking Template ID and Auth Token.",
+          "recommendation": "Revoke token in Blynk console; use placeholders"
         },
         {
           "priority": "P2",
-          "title": "Soil Moisture Calibration",
-          "section": "Sensor Setup",
-          "description": "Capacitive soil moisture sensors require calibration for accurate readings. Dry air vs water calibration values needed.",
-          "recommendation": "Add calibration process with mapping code"
+          "title": "DHT Pin Mismatch",
+          "section": "Circuit Diagram",
+          "description": "Table says GPIO17; code uses GPIO16.",
+          "recommendation": "Make table and code match"
         },
         {
           "priority": "P2",
-          "title": "Electrical Safety for Relay/Pump",
-          "section": "Hardware",
-          "description": "Relay circuits controlling pumps require safety warnings about electrical hazards and proper isolation, especially for AC pumps.",
-          "recommendation": "Add electrical safety warning section"
+          "title": "Blocking Delay in Blynk Timer",
+          "section": "Sample Code",
+          "description": "delay(10000) inside sendSensorData() blocks Blynk.run() for 10 s.",
+          "recommendation": "Use a non-blocking timer for the pump"
         },
         {
           "priority": "P2",
-          "title": "Blynk Free Plan Limitations",
-          "section": "Blynk Setup",
-          "description": "Free tier limits (2 devices, 10 datastreams) should be documented so users understand constraints.",
-          "recommendation": "Document Blynk pricing and limits"
-        },
-        {
-          "priority": "P3",
-          "title": "DHT Library Dependency",
-          "section": "Libraries",
-          "description": "DHT sensor library requires Adafruit Unified Sensor as dependency. Missing this causes compilation errors.",
-          "recommendation": "Document both library requirements"
+          "title": "Pump Drive and Soil Calibration Unclear",
+          "section": "Circuit Diagram / Code",
+          "description": "Table shows Motor+/- on GPIO27/14 but code toggles only GPIO27 as RELAY_PIN; soil % uses uncalibrated map(4095,0).",
+          "recommendation": "Document motor driver control and add dry/wet calibration"
         }
       ],
       "keep": [
         {
-          "section": "Project Concept",
-          "reason": "Farm automation is practical and increasingly relevant"
+          "section": "Blynk IoT Setup",
+          "reason": "Already uses BLYNK_TEMPLATE_ID / TEMPLATE_NAME / AUTH_TOKEN and BlynkTimer"
         },
         {
-          "section": "Multi-Sensor Integration",
-          "reason": "Good demonstration of combining multiple sensors"
+          "section": "Soil Sensor on GPIO36",
+          "reason": "ADC1 input, Wi-Fi-safe"
         },
         {
-          "section": "Blynk IoT Platform",
-          "reason": "Excellent for remote monitoring and control"
-        },
-        {
-          "section": "Robo ESP32",
-          "reason": "Appropriate board with built-in WiFi"
-        },
-        {
-          "section": "Water Level Monitoring",
-          "reason": "Prevents dry-running the pump"
+          "section": "Manual Override (V1)",
+          "reason": "Correct BLYNK_WRITE pattern"
         }
       ],
       "update": [
         {
-          "section": "Blynk Code Structure",
-          "reason": "Legacy auth-only approach deprecated",
-          "action": "Update to Template ID + Name + Token"
+          "section": "Sample Code",
+          "reason": "Missing water-level logic; pin mismatch; blocking delay",
+          "action": "Add ultrasonic + V5 + low-water cutoff (or remove claims), align DHT pin, non-blocking pump timer"
         },
         {
-          "section": "Soil Moisture Calibration",
-          "reason": "Required for accurate readings",
-          "action": "Add dry air/water calibration process"
+          "section": "Circuit Diagram",
+          "reason": "Motor driver vs RELAY_PIN naming",
+          "action": "Clarify GPIO27/14 motor driver control"
         },
         {
-          "section": "Electrical Safety",
-          "reason": "Relay/pump circuits pose hazards",
-          "action": "Add safety warnings for AC circuits"
-        },
-        {
-          "section": "DHT Library",
-          "reason": "Dependency often missed",
-          "action": "Document Unified Sensor requirement"
+          "section": "Soil Moisture",
+          "reason": "Uncalibrated mapping",
+          "action": "Add dry/wet calibration step"
         }
       ],
-      "remove": [],
+      "remove": [
+        {
+          "section": "Sample Code",
+          "reason": "Real Blynk Template ID/Auth Token published",
+          "action": "Placeholders; revoke the token"
+        },
+        {
+          "section": "Features",
+          "reason": "'Low water level protection' not implemented",
+          "action": "Remove unless implemented"
+        }
+      ],
       "evidence": [
         {
-          "claim": "Blynk authentication",
-          "currentTutorial": "May use legacy approach",
-          "finding": "Blynk 2.0 requires Template ID + Name + Token",
+          "claim": "Water level feature",
+          "currentTutorial": "Ultrasonic wired; V5 gauge; low-water protection",
+          "finding": "No ultrasonic code, no V5, no protection",
+          "officialSource": "https://gist.github.com/interns24-bit/f65d1ba7ee4ed3fc2d2390d8452b1159",
+          "sourceLabel": "Tutorial Gist",
+          "recommendedChange": "Implement or remove"
+        },
+        {
+          "claim": "Blynk code structure",
+          "currentTutorial": "Template ID/Name/Auth Token",
+          "finding": "Matches current Blynk IoT structure",
           "officialSource": "https://docs.blynk.io/",
-          "sourceLabel": "Blynk Docs",
-          "recommendedChange": "Update to three-macro approach"
+          "sourceLabel": "Blynk documentation",
+          "recommendedChange": "Keep"
         },
         {
-          "claim": "Soil moisture calibration",
-          "currentTutorial": "May not explain calibration",
-          "finding": "Calibration required for accurate readings",
-          "officialSource": "https://makersportal.com/blog/2020/5/26/capacitive-soil-moisture-calibration-with-arduino",
-          "sourceLabel": "Makers Portal",
-          "recommendedChange": "Add calibration section"
+          "claim": "DHT pin",
+          "currentTutorial": "Table GPIO17",
+          "finding": "Code uses GPIO16",
+          "officialSource": "https://gist.github.com/interns24-bit/f65d1ba7ee4ed3fc2d2390d8452b1159",
+          "sourceLabel": "Tutorial Gist",
+          "recommendedChange": "Align"
         },
         {
-          "claim": "DHT library dependency",
-          "currentTutorial": "Uses DHT library",
-          "finding": "Requires Adafruit Unified Sensor",
-          "officialSource": "https://learn.adafruit.com/dht",
-          "sourceLabel": "Adafruit Learn",
-          "recommendedChange": "Document both libraries"
-        },
-        {
-          "claim": "Relay safety",
-          "currentTutorial": "May not address safety",
-          "finding": "Optocoupler isolation recommended",
-          "officialSource": "https://www.upesy.com/blogs/tutorials/esp32-relay-module-using-arduino-code",
-          "sourceLabel": "uPesy Tutorial",
-          "recommendedChange": "Add safety warnings"
+          "claim": "Board package URL",
+          "currentTutorial": "raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json",
+          "finding": "Current official Espressif board manager URL",
+          "officialSource": "https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html",
+          "sourceLabel": "Espressif arduino-esp32 install guide",
+          "recommendedChange": "Keep"
         }
       ],
       "links": [
@@ -2946,25 +2930,25 @@
           "url": "https://my.cytron.io/tutorial/farm-automation-system-using-roboesp32",
           "purpose": "Original tutorial",
           "status": "Working",
-          "notes": "Primary tutorial URL"
+          "notes": "Snapshot fetched 2026-09-25 by the revamp bridge"
         },
         {
-          "url": "https://zbotic.in/blynk-2-0-with-esp32-cloud-dashboard-for-iot-projects/",
-          "purpose": "Blynk 2.0 reference",
+          "url": "https://gist.github.com/interns24-bit/f65d1ba7ee4ed3fc2d2390d8452b1159",
+          "purpose": "Tutorial code (Gist)",
           "status": "Working",
-          "notes": "Current Blynk IoT setup guide"
+          "notes": "Contains a real-looking Blynk token - revoke"
         },
         {
-          "url": "https://makersportal.com/blog/2020/5/26/capacitive-soil-moisture-calibration-with-arduino",
-          "purpose": "Soil moisture calibration guide",
+          "url": "https://blynk.cloud",
+          "purpose": "Blynk IoT console",
           "status": "Working",
-          "notes": "Calibration methodology"
+          "notes": "Current platform"
         },
         {
-          "url": "https://randomnerdtutorials.com/esp32-hc-sr04-ultrasonic-arduino/",
-          "purpose": "HC-SR04 ultrasonic guide",
-          "status": "Working",
-          "notes": "Water level sensor reference"
+          "url": "https://t.me/ESPmakersMY",
+          "purpose": "Telegram community",
+          "status": "Unknown",
+          "notes": "Verify manually"
         }
       ],
       "auditFile": "audits/farm-automation-system-roboesp32.md",
@@ -2973,13 +2957,12 @@
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
+          "Robo ESP32 (carrier, motor driver)",
           "Maker Soil Moisture Sensor",
           "DHT11 Temperature & Humidity Sensor",
-          "HC-SR04 Ultrasonic Sensor",
-          "Relay Module",
-          "Water Pump"
+          "Micro Submersible Water Pump"
         ],
-        "notes": "Comprehensive automation project"
+        "notes": "Final Output mounts Maker ESP32 on Robo ESP32; water-level/ultrasonic feature removed. No relay module."
       },
       "preparationDate": "2026-09-04",
       "publishDate": "2026-09-25"
@@ -3168,7 +3151,7 @@
         {
           "claim": "Distance calculation",
           "currentTutorial": "Uses standard formula",
-          "finding": "0.034 cm/\u00c2\u00b5s is correct speed of sound",
+          "finding": "0.034 cm/\u00b5s is correct speed of sound",
           "officialSource": "https://randomnerdtutorials.com/esp32-hc-sr04-ultrasonic-arduino/",
           "sourceLabel": "Random Nerd Tutorials",
           "recommendedChange": "No change needed"
@@ -3216,38 +3199,39 @@
     },
     {
       "id": "wifi-weather-station-esp32",
-      "title": "WiFi Weather Station ESP32",
+      "title": "ESP32 Smart Weather Station with Live WiFi Updates",
       "url": "https://my.cytron.io/tutorial/wifi-weather-station-esp32",
       "category": "IoT",
       "subcategory": "Weather & Environment",
       "targetLevel": "Beginner",
       "products": [
-        "ESP32",
-        "OLED Display SSD1306"
+        "Robo ESP32",
+        "NodeMCU ESP32",
+        "DHT11",
+        "Grove 16x2 LCD"
       ],
       "technologies": [
         "ESP32",
         "Arduino IDE",
         "WiFi",
-        "OpenWeatherMap API",
-        "HTTPS",
-        "JSON",
-        "I2C OLED"
+        "DHT11",
+        "I2C LCD",
+        "Web Server"
       ],
       "keywords": [
         "ESP32",
         "Weather Station",
-        "OpenWeatherMap",
-        "API",
-        "OLED",
+        "DHT11",
         "Temperature",
         "Humidity",
+        "LCD",
+        "Web Server",
         "WiFi",
-        "ArduinoJson",
-        "IoT"
+        "IoT",
+        "Beginner"
       ],
       "reviewed": true,
-      "lastReviewed": "2026-08-13",
+      "lastReviewed": "2026-09-28",
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
@@ -3256,137 +3240,117 @@
       "revampScope": "Small",
       "revampStatus": "Complete",
       "priority": "P2",
-      "technicalScore": 8,
+      "technicalScore": 7,
       "scores": {
-        "technicalAccuracy": 8,
-        "currentValidity": 7,
-        "esp32Compatibility": 9,
-        "arduinoIdeCompatibility": 8,
-        "codeQuality": 7,
-        "completeness": 7,
-        "beginnerFriendliness": 7,
-        "reproducibility": 7
+        "technicalAccuracy": 7,
+        "currentValidity": 8,
+        "esp32Compatibility": 8,
+        "codeQuality": 6,
+        "completeness": 6,
+        "beginnerFriendliness": 6,
+        "reproducibility": 6
       },
-      "mainRecommendation": "Verify ArduinoJson version compatibility (v6 vs v7 syntax differs), document OpenWeatherMap API rate limits. Maker ESP32 fully compatible - use Maker Port for I2C OLED.",
+      "mainRecommendation": "DHT11 + Grove 16x2 LCD + local web page (no OpenWeatherMap/OLED as the old audit claimed). Replace Wi-Fi credentials exposed in the Gist, confirm the linked LCD works with the rgb_lcd library at 3.3V, add the Adafruit Unified Sensor dependency, and use English web text.",
       "makerEsp32": {
         "compatibility": "compatible",
-        "notes": "Fully compatible. Use Maker Port (GPIO21/22) for I2C OLED. WiFi and HTTPS API calls work identically.",
+        "notes": "DHT11 on GPIO25 and I2C LCD on GPIO21/22 (Maker Port, Grove via conversion cable) work on Maker ESP32.",
         "requiredChanges": []
       },
       "topIssues": [
         {
           "priority": "P2",
-          "title": "ArduinoJson Version Compatibility",
-          "section": "Code",
-          "description": "ArduinoJson v6 and v7 have different syntax. Tutorial should specify which version to use and provide matching code.",
-          "recommendation": "Specify ArduinoJson version and use correct syntax"
+          "title": "Wi-Fi Credentials Exposed in Gist",
+          "section": "Sample Code",
+          "description": "Public Gist hard-codes a real-looking SSID and password.",
+          "recommendation": "Use placeholders"
         },
         {
           "priority": "P2",
-          "title": "API Rate Limits Not Documented",
-          "section": "API Setup",
-          "description": "OpenWeatherMap free tier allows 60 calls/minute, 1M calls/month. Users need to know appropriate refresh intervals.",
-          "recommendation": "Document rate limits and recommend 10-15 min refresh"
-        },
-        {
-          "priority": "P2",
-          "title": "HTTPS Certificate Handling",
-          "section": "Security",
-          "description": "Modern APIs require HTTPS. ESP32 needs WiFiClientSecure with proper certificate validation.",
-          "recommendation": "Document WiFiClientSecure usage"
+          "title": "LCD Product vs Library",
+          "section": "List of Components",
+          "description": "Page links Grove 16x2 LCD (White on Blue); code uses rgb_lcd RGB Backlight API (setRGB) at 3V3 - NEEDS VERIFICATION.",
+          "recommendation": "Confirm or link the matching LCD"
         },
         {
           "priority": "P3",
-          "title": "API Key Security",
-          "section": "Security",
-          "description": "API keys should not be hardcoded in shared code. Users should be warned about key protection.",
-          "recommendation": "Add API key security warning"
+          "title": "DHT Library Dependency",
+          "section": "Step 1",
+          "description": "Adafruit Unified Sensor not listed.",
+          "recommendation": "Add dependency"
         },
         {
           "priority": "P3",
-          "title": "Error Handling",
-          "section": "Code",
-          "description": "Network failures, API errors, and JSON parsing errors should be handled gracefully.",
-          "recommendation": "Add comprehensive error handling"
+          "title": "Mixed Language / Comment",
+          "section": "Sample Code",
+          "description": "Web page text in Bahasa Malaysia; comment says DHT22 for DHT11.",
+          "recommendation": "English text; fix comment"
+        },
+        {
+          "priority": "P3",
+          "title": "Blocking Loop",
+          "section": "Sample Code",
+          "description": "delay(2000) per loop delays web responses.",
+          "recommendation": "Use millis() timing"
         }
       ],
       "keep": [
         {
           "section": "Project Concept",
-          "reason": "Weather station is a classic, practical IoT project"
+          "reason": "DHT11 + I2C LCD + local web page is a valid Beginner project"
         },
         {
-          "section": "OpenWeatherMap API",
-          "reason": "Well-documented, reliable, free tier available"
-        },
-        {
-          "section": "OLED Display",
-          "reason": "Visual feedback makes project engaging"
-        },
-        {
-          "section": "WiFi Connectivity",
-          "reason": "Essential for fetching real-time data"
-        },
-        {
-          "section": "JSON Parsing",
-          "reason": "Valuable skill for API integration"
+          "section": "Pins",
+          "reason": "GPIO25 DHT11; GPIO21/22 I2C match Maker Port"
         }
       ],
       "update": [
         {
-          "section": "ArduinoJson Version",
-          "reason": "v6 and v7 have different syntax",
-          "action": "Specify version and use matching code"
+          "section": "Sample Code",
+          "reason": "Credentials, comment, language",
+          "action": "Placeholders, fix DHT22 comment, English text"
         },
         {
-          "section": "API Rate Limits",
-          "reason": "Users may exceed limits",
-          "action": "Document 60 calls/min limit and refresh recommendations"
+          "section": "Step 1",
+          "reason": "Missing dependency",
+          "action": "Add Adafruit Unified Sensor"
         },
         {
-          "section": "HTTPS Security",
-          "reason": "Modern APIs require HTTPS",
-          "action": "Document WiFiClientSecure usage"
-        },
-        {
-          "section": "Error Handling",
-          "reason": "Network/API failures need handling",
-          "action": "Add error checking for HTTP and JSON"
+          "section": "List of Components",
+          "reason": "LCD model vs rgb_lcd API",
+          "action": "Confirm matching LCD product"
         }
       ],
-      "remove": [],
+      "remove": [
+        {
+          "section": "Sample Code",
+          "reason": "Real Wi-Fi credentials published",
+          "action": "Replace with placeholders"
+        }
+      ],
       "evidence": [
         {
-          "claim": "ArduinoJson library",
-          "currentTutorial": "May use v6 syntax",
-          "finding": "v7 current with different API (JsonDocument vs StaticJsonDocument)",
-          "officialSource": "https://arduinojson.org/",
-          "sourceLabel": "ArduinoJson.org",
-          "recommendedChange": "Specify version"
+          "claim": "Project uses OpenWeatherMap/OLED (old audit)",
+          "currentTutorial": "DHT11 + Grove LCD + local web",
+          "finding": "No OpenWeatherMap, ArduinoJson, HTTPS or OLED in page or code",
+          "officialSource": "https://gist.github.com/interns24-bit/e3292eb4f7fbe9952bab2ba9091fbf6e",
+          "sourceLabel": "Tutorial Gist",
+          "recommendedChange": "Old findings withdrawn"
         },
         {
-          "claim": "OpenWeatherMap limits",
-          "currentTutorial": "May not document limits",
-          "finding": "60 calls/min, 1M/month free tier",
-          "officialSource": "https://openweathermap.org/appid",
-          "sourceLabel": "OpenWeatherMap",
-          "recommendedChange": "Add rate limit note"
+          "claim": "LCD library",
+          "currentTutorial": "Grove_LCD_RGB_Backlight",
+          "finding": "Code uses rgb_lcd API including setRGB",
+          "officialSource": "https://github.com/Seeed-Studio/Grove_LCD_RGB_Backlight",
+          "sourceLabel": "Seeed Grove_LCD_RGB_Backlight",
+          "recommendedChange": "Confirm product match"
         },
         {
-          "claim": "HTTPS requirement",
-          "currentTutorial": "May use HTTP",
-          "finding": "Modern APIs require HTTPS",
-          "officialSource": "https://openweathermap.org/api",
-          "sourceLabel": "OpenWeatherMap Docs",
-          "recommendedChange": "Use WiFiClientSecure"
-        },
-        {
-          "claim": "SSD1306 library",
-          "currentTutorial": "Uses Adafruit SSD1306",
-          "finding": "Current and well-maintained",
-          "officialSource": "https://github.com/adafruit/Adafruit_SSD1306",
-          "sourceLabel": "Adafruit GitHub",
-          "recommendedChange": "No change needed"
+          "claim": "DHT library dependency",
+          "currentTutorial": "DHT sensor library",
+          "finding": "Requires Adafruit Unified Sensor",
+          "officialSource": "https://github.com/adafruit/DHT-sensor-library",
+          "sourceLabel": "Adafruit DHT library",
+          "recommendedChange": "Add dependency"
         }
       ],
       "links": [
@@ -3394,25 +3358,25 @@
           "url": "https://my.cytron.io/tutorial/wifi-weather-station-esp32",
           "purpose": "Original tutorial",
           "status": "Working",
-          "notes": "Primary tutorial URL"
+          "notes": "Snapshot fetched 2026-09-14 by the revamp bridge; page title 'ESP32 Smart Weather Station with Live WiFi Updates'"
         },
         {
-          "url": "https://openweathermap.org/api",
-          "purpose": "OpenWeatherMap API docs",
+          "url": "https://gist.github.com/interns24-bit/e3292eb4f7fbe9952bab2ba9091fbf6e",
+          "purpose": "Tutorial code (Gist)",
           "status": "Working",
-          "notes": "Official API documentation"
+          "notes": "Contains hard-coded Wi-Fi credentials"
         },
         {
-          "url": "https://arduinojson.org/",
-          "purpose": "ArduinoJson library",
-          "status": "Working",
-          "notes": "JSON parsing library"
+          "url": "https://my.cytron.io/p-grove-16-x-2-lcd-white-on-blue",
+          "purpose": "LCD product",
+          "status": "Unknown",
+          "notes": "Verify it matches rgb_lcd library use"
         },
         {
-          "url": "https://github.com/adafruit/Adafruit_SSD1306",
-          "purpose": "OLED display library",
+          "url": "https://github.com/Seeed-Studio/Grove_LCD_RGB_Backlight",
+          "purpose": "LCD library",
           "status": "Working",
-          "notes": "Adafruit SSD1306 driver"
+          "notes": "Used by code"
         }
       ],
       "auditFile": "audits/wifi-weather-station-esp32.md",
@@ -3421,9 +3385,9 @@
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
-          "OLED Display SSD1306 (I2C)"
+          "DHT11 Temperature & Humidity Sensor (Crowtail)"
         ],
-        "notes": "Connect via Maker Port (I2C). Uses OpenWeatherMap API"
+        "notes": "Final Output removed the LCD per human instruction; DHT11 via Maker Port. No OpenWeatherMap/OLED."
       },
       "preparationDate": "2026-08-18",
       "publishDate": "2026-09-12"
@@ -3809,35 +3773,38 @@
     },
     {
       "id": "ws2812-ring-led-clock-with-ntp-server-using-esp32",
-      "title": "WS2812 Ring LED Clock with NTP Server Using ESP32",
+      "title": "WS2812 Ring LED Clock With NTP Server Using ESP32",
       "url": "https://my.cytron.io/tutorial/ws2812-ring-led-clock-with-ntp-server-using-esp32",
       "category": "IoT",
       "subcategory": "Display",
-      "targetLevel": "Intermediate",
+      "targetLevel": "Beginner",
       "products": [
-        "ESP32",
-        "WS2812 LED Ring"
+        "NodeMCU ESP32",
+        "WS2812B NeoPixel LED Ring (60 LED)"
       ],
       "technologies": [
         "ESP32",
         "Arduino IDE",
-        "WS2812",
-        "NeoPixel",
+        "WS2812B",
+        "NeoPixelBus",
+        "NTPClient",
         "NTP",
-        "FastLED"
+        "WiFi"
       ],
       "keywords": [
         "ESP32",
         "WS2812",
         "NeoPixel",
         "LED Ring",
-        "Clock",
         "NTP",
-        "Time",
-        "Intermediate"
+        "Clock",
+        "NeoPixelBus",
+        "NTPClient",
+        "WiFi",
+        "Beginner"
       ],
       "reviewed": true,
-      "lastReviewed": "2026-08-13",
+      "lastReviewed": "2026-09-28",
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
@@ -3849,93 +3816,167 @@
       "technicalScore": 7,
       "scores": {
         "technicalAccuracy": 7,
-        "currentValidity": 7,
-        "esp32Compatibility": 7,
-        "codeQuality": 7,
-        "completeness": 8,
-        "beginnerFriendliness": 7,
-        "reproducibility": 7
+        "currentValidity": 6,
+        "esp32Compatibility": 8,
+        "codeQuality": 6,
+        "completeness": 7,
+        "beginnerFriendliness": 6,
+        "reproducibility": 6
       },
-      "mainRecommendation": "Address ESP32 WiFi timing conflicts with NeoPixel libraries. Maker ESP32 compatible with external WS2812 ring.",
+      "mainRecommendation": "Code uses NeoPixelBus (deprecated NeoPixelBrightnessBus) and getFormattedDate() from the taranais NTPClient fork - not Adafruit/FastLED/configTime as the old audit claimed. Clarify the NTPClient fork or switch to official getters/configTime(), move to NeoPixelBusLg, and replace the out-of-stock NodeMCU ESP32 with Maker ESP32 (VIN 5V powers the ring).",
       "makerEsp32": {
         "compatibility": "compatible",
-        "notes": "Compatible with external WS2812 LED ring. Use any GPIO for data (avoid GPIO26 buzzer). RMT driver recommended.",
-        "requiredChanges": []
+        "notes": "GPIO25 DIN works (its onboard LED will flicker with data). Power the ring from VIN, which outputs 5V on USB power. Avoid GPIO26 (buzzer) and GPIO4 (button).",
+        "requiredChanges": [
+          "Power ring from VIN (5V) instead of RAW"
+        ]
       },
       "topIssues": [
         {
           "priority": "P2",
-          "title": "WiFi Timing Conflicts",
-          "section": "Code",
-          "description": "ESP32 WiFi can interfere with NeoPixel timing, causing flickering.",
-          "recommendation": "Use RMT driver or timing isolation"
+          "title": "NTPClient Fork Confusion",
+          "section": "Sample Program",
+          "description": "getFormattedDate() exists only in the taranais NTPClient fork; the Library Manager NTPClient does not provide it, but the page names the ZIP 'NTPClient by Fabrice Weinberg 3.1.0'.",
+          "recommendation": "Explain the fork or use official getHours()/getMinutes()/getSeconds() or configTime()"
         },
         {
           "priority": "P2",
-          "title": "RMT Driver Recommendation",
-          "section": "Library",
-          "description": "Should use ESP32's RMT peripheral for reliable WS2812 control.",
-          "recommendation": "Add ESP32-specific configuration"
+          "title": "Deprecated NeoPixelBrightnessBus",
+          "section": "Sample Program",
+          "description": "NeoPixelBus wiki marks NeoPixelBrightnessBus deprecated, replaced by NeoPixelBusLg; page pins v2.5.7.",
+          "recommendation": "Use NeoPixelBusLg"
+        },
+        {
+          "priority": "P2",
+          "title": "Out-of-Date Hardware List",
+          "section": "Hardware Preparation",
+          "description": "NodeMCU ESP32 shows Out of Stock; USB Micro B cable.",
+          "recommendation": "Maker ESP32 with USB-C"
         },
         {
           "priority": "P3",
-          "title": "Level Shifter",
-          "section": "Hardware",
-          "description": "3.3V data line may be unreliable; 5V logic preferred for WS2812.",
-          "recommendation": "Recommend 330-470\u00ce\u00a9 resistor"
+          "title": "3.3V Data to 5V Ring",
+          "section": "Wiring",
+          "description": "GPIO25 3.3V data into a 5V-powered WS2812B ring is marginal.",
+          "recommendation": "Add optional level-shifter note"
+        },
+        {
+          "priority": "P3",
+          "title": "Blocking NTP Loop",
+          "section": "Sample Program",
+          "description": "while(!timeClient.update()) forceUpdate(); can block if the network drops.",
+          "recommendation": "Add retry limit/timeout"
         }
       ],
       "keep": [
         {
-          "section": "NTP Concept",
-          "reason": "Using NTP for accurate time is still the best approach"
+          "section": "Clock Logic",
+          "reason": "Hour/minute/second mapping onto 60 LEDs with 5-minute markers is correct"
         },
         {
-          "section": "LED Ring Clock Concept",
-          "reason": "Creative and visually appealing project"
+          "section": "Settings",
+          "reason": "GMT+8 offset and low brightness (5/255) suit Malaysia and USB power"
         },
         {
-          "section": "configTime() Usage",
-          "reason": "Built-in NTP function is correct approach"
+          "section": "Credentials",
+          "reason": "Placeholders used"
         }
       ],
       "update": [
         {
-          "section": "Library Configuration",
-          "reason": "WiFi timing conflicts",
-          "action": "Add ESP32-specific RMT settings for NeoPixel"
+          "section": "Sample Program",
+          "reason": "NTPClient fork and deprecated class",
+          "action": "Official NTPClient getters or configTime(); NeoPixelBusLg"
         },
         {
-          "section": "Hardware",
-          "reason": "Signal integrity",
-          "action": "Add 330-470\u00ce\u00a9 resistor between data pin and LED strip"
+          "section": "Hardware Preparation",
+          "reason": "NodeMCU out of stock, Micro-USB",
+          "action": "Maker ESP32 + USB-C; ring VCC from VIN"
         }
       ],
-      "remove": [],
+      "remove": [
+        {
+          "section": "Hardware Preparation",
+          "reason": "NodeMCU ESP32 out of stock; Micro-USB cable not needed",
+          "action": "Replace with Maker ESP32 and USB-C cable"
+        }
+      ],
       "evidence": [
         {
-          "claim": "NeoPixel library works",
-          "currentTutorial": "Uses Adafruit or FastLED",
-          "finding": "Works but timing issues with WiFi",
-          "officialSource": "https://www.sunfounder.com/blogs/news/esp32-with-ws2812b-neopixel-leds-complete-beginner-s-guide",
-          "sourceLabel": "SunFounder",
-          "recommendedChange": "Add RMT driver configuration"
+          "claim": "LED library",
+          "currentTutorial": "NeoPixelBus v2.5.7, NeoPixelBrightnessBus",
+          "finding": "NeoPixelBrightnessBus is deprecated; replaced by NeoPixelBusLg",
+          "officialSource": "https://github.com/Makuna/NeoPixelBus/wiki/NeoPixelBrightnessBus-object",
+          "sourceLabel": "NeoPixelBus wiki",
+          "recommendedChange": "Use NeoPixelBusLg"
         },
         {
-          "claim": "NTP function",
-          "currentTutorial": "Uses configTime()",
-          "finding": "Correct, built into ESP32 core",
-          "officialSource": "https://randomnerdtutorials.com/esp32-ntp-client-date-time-arduino-ide/",
-          "sourceLabel": "Random Nerd Tutorials",
-          "recommendedChange": "Keep as-is"
+          "claim": "Time library",
+          "currentTutorial": "NTPClient ZIP (taranais fork), getFormattedDate()",
+          "finding": "Official NTPClient documents getEpochTime/getFormattedTime, not getFormattedDate",
+          "officialSource": "https://github.com/arduino-libraries/NTPClient",
+          "sourceLabel": "arduino-libraries/NTPClient",
+          "recommendedChange": "Explain fork or use official getters"
+        },
+        {
+          "claim": "Old audit: Adafruit/FastLED and configTime()",
+          "currentTutorial": "NeoPixelBus + NTPClient",
+          "finding": "Old claims not in the code",
+          "officialSource": "https://gist.github.com/IdrisCytron/51625683d3007c5e069babc6f1568360",
+          "sourceLabel": "Tutorial Gist",
+          "recommendedChange": "Withdrawn"
+        },
+        {
+          "claim": "Board availability",
+          "currentTutorial": "NodeMCU ESP32",
+          "finding": "Product shows Out Of Stock on the saved page (2026-09-28)",
+          "officialSource": "https://my.cytron.io/tutorial/ws2812-ring-led-clock-with-ntp-server-using-esp32",
+          "sourceLabel": "Cytron page (saved copy)",
+          "recommendedChange": "Maker ESP32"
         }
       ],
       "links": [
         {
-          "url": "https://github.com/adafruit/Adafruit_NeoPixel",
-          "purpose": "NeoPixel library",
+          "url": "https://my.cytron.io/tutorial/ws2812-ring-led-clock-with-ntp-server-using-esp32",
+          "purpose": "Original tutorial",
           "status": "Working",
-          "notes": "Adafruit NeoPixel library"
+          "notes": "Saved copy 2026-09-28; republished 2025-11-28"
+        },
+        {
+          "url": "https://gist.github.com/IdrisCytron/51625683d3007c5e069babc6f1568360",
+          "purpose": "Tutorial code (Gist)",
+          "status": "Working",
+          "notes": "Matches page code"
+        },
+        {
+          "url": "https://my.cytron.io/p-nodemcu-esp32",
+          "purpose": "Board",
+          "status": "Working",
+          "notes": "Out of Stock on 2026-09-28"
+        },
+        {
+          "url": "https://my.cytron.io/p-ws2812b-neopixel-addressable-led-ring-60-led",
+          "purpose": "LED ring",
+          "status": "Working",
+          "notes": "In stock on 2026-09-28"
+        },
+        {
+          "url": "https://github.com/taranais/NTPClient/archive/master.zip",
+          "purpose": "NTPClient fork ZIP",
+          "status": "Unknown",
+          "notes": "Third-party fork providing getFormattedDate()"
+        },
+        {
+          "url": "https://github.com/Makuna/NeoPixelBus",
+          "purpose": "LED library",
+          "status": "Working",
+          "notes": "Use NeoPixelBusLg"
+        },
+        {
+          "url": "https://www.youtube.com/watch?v=MdIW4qle2ZI",
+          "purpose": "Tutorial video",
+          "status": "Unknown",
+          "notes": "Not reviewed"
         }
       ],
       "auditFile": "audits/ws2812-ring-led-clock-with-ntp-server-using-esp32.md",
@@ -3943,9 +3984,9 @@
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
-          "WS2812 NeoPixel LED Ring (60 LEDs)"
+          "WS2812B NeoPixel LED Ring (60 LEDs)"
         ],
-        "notes": "External NeoPixel ring for clock display"
+        "notes": "DIN on GPIO25; ring VCC from VIN (5V on USB power)"
       },
       "preparationDate": "2026-09-02",
       "publishDate": "2026-09-24"
@@ -5182,16 +5223,19 @@
       "subcategory": "Smart Home",
       "targetLevel": "Intermediate",
       "products": [
-        "Robo ESP32"
+        "Robo ESP32",
+        "NodeMCU ESP32",
+        "DHT11",
+        "MQ2 Gas Sensor"
       ],
       "technologies": [
         "ESP32",
         "Arduino IDE",
         "DHT11",
-        "MQ-135",
+        "MQ2",
         "Web Server",
         "WiFi",
-        "HTML/CSS/JavaScript"
+        "NeoPixel"
       ],
       "keywords": [
         "Smart Home",
@@ -5199,13 +5243,13 @@
         "Temperature",
         "Humidity",
         "Air Quality",
-        "Real-Time",
+        "DHT11",
+        "MQ2",
         "Web Server",
-        "Environmental Monitoring",
         "IoT"
       ],
       "reviewed": true,
-      "lastReviewed": "2026-08-16",
+      "lastReviewed": "2026-09-28",
       "validity": {
         "grade": "B",
         "label": "Mostly Valid"
@@ -5217,157 +5261,130 @@
       "technicalScore": 7,
       "scores": {
         "technicalAccuracy": 7,
-        "currentValidity": 8,
-        "esp32Compatibility": 8,
-        "codeQuality": 7,
-        "completeness": 7,
+        "currentValidity": 7,
+        "esp32Compatibility": 7,
+        "codeQuality": 6,
+        "completeness": 6,
         "beginnerFriendliness": 6,
-        "reproducibility": 7
+        "reproducibility": 6
       },
-      "mainRecommendation": "Add critical warning about MQ-135 voltage divider requirement (5V output can damage ESP32's 3.3V GPIO) and document the 24-48 hour sensor warmup period. Maker ESP32 compatible - avoid GPIO4/GPIO26 for sensors.",
+      "mainRecommendation": "Resolve the MQ2 vs MQ135 inconsistency (page vs code comment vs product link), add a 5V gas-sensor output warning and the Adafruit Unified Sensor dependency, and add auto-refresh so the dashboard is actually real-time.",
       "makerEsp32": {
         "compatibility": "compatible",
-        "notes": "Fully compatible with Maker ESP32. Use ADC pins (GPIO32/33) for MQ-135. Avoid GPIO4 (user button) and GPIO26 (buzzer) for DHT sensor.",
+        "notes": "DHT11 on GPIO25 and analog sensor on GPIO33 (ADC1) both work on Maker ESP32. Replace the Robo ESP32 NeoPixel (GPIO15) with onboard GPIO LEDs.",
         "requiredChanges": [
-          "Use GPIO16 or GPIO13 for DHT data instead of GPIO4"
+          "Replace NeoPixel (GPIO15) with onboard GPIO LEDs"
         ]
       },
       "topIssues": [
         {
-          "priority": "P1",
-          "title": "MQ-135 Voltage Divider Requirement",
-          "section": "Hardware Setup",
-          "description": "MQ-135 analog output can exceed 3.3V, potentially damaging ESP32 GPIO pins. A voltage divider is essential but often overlooked.",
-          "recommendation": "Add voltage divider circuit diagram and clear warning about 5V to 3.3V conversion"
+          "priority": "P2",
+          "title": "Gas Sensor Identity Inconsistent",
+          "section": "List of Components / Code",
+          "description": "Page lists MQ2, code comment says MQ135, product link points to MQ135.",
+          "recommendation": "Pick one sensor and link only that product"
         },
         {
           "priority": "P2",
-          "title": "MQ-135 Warmup/Calibration Period",
-          "section": "Sensor Setup",
-          "description": "MQ-135 requires 24-48 hours of continuous operation for accurate readings. Initial readings will be unreliable.",
-          "recommendation": "Document warmup period and set user expectations for initial inaccuracy"
+          "title": "No 5V Output Warning",
+          "section": "Circuit Diagram",
+          "description": "MQ-series AO can exceed 3.3V when powered at 5V.",
+          "recommendation": "Add voltage divider guidance"
         },
         {
           "priority": "P2",
-          "title": "Web Server Architecture Choice",
-          "section": "Code",
-          "description": "Synchronous WebServer blocks main loop during requests; sensor readings may freeze during web access.",
-          "recommendation": "Recommend ESPAsyncWebServer for real-time dashboards"
+          "title": "Dashboard Not Real-Time",
+          "section": "Sample Code",
+          "description": "HTML is generated per request with no refresh or polling.",
+          "recommendation": "Add meta refresh or fetch polling"
         },
         {
           "priority": "P3",
-          "title": "DHT Library Dependencies",
-          "section": "Prerequisites",
-          "description": "Adafruit DHT library requires Adafruit Unified Sensor library as a dependency.",
-          "recommendation": "Explicitly list all library dependencies including Unified Sensor"
+          "title": "DHT Library Dependency",
+          "section": "Software Setup",
+          "description": "Adafruit DHT needs Adafruit Unified Sensor, not listed.",
+          "recommendation": "Add dependency"
         },
         {
           "priority": "P3",
-          "title": "Power Consumption",
-          "section": "Hardware",
-          "description": "MQ-135 heater draws ~150mA. Combined with ESP32 WiFi, adequate power supply is critical.",
-          "recommendation": "Document power requirements and recommend quality USB power supply"
+          "title": "LED Updates Only On Page Load",
+          "section": "Sample Code",
+          "description": "NeoPixel colour is set inside handleRoot().",
+          "recommendation": "Update LED in loop()"
         }
       ],
       "keep": [
         {
-          "section": "Project Concept",
-          "reason": "Smart home environmental monitoring is practical and educational"
+          "section": "Pins",
+          "reason": "DHT11 GPIO25 and analog GPIO33 (ADC1) match the table and are Wi-Fi-safe"
         },
         {
-          "section": "Sensor Selection",
-          "reason": "DHT11 + MQ-135 combination covers key environmental metrics"
-        },
-        {
-          "section": "Web Dashboard Approach",
-          "reason": "Local web server is network-independent and responsive"
-        },
-        {
-          "section": "ESP32 Platform",
-          "reason": "Ideal for WiFi-enabled sensor projects"
+          "section": "Credentials",
+          "reason": "Code uses placeholders"
         }
       ],
       "update": [
         {
-          "section": "Hardware Setup",
-          "reason": "MQ-135 voltage can damage ESP32",
-          "action": "Add voltage divider circuit (10K-20K) and warning"
+          "section": "List of Components",
+          "reason": "Split MQ2/MQ135 link",
+          "action": "Single correct sensor link"
         },
         {
-          "section": "Sensor Calibration",
-          "reason": "MQ-135 warmup period not explained",
-          "action": "Document 24-48 hour calibration period for accurate readings"
+          "section": "Software Setup",
+          "reason": "Missing Adafruit Unified Sensor",
+          "action": "Add dependency; mark WiFi/WebServer as built-in"
         },
         {
-          "section": "Web Server Code",
-          "reason": "Sync server may block sensor readings",
-          "action": "Recommend ESPAsyncWebServer v3.11.1 for real-time updates"
-        },
-        {
-          "section": "Prerequisites",
-          "reason": "Library dependencies incomplete",
-          "action": "List DHT library v1.4.7 and Adafruit Unified Sensor dependency"
+          "section": "Sample Code",
+          "reason": "No auto-refresh",
+          "action": "Add refresh/polling; move LED update to loop()"
         }
       ],
       "remove": [],
       "evidence": [
         {
-          "claim": "MQ-135 voltage safe for ESP32",
-          "currentTutorial": "May not address voltage levels",
-          "finding": "MQ-135 output can reach 5V, ESP32 ADC maximum is 3.3V",
-          "officialSource": "https://docs.arduino.cc/libraries/mq135/",
-          "sourceLabel": "Arduino MQ135 Docs",
-          "recommendedChange": "Add voltage divider circuit"
+          "claim": "Gas sensor model",
+          "currentTutorial": "Page MQ2, code comment MQ135",
+          "finding": "Inconsistent; link split across two products",
+          "officialSource": "https://gist.github.com/interns24-bit/be9b0a8574efafd81309f0cd67dcc693",
+          "sourceLabel": "Tutorial Gist",
+          "recommendedChange": "Pick one"
         },
         {
-          "claim": "DHT library installation",
-          "currentTutorial": "Uses Adafruit DHT",
-          "finding": "Version 1.4.7 current, requires Adafruit Unified Sensor",
+          "claim": "Analog pin works with Wi-Fi",
+          "currentTutorial": "GPIO33",
+          "finding": "ADC1 - works with Wi-Fi",
+          "officialSource": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/gpio.html",
+          "sourceLabel": "Espressif ESP32 GPIO docs",
+          "recommendedChange": "Keep"
+        },
+        {
+          "claim": "DHT library dependency",
+          "currentTutorial": "DHT library only",
+          "finding": "Requires Adafruit Unified Sensor",
           "officialSource": "https://github.com/adafruit/DHT-sensor-library",
-          "sourceLabel": "Adafruit GitHub",
-          "recommendedChange": "Document Unified Sensor dependency"
-        },
-        {
-          "claim": "Web server for real-time",
-          "currentTutorial": "May use synchronous WebServer",
-          "finding": "ESPAsyncWebServer v3.11.1 better for real-time dashboards",
-          "officialSource": "https://github.com/ESP32Async/ESPAsyncWebServer",
-          "sourceLabel": "ESPAsyncWebServer GitHub",
-          "recommendedChange": "Recommend async web server"
-        },
-        {
-          "claim": "MQ-135 accuracy",
-          "currentTutorial": "May not document warmup",
-          "finding": "24-48 hour warmup required for accurate readings",
-          "officialSource": "https://www.sparkfun.com/datasheets/Sensors/Biometric/MQ-135.pdf",
-          "sourceLabel": "MQ-135 Datasheet",
-          "recommendedChange": "Add warmup period documentation"
+          "sourceLabel": "Adafruit DHT library",
+          "recommendedChange": "Add dependency"
         }
       ],
       "links": [
         {
+          "url": "https://my.cytron.io/tutorial/esp32-smart-home-dashboard-with-real-time-sensor-data",
+          "purpose": "Original tutorial",
+          "status": "Working",
+          "notes": "Snapshot fetched 2026-09-15 by the revamp bridge"
+        },
+        {
+          "url": "https://gist.github.com/interns24-bit/be9b0a8574efafd81309f0cd67dcc693",
+          "purpose": "Tutorial code (Gist)",
+          "status": "Working",
+          "notes": "Uses placeholder credentials"
+        },
+        {
           "url": "https://github.com/adafruit/DHT-sensor-library",
-          "purpose": "DHT Sensor Library",
+          "purpose": "DHT library",
           "status": "Working",
-          "notes": "Version 1.4.7, requires Unified Sensor"
-        },
-        {
-          "url": "https://github.com/ESP32Async/ESPAsyncWebServer",
-          "purpose": "Async Web Server Library",
-          "status": "Working",
-          "notes": "Version 3.11.1, recommended for real-time"
-        },
-        {
-          "url": "https://docs.arduino.cc/libraries/mq135/",
-          "purpose": "MQ135 Library Documentation",
-          "status": "Working",
-          "notes": "Official Arduino library docs"
-        },
-        {
-          "url": "https://github.com/miguel5612/MQSensorsLib",
-          "purpose": "MQ Unified Sensor Library",
-          "status": "Working",
-          "notes": "Advanced calibration support"
+          "notes": "Needs Adafruit Unified Sensor"
         }
       ],
       "auditFile": "audits/esp32-smart-home-dashboard-with-real-time-sensor-data.md",
@@ -5376,10 +5393,9 @@
       "hardwareUsed": {
         "board": "Maker ESP32",
         "components": [
-          "DHT11 Temperature & Humidity Sensor",
-          "MQ-135 Air Quality Sensor"
+          "DHT11 Temperature & Humidity Sensor"
         ],
-        "notes": "MQ-135 requires voltage divider"
+        "notes": "Final Output removed the gas sensor per human instruction; original used DHT11 (GPIO25) + MQ2/MQ135 (GPIO33) + Robo ESP32 NeoPixel"
       },
       "preparationDate": "2026-08-31",
       "publishDate": "2026-09-14"

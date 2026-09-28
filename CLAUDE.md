@@ -15,7 +15,12 @@ When asked to audit a Cytron tutorial, you must update **both**:
 
 ## Workflow for Auditing a Tutorial
 
-1. **Review the tutorial** at the provided URL
+1. **Review the tutorial's actual content**, never just its URL or title. Some Cytron URL slugs don't match the page (e.g. `interface-water-flow-sensor-using-esp32-board-2` is "Program Telegram Bot on ESP32 Board").
+   - cytron.io blocks automated fetching from Claude's cloud tools. Use one of these instead:
+     - a copy of the page saved into `tmp/` (browser Ctrl+S, "Webpage, HTML only");
+     - the revamp bridge snapshot at `service/jobs/<jobId>/sources/original-tutorial.html` / `.md`.
+   - Read the code from the tutorial's GitHub Gist (gist.github.com works).
+   - Record which source you used in the audit (Audit history / Evidence).
 2. **Verify technical validity** using current official documentation
 3. **Generate a unique slug** from the tutorial title (lowercase, hyphens, no special chars)
 4. **Create the audit file** at `audits/[slug].md` using the template
@@ -30,6 +35,8 @@ When asked to audit a Cytron tutorial, you must update **both**:
 - Do NOT mark something as outdated without verifying against official sources
 - Do NOT fabricate broken links, deprecated packages, or compatibility issues
 - Do NOT guess - verify with official documentation
+- Do NOT write "May ..." / "likely ..." findings about what a tutorial contains - read the page and code first
+- Do NOT copy real credentials (Wi-Fi passwords, bot/Blynk tokens) from a tutorial into this public repo - describe them as "exposed credentials" instead
 
 ## Always Do
 
@@ -76,7 +83,8 @@ Use ISO format: `YYYY-MM-DD` (e.g., `2026-08-10`)
 - `Reviewed` - Audit complete
 - `Planned` - Revamp scheduled
 - `Revamping` - Work in progress
-- `Completed` - Revamp finished
+- `Complete` - Final Output published via the revamp bridge (current value)
+- `Completed` - Older spelling, still accepted
 - `Archived` - Tutorial retired
 
 ### Target Level
@@ -106,7 +114,7 @@ Use ISO format: `YYYY-MM-DD` (e.g., `2026-08-10`)
   },
   "decision": "Keep|Minor Update|Major Revamp|Replace|Not Decided",
   "revampScope": "Small|Medium|Large",
-  "revampStatus": "Not Reviewed|Reviewed|Planned|Revamping|Completed|Archived",
+  "revampStatus": "Not Reviewed|Reviewed|Planned|Revamping|Complete|Completed|Archived",
   "priority": "P0|P1|P2|P3|None",
   "technicalScore": 7,
   "scores": {
@@ -165,9 +173,24 @@ Use ISO format: `YYYY-MM-DD` (e.g., `2026-08-10`)
       "notes": "Additional notes"
     }
   ],
-  "auditFile": "audits/unique-slug.md"
+  "auditFile": "audits/unique-slug.md",
+  "makerEsp32": {
+    "compatibility": "compatible|minor|conflict|significant",
+    "notes": "Maker ESP32 notes (check the Maker ESP32 AI Coding Pack, Datasheet Rev 1.1)",
+    "requiredChanges": []
+  },
+  "hardwareUsed": { "board": "Maker ESP32", "components": [], "notes": "" },
+  "preparationDate": "YYYY-MM-DD",
+  "publishDate": "YYYY-MM-DD",
+  "makerEsp32PublishDate": "YYYY-MM-DD",
+  "revampedOutputFile": "revamped-tutorials/unique-slug.md"
 }
 ```
+
+- Don't change `preparationDate`, `publishDate`, `makerEsp32PublishDate` or `revampStatus` during an audit unless a human asks.
+- `revampedOutputFile` is added only when a Final Output is published.
+- Write non-ASCII characters as `\uXXXX` escapes (the file's existing style). Edit single records with `service/tutorialsJsonRecordEditor.js` so the rest of the file (CRLF line endings) stays untouched.
+- Maker ESP32 hardware facts come from `E:\Cytron-AI-Coding-Pack\cytron-ai-coding-pack-maker-esp32` (Datasheet Rev 1.1, e.g. 3V3 rail 700 mA; ADC2 pins can't be read while Wi-Fi is on).
 
 ## Audit Template Location
 

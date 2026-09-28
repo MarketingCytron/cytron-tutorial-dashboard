@@ -2,21 +2,48 @@
 
 ## Tutorial Information
 
-**Title:** WS2812 Ring LED Clock with NTP Server Using ESP32
+**Title:** WS2812 Ring LED Clock With NTP Server Using ESP32
 
 **URL:** https://my.cytron.io/tutorial/ws2812-ring-led-clock-with-ntp-server-using-esp32
 
-**Audit Date:** 2026-08-13
+**Audit Date:** 2026-09-28 (re-audit)
 
-**Target Level:** Intermediate
+**Target Level:** Beginner (as stated on the page)
 
-**Category:** IoT / Display
+**Category:** IoT / Clocks & Displays
+
+**Author / Dates (page):** Idris Zainal Abidin. Originally published 13 May 2020; page republished and edited by Khairul Tajudin on 28 Nov 2025.
+
+> **Audit history:** The previous audit was not based on the page.
+> - It assumed the code "uses Adafruit or FastLED" and "uses configTime()". The code actually uses **NeoPixelBus** (`NeoPixelBrightnessBus`) and the **NTPClient** `getFormattedDate()` fork.
+> - Its main finding was a general "Wi-Fi timing conflict" with no evidence.
+> - This audit replaces it. Sources: a saved copy of the live page (`tmp/WS2812 Ring LED Clock With NTP Server Using ESP32.html`, 2026-09-28) and Gist `IdrisCytron/51625683d3007c5e069babc6f1568360`.
 
 ---
 
 ## Tutorial Objective
 
-This tutorial teaches users how to create an LED ring clock using WS2812 NeoPixel LEDs with ESP32, synchronizing time via NTP (Network Time Protocol) server.
+Show the time on a 60-LED WS2812B ring driven by an ESP32 (NodeMCU ESP32), with the time set by NTP over Wi-Fi (GMT+8):
+
+- hour: 3 red LEDs;
+- minute: green;
+- second: blue;
+- dim white markers every 5 LEDs.
+
+---
+
+## What the Page and Code Actually Contain
+
+| Item | Page / Code |
+|---|---|
+| Hardware | NodeMCU ESP32 (product page shows **Out of Stock**), WS2812B 60-LED ring, USB Micro B cable, jumper wires |
+| Wiring (code header) | ESP32 RAW (5V) → ring VCC, GND → GND, **GPIO25 → DIN** |
+| Libraries | **NeoPixelBus** by Michael C. Miller **v2.5.7**; **NTPClient v3.1.0 installed from a ZIP of the `taranais/NTPClient` fork** (named "by Fabrice Weinberg" on the page) |
+| Code | `NeoPixelBrightnessBus<NeoGrbFeature, Neo800KbpsMethod>`, brightness 5/255; `timeClient.getFormattedDate()` parsed with `substring()`; `setTimeOffset(28800)` |
+| Credentials | Placeholders ✓ |
+| Video | YouTube `MdIW4qle2ZI` |
+| Prerequisites | Dot Matrix Clock with NTP (ESP32), ESP-NOW tutorial |
+| Support | ESP Makers Malaysia Telegram group |
 
 ---
 
@@ -30,7 +57,11 @@ This tutorial teaches users how to create an LED ring clock using WS2812 NeoPixe
 
 **Revamp Scope:** Small
 
-**Main Recommendation:** Update to address ESP32 WiFi timing conflicts with NeoPixel libraries. Recommend using RMT driver or proper timing isolation for reliable LED control.
+**Main Recommendation:**
+
+- Explain that `getFormattedDate()` only exists in the `taranais/NTPClient` fork. The Library Manager NTPClient doesn't have it. Alternatively, switch to the official `getHours()`/`getMinutes()`/`getSeconds()` or the ESP32's built-in `configTime()`.
+- Move from the deprecated `NeoPixelBrightnessBus` to `NeoPixelBusLg`.
+- Replace the out-of-stock NodeMCU ESP32 and Micro-USB cable with Maker ESP32, using VIN (5V) to power the ring.
 
 ---
 
@@ -39,110 +70,90 @@ This tutorial teaches users how to create an LED ring clock using WS2812 NeoPixe
 | Metric | Score |
 | ------ | ----- |
 | Technical Accuracy | 7/10 |
-| Current Validity | 7/10 |
-| ESP32 Compatibility | 7/10 |
-| Code Quality | 7/10 |
-| Completeness | 8/10 |
-| Beginner Friendliness | 7/10 |
-| Reproducibility | 7/10 |
+| Current Validity | 6/10 |
+| ESP32 Compatibility | 8/10 |
+| Code Quality | 6/10 |
+| Completeness | 7/10 |
+| Beginner Friendliness | 6/10 |
+| Reproducibility | 6/10 |
 
 ---
 
 ## Top 5 Issues
 
-1. **[P2] WiFi Timing Conflicts** - ESP32 WiFi can interfere with NeoPixel timing, causing flickering
-2. **[P2] RMT Driver Recommendation** - Should use ESP32's RMT peripheral for reliable WS2812 control
-3. **[P3] Level Shifter** - 3.3V data line may be unreliable; 5V logic preferred for WS2812
-4. **[P3] Color Order** - WS2812B uses GRB color order, not RGB
-5. **[P3] NTP Configuration** - configTime() parameters and timezone handling could be clearer
+1. **[P2] NTPClient fork confusion.** The code calls `getFormattedDate()`, which the official NTPClient (Library Manager, arduino-libraries) doesn't provide. The page labels the ZIP as "NTPClient by Fabrice Weinberg 3.1.0", but it links the `taranais` fork. Anyone who installs the Library Manager version gets a compile error.
+2. **[P2] Deprecated NeoPixelBus class.** `NeoPixelBrightnessBus` is deprecated; the NeoPixelBus wiki says to use `NeoPixelBusLg` instead. The page also pins an old version (v2.5.7).
+3. **[P2] Out-of-date hardware list.** The NodeMCU ESP32 product shows Out of Stock, and the Micro-USB cable doesn't suit USB-C boards. Maker ESP32 is the obvious replacement.
+4. **[P3] 3.3V data to a 5V WS2812B ring.** The ring runs at 5V (RAW) and gets 3.3V data from GPIO25. This usually works, but it's marginal: at 5V the input-high threshold is about 0.7×VDD. Mention a level shifter if it flickers.
+5. **[P3] Blocking NTP loop.** `while(!timeClient.update()) forceUpdate();` can block indefinitely if the network drops.
 
 ---
 
 ## Technical Validation
 
-### WS2812 / NeoPixel Technology
+### LED driver
 
-WS2812B addressable LEDs remain fully valid and widely available. Two main library options:
-- **Adafruit NeoPixel**: Easy to use, well-documented
-- **FastLED**: More features, better performance
+- NeoPixelBus with `Neo800KbpsMethod` on ESP32 works. `NeoPixelBrightnessBus` still compiles for backward compatibility, but it is **deprecated** in favour of `NeoPixelBusLg` (NeoPixelBus wiki).
+- The previous audit's claims (Adafruit/FastLED, a "Wi-Fi timing conflict", "switch to the RMT driver") had no evidence and are withdrawn.
 
-Both libraries support ESP32, but require special consideration for WiFi timing conflicts.
+### NTP / time
 
-### ESP32 WiFi + NeoPixel Conflict
+- Uses NTPClient with `setTimeOffset(28800)` (GMT+8) ✓ and `getFormattedDate()` from the **taranais fork**.
+- The official `arduino-libraries/NTPClient` documents `getEpochTime()`/`getFormattedTime()` and doesn't list `getFormattedDate()`.
+- Simpler current options: `getHours()`/`getMinutes()`/`getSeconds()`, or the ESP32 core's `configTime()` + `getLocalTime()`, which needs no extra library.
 
-**Critical Issue**: WiFi operations on ESP32 can disrupt the precise timing required for WS2812 communication, causing:
-- Flickering LEDs
-- Wrong colors displayed
-- LEDs freezing on single color
+### Power
 
-**Solution**: Use ESP32's RMT (Remote Control) peripheral driver which handles timing in hardware, immune to WiFi interrupts.
+- The ring is powered from RAW (5V USB). At brightness 5/255 with about 17 LEDs lit, current is low and USB power is fine.
+- On **Maker ESP32**, VIN outputs 5V when on USB (confirmed by the Cytron design team). Use VIN → ring VCC.
 
-### NTP Time Synchronization
+### Maker ESP32 note
 
-ESP32 has built-in NTP support via `configTime()`:
-```cpp
-configTime(gmtOffset_sec, daylightOffset_sec, "pool.ntp.org");
-```
-- No external library needed
-- Time stored in internal RTC
-- Only needs to sync once at startup
+- GPIO25 has an onboard GPIO LED on Maker ESP32, so it will flicker with the data signal. That's harmless.
+- Keep DIN off GPIO26 (buzzer) and GPIO4 (button).
 
 ### Installation
 
-- Install Adafruit NeoPixel or FastLED via Library Manager
-- No separate NTP library needed (built into ESP32 core)
+- The Library Manager install for NeoPixelBus is fine. NTPClient needs clarification (issue 1).
 
 ### External Links
 
-Standard Arduino IDE and ESP32 setup links should be current.
-
-### UI / Screenshots
-
-LED ring wiring and clock display images should remain accurate.
-
-### Beginner Usability
-
-Moderately complex project - combines WiFi, NTP, and addressable LEDs.
+| Link | Status | Notes |
+|---|---|---|
+| NodeMCU ESP32 product page | **Out of Stock** (shown on the saved page) | Replace with Maker ESP32 |
+| WS2812B 60-LED ring product page | Working (in stock on the saved page) | — |
+| USB Micro B cable | Working | Not needed for Maker ESP32 (USB-C) |
+| `github.com/taranais/NTPClient/archive/master.zip` | Unknown | Third-party fork ZIP |
+| YouTube `MdIW4qle2ZI` | Unknown | Not reviewed |
+| Gist `IdrisCytron/51625683…` | Working | Code matches the page |
+| Prerequisites (Dot Matrix Clock NTP, ESP-NOW) | Unknown | cytron.io blocks automated checks |
+| ESP Makers Malaysia Telegram (t.me/ESPmakersMY) | Unknown | Check manually |
 
 ### Security
 
-WiFi credentials are stored in code - typical for beginner tutorials but should note security considerations.
-
----
-
-## Priority Issues
-
-| Priority | Tutorial Section | Problem | Severity | Recommended Change |
-| -------- | ---------------- | ------- | -------- | ------------------ |
-| P2 | Code | WiFi/NeoPixel timing conflict | Medium | Use RMT driver or timing isolation |
-| P2 | Library | May not address ESP32-specific issues | Medium | Add ESP32-specific configuration |
-| P3 | Hardware | 3.3V logic level for WS2812 | Low | Recommend level shifter or 330Ω resistor |
-| P3 | Code | Color order (GRB vs RGB) | Low | Verify NEO_GRB + NEO_KHZ800 used |
+- Credentials use placeholders ✓.
 
 ---
 
 ## KEEP
 
-- **NTP concept**: Using NTP for accurate time is still the best approach
-- **LED ring clock concept**: Creative and visually appealing project
-- **WiFi connection code**: Basic WiFi connection remains valid
-- **configTime() usage**: Built-in NTP function is correct approach
+- **Clock logic:** hour/minute/second mapping onto 60 LEDs with 5-minute markers is correct and clear
+- **GMT+8 offset** for Malaysia
+- **Low brightness (5/255):** keeps USB current low
 
 ---
 
 ## UPDATE
 
-- **Library configuration**: Add ESP32-specific settings for NeoPixel
-- **RMT driver**: Recommend RMT-based timing for reliability
-- **Hardware**: Add 330-470Ω resistor between data pin and LED strip
-- **Timing isolation**: Show how to pause NeoPixel updates during WiFi operations
-- **Color order**: Ensure GRB color order is correctly specified
+- **Libraries:** explain the NTPClient fork, or use the official NTPClient getters / `configTime()`; replace `NeoPixelBrightnessBus` with `NeoPixelBusLg`
+- **Hardware:** Maker ESP32 + USB-C; power the ring from VIN (5V); optional level shifter note
+- **Code:** add a timeout or retry limit to the NTP `while` loop
 
 ---
 
 ## REMOVE / REPLACE
 
-- **None**: No content needs removal, only updates
+- **NodeMCU ESP32 (out of stock) and USB Micro B cable:** replace with Maker ESP32 and a USB-C cable
 
 ---
 
@@ -150,24 +161,11 @@ WiFi credentials are stored in code - typical for beginner tutorials but should 
 
 | Claim | Current Tutorial | Finding | Official Source | Recommended Change |
 | ----- | ---------------- | ------- | --------------- | ------------------ |
-| NeoPixel library works | Uses Adafruit or FastLED | Works but timing issues with WiFi | [SunFounder](https://www.sunfounder.com/blogs/news/esp32-with-ws2812b-neopixel-leds-complete-beginner-s-guide) | Add RMT driver configuration |
-| NTP function | Uses configTime() | Correct, built into ESP32 core | [Random Nerd Tutorials](https://randomnerdtutorials.com/esp32-ntp-client-date-time-arduino-ide/) | Keep as-is |
-| WiFi timing conflict | May not address | Known ESP32 issue | [N-QUE](https://n-que.ca/blogs/made-in-lockdown/it-works-esp32-with-ws2812b-ws2812-neopixel-and-fastled) | Add timing isolation |
-| Color order | May use RGB | WS2812B is GRB | [Component Index](https://componentindex.net/components/ws2812b/) | Verify NEO_GRB used |
-
----
-
-## Recommended Updated Tutorial Flow
-
-1. Introduction to NTP-synchronized LED clock
-2. Hardware requirements (LED ring, ESP32, resistor)
-3. Wiring with 330Ω resistor on data line
-4. Library installation (NeoPixel or FastLED)
-5. ESP32-specific configuration (RMT driver)
-6. WiFi connection code
-7. NTP time synchronization with configTime()
-8. Clock display logic on LED ring
-9. Troubleshooting WiFi/LED conflicts
+| LED library | NeoPixelBus v2.5.7, `NeoPixelBrightnessBus` | Deprecated; replaced by `NeoPixelBusLg` | [NeoPixelBus wiki: NeoPixelBrightnessBus](https://github.com/Makuna/NeoPixelBus/wiki/NeoPixelBrightnessBus-object) | Use `NeoPixelBusLg` |
+| Time library | NTPClient ZIP (taranais fork) + `getFormattedDate()` | Official NTPClient documents `getEpochTime`/`getFormattedTime`, not `getFormattedDate` | [arduino-libraries/NTPClient](https://github.com/arduino-libraries/NTPClient) | Explain the fork or use official getters |
+| Hardware availability | NodeMCU ESP32 | Product shows "Out Of Stock" on the page | Saved page 2026-09-28 | Maker ESP32 |
+| Old audit: "uses Adafruit/FastLED, configTime()" | — | Not in the code | [Gist](https://gist.github.com/IdrisCytron/51625683d3007c5e069babc6f1568360) | Withdrawn |
+| 5V power on Maker ESP32 | RAW 5V | VIN outputs 5V on USB power | Cytron design team (2026-09-28); Maker ESP32 AI Coding Pack | VIN → ring VCC |
 
 ---
 
@@ -179,16 +177,16 @@ WiFi credentials are stored in code - typical for beginner tutorials but should 
 
 **Top 5 Issues:**
 
-1. WiFi timing can interfere with NeoPixel updates
-2. RMT driver should be recommended for ESP32
-3. Data line may need resistor for signal integrity
-4. Color order (GRB) should be verified
-5. NTP timezone handling could be clearer
+1. `getFormattedDate()` needs the taranais NTPClient fork (confusing library naming)
+2. `NeoPixelBrightnessBus` deprecated → use `NeoPixelBusLg`
+3. NodeMCU ESP32 out of stock; Micro-USB cable
+4. 3.3V data to 5V ring is marginal (level shifter note)
+5. NTP update loop can block
 
 **Estimated Revamp Scope:** Small
 
-**Most Important Action:** Add ESP32-specific RMT configuration to prevent WiFi/NeoPixel timing conflicts
+**Most Important Action:** Fix the NTPClient instructions (or drop the fork), and move the build to Maker ESP32 with VIN powering the ring.
 
 ---
 
-*Audit completed by Claude Code on 2026-08-13.*
+*Re-audit completed by Claude on 2026-09-28 from a saved copy of the live page and the tutorial Gist. Supersedes the earlier audit.*

@@ -2,27 +2,51 @@
 
 ## Tutorial Information
 
-**Title:** WiFi Weather Station ESP32
+**Title:** ESP32 Smart Weather Station with Live WiFi Updates (dashboard ID: `wifi-weather-station-esp32`)
 
 **URL:** https://my.cytron.io/tutorial/wifi-weather-station-esp32
 
-**Audit Date:** 2026-08-13
+**Audit Date:** 2026-09-28 (re-audit)
 
 **Target Level:** Beginner
 
-**Category:** IoT
+**Category:** IoT / Environmental Monitoring
+
+**Published / Modified (page):** 29 May 2025 / 9 Jun 2025
+
+> **Audit history:** The previous audit was not based on the page.
+> - It described an **OpenWeatherMap API + SSD1306 OLED** project, with ArduinoJson v6/v7, HTTPS certificates and API rate limits. None of that is in the tutorial.
+> - The page actually uses a **DHT11** and a **Grove 16x2 LCD**, plus a simple local web page.
+> - This audit replaces it. Sources: the bridge snapshot (`service/jobs/1443e676-…/sources/`, fetched 2026-09-14) and Gist `interns24-bit/e3292eb4f7fbe9952bab2ba9091fbf6e`.
 
 ---
 
 ## Tutorial Objective
 
-This tutorial teaches users how to build a WiFi-connected weather station using ESP32 that fetches real-time weather data from an online API (likely OpenWeatherMap) and displays it on an OLED screen. Users learn to connect ESP32 to WiFi, make HTTP requests to weather APIs, parse JSON responses, and display weather information locally.
+Measure temperature and humidity with a **DHT11** on an ESP32 (Robo ESP32 / NodeMCU ESP32) and do two things with the readings:
+
+- show them on a **Grove 16x2 I2C LCD**;
+- serve them on a local web page (`WiFiServer`) that auto-refreshes every 5 s.
+
+---
+
+## What the Page and Code Actually Contain
+
+| Item | Page | Code (Gist) |
+|---|---|---|
+| Boards | Robo ESP32, NodeMCU ESP32 | — |
+| Sensor | DHT11 (Crowtail) on D25 | `DHTPIN 25`, `DHT11` (comment says "DHT22 setup") |
+| Display | "LCD Display" linked to **Grove 16x2 LCD (White on Blue)**; SDA D21, SCL D22, VCC 3V3 | `rgb_lcd.h` with `lcd.setRGB(0,128,255)` (Grove **RGB Backlight** LCD API) |
+| Libraries | DHT sensor library (Adafruit), WiFi, Grove_LCD_RGB_Backlight | Same |
+| Web | "copy the IP and paste to the website" | `WiFiServer` port 80, HTML with `meta refresh 5`; page text in Bahasa Malaysia (Suhu, Kelembapan) |
+| Credentials | — | **Real-looking Wi-Fi SSID and password hard-coded** |
+| Online APIs | None | None (no OpenWeatherMap, no ArduinoJson, no HTTPS) |
 
 ---
 
 ## Overall Validity
 
-**Grade:** B - Mostly Valid
+**Grade:** B
 
 **Decision:** Minor Update
 
@@ -30,7 +54,12 @@ This tutorial teaches users how to build a WiFi-connected weather station using 
 
 **Revamp Scope:** Small
 
-**Main Recommendation:** Verify ArduinoJson version compatibility (v6 vs v7 syntax differs), document OpenWeatherMap API free tier limitations (60 calls/min), ensure HTTPS is used with proper certificate handling, and add guidance for API key security.
+**Main Recommendation:**
+
+- Replace the exposed Wi-Fi credentials with placeholders.
+- Confirm the linked LCD product works with the `rgb_lcd` library at 3.3V, or link the RGB Backlight LCD.
+- Add the Adafruit Unified Sensor dependency.
+- Translate the web page text to English.
 
 ---
 
@@ -38,284 +67,72 @@ This tutorial teaches users how to build a WiFi-connected weather station using 
 
 | Metric | Score |
 | ------ | ----- |
-| Technical Accuracy | 8/10 |
-| Current Validity | 7/10 |
-| ESP32 Compatibility | 9/10 |
-| Arduino IDE Compatibility | 8/10 |
-| Code Quality | 7/10 |
-| Completeness | 7/10 |
-| Beginner Friendliness | 7/10 |
-| Reproducibility | 7/10 |
+| Technical Accuracy | 7/10 |
+| Current Validity | 8/10 |
+| ESP32 Compatibility | 8/10 |
+| Code Quality | 6/10 |
+| Completeness | 6/10 |
+| Beginner Friendliness | 6/10 |
+| Reproducibility | 6/10 |
 
 ---
 
 ## Top 5 Issues
 
-1. **[P2] ArduinoJson Version Compatibility** - ArduinoJson v6 and v7 have different syntax. Tutorial should specify which version to use and provide appropriate code.
-
-2. **[P2] API Rate Limits Not Documented** - OpenWeatherMap free tier allows 60 calls/minute, 1M calls/month. Tutorial should explain rate limiting and appropriate refresh intervals.
-
-3. **[P2] HTTPS Certificate Handling** - Modern APIs require HTTPS. ESP32 needs WiFiClientSecure with proper certificate validation or explicit insecure mode.
-
-4. **[P3] API Key Security** - API keys should not be hardcoded in shared code. Tutorial should warn about key protection.
-
-5. **[P3] Error Handling** - Network failures, API errors, and JSON parsing errors should be handled gracefully.
+1. **[P2] Real Wi-Fi credentials in the public Gist.** A hard-coded SSID and password instead of placeholders.
+2. **[P2] LCD product vs library.** The page links the **Grove 16x2 LCD (White on Blue)**, but the code uses the `rgb_lcd` RGB Backlight API (`setRGB`), powered at 3V3. Whether that exact product works with this library at 3.3V is **NEEDS VERIFICATION**.
+3. **[P3] Missing dependency.** The Adafruit DHT library needs **Adafruit Unified Sensor**, which isn't listed.
+4. **[P3] Mixed language / small inconsistencies.** The web page text is in Bahasa Malaysia on an English tutorial, and a code comment says "DHT22" for a DHT11.
+5. **[P3] Blocking loop.** `delay(2000)` plus a DHT read per loop means web clients can wait about 2 s for a response. Acceptable for Beginner level, but should be noted.
 
 ---
 
 ## Technical Validation
 
-### ESP32
+### Sensor and display
 
-ESP32's WiFi capabilities make it ideal for fetching weather data from internet APIs. Built-in HTTPS support via WiFiClientSecure enables secure API communication.
+- DHT11 on GPIO25 (digital) ✓.
+- I2C LCD on GPIO21/22, the ESP32 `Wire` defaults ✓. On Maker ESP32 this can use the **Maker Port** (Grove via conversion cable).
 
-**Key Features:**
-- Built-in WiFi for internet connectivity
-- HTTPS support via WiFiClientSecure
-- Sufficient memory for JSON parsing
-- I2C pins for OLED display
+### Web server
 
-**Status:** Valid
+- A minimal `WiFiServer` HTTP response with a meta refresh. Works, but it doesn't parse requests. Fine for a demo.
 
-### Arduino IDE
+### Installation
 
-Standard Arduino IDE setup with ESP32 board package. Requires several library installations.
+- WiFi is part of the ESP32 core. Install the DHT library (Adafruit) with Adafruit Unified Sensor, and Grove_LCD_RGB_Backlight (Seeed).
 
-**Typical Required Libraries:**
-- WiFi (built-in)
-- HTTPClient (built-in)
-- WiFiClientSecure (built-in)
-- ArduinoJson (for JSON parsing)
-- Adafruit_SSD1306 (for OLED display)
-- Adafruit_GFX (graphics library)
+### External Links
 
-**Status:** Valid
+| Link | Status | Notes |
+|---|---|---|
+| Robo ESP32 / NodeMCU ESP32 / DHT11 / Grove 16x2 LCD product pages | Unknown | cytron.io blocks automated checks |
+| [Grove_LCD_RGB_Backlight](https://github.com/Seeed-Studio/Grove_LCD_RGB_Backlight) | Working | Library used by the code |
 
-### OpenWeatherMap API
+### Security
 
-**Free Tier Limits (2026):**
-- 60 API calls per minute
-- 1,000,000 calls per month
-- Current weather data included
-- 3-hour forecast included
-- Air pollution data included
-
-**One Call API 3.0:**
-- 1,000 free calls per day
-- Requires payment card on file
-- More detailed forecast data
-
-**API Key Requirement:**
-- Registration required at openweathermap.org
-- Free API key provided after registration
-- Key must be included in API requests
-
-**Rate Limiting:**
-- Exceeding limits returns HTTP 429
-- Wait 10 minutes before retrying
-- Implement backoff and caching
-
-**Status:** Valid - free tier sufficient for hobbyist projects
-
-### ArduinoJson Library
-
-**Current Version:** 7.x (with v6 still widely used)
-**Author:** Benoit Blanchon
-**License:** MIT
-
-**Version Differences:**
-
-**ArduinoJson v6 (Legacy):**
-```cpp
-StaticJsonDocument<1024> doc;
-deserializeJson(doc, json);
-const char* city = doc["name"];
-float temp = doc["main"]["temp"];
-```
-
-**ArduinoJson v7 (Current):**
-```cpp
-JsonDocument doc;
-deserializeJson(doc, json);
-const char* city = doc["name"];
-float temp = doc["main"]["temp"];
-```
-
-**Key Changes v6 → v7:**
-- `StaticJsonDocument<N>` → `JsonDocument` (auto-sizing)
-- No need to specify buffer size
-- Improved memory management
-
-**Recommendation:** Use v7 for new projects, but specify version in tutorial
-
-**Status:** Valid - library actively maintained
-
-### HTTPS and Certificate Handling
-
-**Modern API Security:**
-- OpenWeatherMap uses HTTPS (required)
-- ESP32 needs WiFiClientSecure for HTTPS
-- Certificate validation recommended
-
-**Options:**
-1. **Full Validation (Secure):**
-   ```cpp
-   WiFiClientSecure client;
-   client.setCACert(root_ca);  // Root CA certificate
-   ```
-
-2. **Skip Validation (Development Only):**
-   ```cpp
-   WiFiClientSecure client;
-   client.setInsecure();  // Not recommended for production
-   ```
-
-**Status:** Should be documented
-
-### OLED Display (SSD1306)
-
-**Common Configurations:**
-- 128x64 pixels (most common)
-- 128x32 pixels
-- I2C interface (2 wires)
-- I2C address: 0x3C or 0x3D
-
-**Required Libraries:**
-1. Adafruit_SSD1306 (display driver)
-2. Adafruit_GFX (graphics primitives)
-
-**Alternative:** ThingPulse ESP32 OLED Driver (v4.6.2)
-
-**ESP32 I2C Pins:**
-- SDA: GPIO 21
-- SCL: GPIO 22
-
-**Status:** Valid
-
-### HTTP Request Pattern
-
-**Standard ESP32 HTTP GET:**
-```cpp
-#include <HTTPClient.h>
-#include <WiFiClientSecure.h>
-
-WiFiClientSecure client;
-client.setInsecure();  // For development
-
-HTTPClient http;
-http.begin(client, apiUrl);
-int httpCode = http.GET();
-
-if (httpCode == HTTP_CODE_OK) {
-  String payload = http.getString();
-  // Parse JSON
-}
-http.end();
-```
-
-**Efficient JSON Parsing:**
-```cpp
-http.useHTTP10(true);  // Enables streaming
-deserializeJson(doc, http.getStream());
-```
-
-**Status:** Valid pattern
-
-### Weather Data Display
-
-**Typical Data Points:**
-- City name
-- Current temperature
-- Humidity
-- Weather description (sunny, cloudy, etc.)
-- Weather icon (optional)
-- Wind speed (optional)
-
-**Temperature Conversion:**
-- API returns Kelvin by default
-- Use `units=metric` for Celsius
-- Use `units=imperial` for Fahrenheit
-
-**Status:** Valid
-
----
-
-## Priority Issues
-
-| Priority | Tutorial Section | Problem | Severity | Recommended Change |
-| -------- | ---------------- | ------- | -------- | ------------------ |
-| P2 | Code | ArduinoJson version not specified | Medium | Specify v6 or v7 with matching syntax |
-| P2 | API Setup | Rate limits not documented | Medium | Add API limits and refresh interval guidance |
-| P2 | Security | HTTPS certificate handling unclear | Medium | Document WiFiClientSecure usage |
-| P3 | Security | API key hardcoded in example | Low | Add warning about key protection |
-| P3 | Robustness | Error handling minimal | Low | Add network/API error handling |
+- Exposed Wi-Fi credentials in the Gist.
 
 ---
 
 ## KEEP
 
-- **Project Concept:** Weather station is a classic, practical IoT project
-- **OpenWeatherMap API:** Well-documented, reliable, free tier available
-- **OLED Display:** Visual feedback makes project engaging
-- **WiFi Connectivity:** Essential for fetching real-time data
-- **JSON Parsing:** Valuable skill for API integration
+- **DHT11 + I2C LCD + local web page:** simple, valid Beginner project
+- **Pins:** GPIO25 for DHT; GPIO21/22 I2C (matches the Maker Port on Maker ESP32)
 
 ---
 
 ## UPDATE
 
-- **ArduinoJson Version Specification:**
-  ```
-  This tutorial uses ArduinoJson v7. Install via Library Manager.
-  If using v6, replace `JsonDocument` with `StaticJsonDocument<1024>`.
-  ```
-
-- **API Rate Limiting Section (Add):**
-  - Free tier: 60 calls/minute, 1M calls/month
-  - Recommended refresh: Every 10-15 minutes for weather
-  - Add delay between requests to avoid HTTP 429 errors
-
-- **HTTPS Security (Add):**
-  ```cpp
-  WiFiClientSecure client;
-  client.setInsecure();  // For testing only
-  // For production, use: client.setCACert(root_ca);
-  ```
-
-- **API Key Security Warning (Add):**
-  ```
-  ⚠️ Never share your API key publicly.
-  If posting code to GitHub, use environment variables
-  or a separate config file (add to .gitignore).
-  ```
-
-- **Temperature Units (Clarify):**
-  ```cpp
-  // For Celsius, add units=metric to URL
-  String url = "https://api.openweathermap.org/data/2.5/weather?q="
-               + city + "&appid=" + apiKey + "&units=metric";
-  ```
-
-- **Error Handling (Add):**
-  ```cpp
-  if (httpCode != HTTP_CODE_OK) {
-    Serial.printf("HTTP error: %d\n", httpCode);
-    return;
-  }
-
-  DeserializationError error = deserializeJson(doc, payload);
-  if (error) {
-    Serial.printf("JSON error: %s\n", error.c_str());
-    return;
-  }
-  ```
+- **Code:** placeholders; fix the "DHT22" comment; English web text
+- **Software setup:** add Adafruit Unified Sensor
+- **Components:** confirm the LCD product and library match (and 3.3V operation)
 
 ---
 
 ## REMOVE / REPLACE
 
-- **Outdated ArduinoJson Syntax:** If using v6 syntax, update to v7 or clearly document v6 requirement
-- **HTTP (non-secure):** Replace with HTTPS if tutorial uses plain HTTP
+- **Hard-coded Wi-Fi credentials:** replace with placeholders
 
 ---
 
@@ -323,53 +140,16 @@ deserializeJson(doc, http.getStream());
 
 | Claim | Current Tutorial | Finding | Official Source | Recommended Change |
 | ----- | ---------------- | ------- | --------------- | ------------------ |
-| ArduinoJson | May use v6 syntax | v7 current with different API | [ArduinoJson.org](https://arduinojson.org/) | Specify version |
-| OpenWeatherMap limits | May not document | 60 calls/min, 1M/month free | [OpenWeatherMap](https://openweathermap.org/appid) | Add rate limit note |
-| HTTPS requirement | May use HTTP | Modern APIs require HTTPS | [OpenWeatherMap Docs](https://openweathermap.org/api) | Use WiFiClientSecure |
-| SSD1306 library | Uses Adafruit | Current and well-maintained | [Adafruit GitHub](https://github.com/adafruit/Adafruit_SSD1306) | No change needed |
+| Project uses OpenWeatherMap / OLED (old audit) | — | Not in the page or code; the project is DHT11 + Grove LCD + local web | Page snapshot; Gist `e3292eb4…` | Old findings withdrawn |
+| LCD library | Grove_LCD_RGB_Backlight | Code uses the `rgb_lcd` API incl. `setRGB` | [Seeed Grove_LCD_RGB_Backlight](https://github.com/Seeed-Studio/Grove_LCD_RGB_Backlight) | Confirm the linked product matches |
+| DHT dependency | DHT library only | Needs Adafruit Unified Sensor | [Adafruit DHT library](https://github.com/adafruit/DHT-sensor-library) | Add dependency |
+| Credentials | Hard-coded | Real-looking SSID/password in the public Gist | Gist `e3292eb4…` | Placeholders |
 
 ---
 
-## Recommended Tutorial Flow
+## Final Output Note (already published revamp)
 
-1. **Introduction** - Project overview and what we'll build
-2. **Prerequisites** - Hardware list, software requirements
-3. **OpenWeatherMap Setup** - Account creation, API key
-4. **API Limits Note (NEW)** - Free tier restrictions
-5. **Hardware Setup** - OLED wiring diagram
-6. **Library Installation** - WiFi, ArduinoJson (specify version), Adafruit_SSD1306
-7. **WiFi Connection** - Connect ESP32 to network
-8. **API Request** - HTTPS request with WiFiClientSecure
-9. **JSON Parsing** - Extract weather data with ArduinoJson
-10. **Display Output** - Show data on OLED
-11. **Error Handling (NEW)** - Handle network/API failures
-12. **API Key Security (NEW)** - Protect your credentials
-13. **Customization** - Different cities, units, refresh rate
-
----
-
-## API Endpoint Reference
-
-**Current Weather:**
-```
-https://api.openweathermap.org/data/2.5/weather?q={city}&appid={key}&units=metric
-```
-
-**Example Response Fields:**
-```json
-{
-  "name": "Kuala Lumpur",
-  "main": {
-    "temp": 28.5,
-    "humidity": 75
-  },
-  "weather": [
-    {
-      "description": "scattered clouds"
-    }
-  ]
-}
-```
+The published Final Output removed the LCD and the Robo ESP32 per human-approved instructions. It keeps a DHT11 web server on Maker ESP32, and its change log already records that the old audit's OpenWeatherMap/OLED assumption was wrong.
 
 ---
 
@@ -381,35 +161,16 @@ https://api.openweathermap.org/data/2.5/weather?q={city}&appid={key}&units=metri
 
 **Top 5 Issues:**
 
-1. ArduinoJson version compatibility (v6 vs v7 syntax)
-2. API rate limits should be documented
-3. HTTPS certificate handling needs clarification
-4. API key security warning recommended
-5. Error handling could be more robust
+1. Real Wi-Fi credentials in the public Gist
+2. LCD product link vs `rgb_lcd` library at 3.3V (NEEDS VERIFICATION)
+3. Adafruit Unified Sensor dependency missing
+4. BM web page text; "DHT22" comment
+5. Blocking loop delays web responses
 
 **Estimated Revamp Scope:** Small
-- Specify ArduinoJson version
-- Add API rate limit documentation
-- Document HTTPS/WiFiClientSecure usage
-- Add error handling examples
-- Core concept is valid and educational
 
-**Most Important Action:** Specify which ArduinoJson version the tutorial uses and ensure the code matches that version's syntax. The v6 to v7 API changes can cause confusion for beginners trying to follow the tutorial.
+**Most Important Action:** Replace the exposed credentials and confirm the LCD product and library match.
 
 ---
 
-## Sources
-
-- [ArduinoJson Official Site](https://arduinojson.org/)
-- [ArduinoJson with HTTPClient](https://arduinojson.org/v6/how-to/use-arduinojson-with-httpclient/)
-- [OpenWeatherMap API Documentation](https://openweathermap.org/api)
-- [OpenWeatherMap Free Tier Limits](https://openweathermap.org/appid)
-- [ESP32 JSON Parsing - Zbotic](https://zbotic.in/esp32-json-parsing-arduinojson-library-for-api-responses/)
-- [Adafruit SSD1306 Library](https://github.com/adafruit/Adafruit_SSD1306)
-- [ThingPulse ESP32 OLED Driver](https://docs.arduino.cc/libraries/esp8266-and-esp32-oled-driver-for-ssd1306-displays/)
-- [ESP32 Weather Station - Maker Pro](https://maker.pro/arduino/projects/build-an-esp32-oled-weather-display-terminal)
-- [Simple ESP32 Internet Weather Station - Makerguides](https://www.makerguides.com/simple-esp32-internet-weather-station/)
-
----
-
-*Audit completed by Claude Code on 2026-08-13.*
+*Re-audit completed by Claude on 2026-09-28 from the saved page snapshot and the tutorial Gist. Supersedes the earlier audit.*

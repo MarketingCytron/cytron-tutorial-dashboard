@@ -6,31 +6,63 @@
 
 **URL:** https://my.cytron.io/tutorial/farm-automation-system-using-roboesp32
 
-**Audit Date:** 2026-08-13
+**Audit Date:** 2026-09-28 (re-audit)
 
 **Target Level:** Intermediate
 
-**Category:** IoT
+**Category:** IoT / Agriculture (Blynk IoT)
+
+**Published / Modified (page):** 23 May 2025 / 3 Jun 2025
+
+> **Audit history:** The previous audit was not based on the page or code.
+> - It said the tutorial "may use the legacy Blynk approach". It already uses Blynk IoT, with Template ID, Template Name and Auth Token.
+> - It listed a relay module and relay/AC safety. The pump runs through the Robo ESP32 motor driver.
+> - It missed that the ultrasonic/water-level feature is advertised but not coded.
+> - This audit replaces it. Sources: the bridge snapshot (`service/jobs/119a6768-…/sources/`, fetched 2026-09-25) and Gist `interns24-bit/f65d1ba7ee4ed3fc2d2390d8452b1159`.
 
 ---
 
 ## Tutorial Objective
 
-This tutorial teaches users how to build an automated farm irrigation system using Robo ESP32. The system monitors soil moisture, temperature, humidity, and water tank level, then controls a water pump automatically or remotely via the Blynk IoT platform. Users learn to integrate multiple sensors and actuators into a complete IoT solution.
+An automated irrigation system on **Robo ESP32**, using Blynk IoT for monitoring and manual pump control:
+
+- **Sensors:** soil moisture (Maker Soil Moisture Sensor), DHT11 temperature/humidity and an ultrasonic water-level sensor.
+- **Pump:** a motor pump driven by the Robo ESP32 motor driver.
+
+---
+
+## What the Page and Code Actually Contain
+
+| Item | Page | Code (Gist) |
+|---|---|---|
+| Hardware | Robo ESP32, Maker Soil Moisture, ultrasonic sensor, motor pump, DHT11 | — |
+| DHT11 | **GPIO17** | `DHT_PIN 16` ❌ mismatch |
+| Soil sensor | GPIO36 (VP) | `SOIL_PIN 36` ✓ |
+| Pump | Motor(+)/(−) on GPIO27 / GPIO14 | `RELAY_PIN 27` only (HIGH/LOW), GPIO14 not used |
+| Ultrasonic | Trig GPIO25, Echo GPIO26 | **Not in the code at all** |
+| Blynk | IoT platform; datastreams V1–V4 (switch, soil, temp, humidity) | Template ID/Name/Auth Token macros ✓; writes V2–V4, reads V1 |
+| Dashboard | "Gauge (V2–V5) … Water Level"; features list "Low water level protection" | No V5, no water-level logic |
+| Credentials | — | **Real Blynk Template ID and Auth Token hard-coded** (SSID/password are placeholders) |
+| Auto mode | "Auto-pump mode" | `delay(10000)` inside the timer callback while the pump runs |
 
 ---
 
 ## Overall Validity
 
-**Grade:** B - Mostly Valid
+**Grade:** C
 
-**Decision:** Minor Update
+**Decision:** Major Revamp
 
-**Priority:** P2
+**Priority:** P1
 
 **Revamp Scope:** Medium
 
-**Main Recommendation:** Ensure Blynk 2.0 code structure is used (Template ID, Template Name, Auth Token), add sensor calibration guidance for soil moisture, include electrical safety warnings for relay/pump circuits, and document Blynk free plan limitations.
+**Main Recommendation:**
+
+- Either implement the advertised ultrasonic water-level feature (V5, low-water pump cutoff) or remove it from the page.
+- Fix the DHT pin mismatch (page 17, code 16).
+- Revoke and replace the Blynk auth token that was published in the Gist.
+- Remove the 10-second blocking delay.
 
 ---
 
@@ -38,274 +70,88 @@ This tutorial teaches users how to build an automated farm irrigation system usi
 
 | Metric | Score |
 | ------ | ----- |
-| Technical Accuracy | 8/10 |
+| Technical Accuracy | 5/10 |
 | Current Validity | 7/10 |
-| ESP32 Compatibility | 9/10 |
-| Arduino IDE Compatibility | 8/10 |
-| Code Quality | 7/10 |
-| Completeness | 7/10 |
-| Beginner Friendliness | 6/10 |
-| Reproducibility | 7/10 |
+| ESP32 Compatibility | 6/10 |
+| Code Quality | 5/10 |
+| Completeness | 4/10 |
+| Beginner Friendliness | 5/10 |
+| Reproducibility | 4/10 |
 
 ---
 
 ## Top 5 Issues
 
-1. **[P2] Blynk 2.0 Code Structure** - Must use BLYNK_TEMPLATE_ID, BLYNK_TEMPLATE_NAME, and BLYNK_AUTH_TOKEN macros. Legacy single auth token approach no longer works.
-
-2. **[P2] Soil Moisture Sensor Calibration** - Capacitive soil moisture sensors require calibration for accurate readings. Tutorial should explain calibration process (dry air vs water readings).
-
-3. **[P2] Electrical Safety for Relay/Pump** - Relay circuits controlling pumps (especially AC pumps) require safety warnings about electrical hazards and proper isolation.
-
-4. **[P2] Blynk Free Plan Limitations** - Free tier limits (2 devices, 10 datastreams) should be documented so users understand constraints.
-
-5. **[P3] Sensor Power Considerations** - Multiple sensors (DHT11, soil moisture, ultrasonic) may exceed ESP32 GPIO current limits. Should mention external power if needed.
+1. **[P1] Advertised feature not implemented.** The ultrasonic sensor is wired (Trig 25 / Echo 26), and the page promises a V5 water-level gauge and "low water level protection". The code has no ultrasonic reading, no V5 and no protection.
+2. **[P1] Blynk auth token exposed.** A real-looking Template ID and Auth Token are published in the Gist. Anyone can control the device.
+3. **[P2] DHT pin mismatch.** The wiring table says GPIO17 and the code uses GPIO16. Readers who follow the table get NaN readings.
+4. **[P2] Blocking delay in the Blynk timer.** `delay(10000)` inside `sendSensorData()` blocks `Blynk.run()` for 10 s every time auto mode waters. This can cause disconnects and an unresponsive app.
+5. **[P2] Pump drive unclear.** The table shows Motor+/− on GPIO27/14 (motor driver), but the code toggles only GPIO27 and names it `RELAY_PIN`. Soil % also uses an uncalibrated `map(4095→0)`.
 
 ---
 
 ## Technical Validation
 
-### Robo ESP32
+### Blynk IoT
 
-Cytron's Robo ESP32 is a current product well-suited for IoT projects. Built-in WiFi, multiple GPIO pins, and ADC channels make it ideal for multi-sensor applications like farm automation.
+- Already uses `BLYNK_TEMPLATE_ID`, `BLYNK_TEMPLATE_NAME` and `BLYNK_AUTH_TOKEN` with `BlynkSimpleEsp32.h` ✓. This is the current Blynk IoT structure.
+- `BlynkTimer` at 5 s ✓.
+- The Blynk docs advise keeping `loop()` free of delays.
 
-**Key Features:**
-- Built-in WiFi for IoT connectivity
-- Multiple ADC pins for analog sensors
-- Sufficient GPIO for sensors and relays
-- 3.3V logic with 5V tolerant considerations
+### Sensors
 
-**Status:** Valid
+- Soil on GPIO36 (ADC1, input-only) is fine with Wi-Fi.
+- DHT11: the table and code disagree (17 vs 16).
+- Ultrasonic: wired but unused.
 
-### Arduino IDE
+### Pump / motor driver
 
-Standard Arduino IDE setup with ESP32 board package. Requires multiple library installations via Library Manager.
+- Robo ESP32 drives the pump through its onboard motor driver (GPIO27/14 per the table). The code only sets GPIO27 HIGH/LOW, which drives one direction if GPIO14 stays LOW. It works, but it's undocumented.
+- The previous audit's "relay module / AC safety" concerns don't apply: the pump is a small DC pump on the motor driver.
 
-**Status:** Valid
+### Maker ESP32 note
 
-### Hardware Components
+- On Maker ESP32, GPIO26 is the buzzer (Echo pin here), and there's no motor driver. This project is best kept on **Robo ESP32**.
 
-**1. Maker Soil Moisture Sensor (Capacitive)**
-- More durable than resistive sensors (no corrosion)
-- Analog output varies with soil moisture
-- Operating voltage: 3.3V-5V
-- Requires calibration for accurate readings
+### Installation
 
-**2. DHT11 Temperature & Humidity Sensor**
-- Temperature range: 0-50°C (±2°C accuracy)
-- Humidity range: 20-80% RH (±5% accuracy)
-- Digital output, single wire protocol
-- Requires Adafruit DHT library + Unified Sensor library
+- Board URL and libraries are listed: Blynk, DHT sensor library, and Adafruit Unified Sensor ("if DHT needs it") ✓.
 
-**3. Ultrasonic Sensor (HC-SR04)**
-- Measures water tank level
-- Range: 2cm - 400cm
-- Accuracy: ~3mm
-- Operating voltage: 5V (some work at 3.3V)
+### External Links
 
-**4. Relay Module**
-- Controls water pump power
-- Provides electrical isolation
-- Optocoupler isolation recommended
-- NO/NC terminals for pump connection
+| Link | Status | Notes |
+|---|---|---|
+| https://blynk.cloud | Working | Blynk IoT console |
+| Espressif board manager URL (`raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json`) | Working | Current official URL |
+| Telegram community (t.me/ESPmakersMY) | Unknown | Check manually |
 
-**5. Water Pump**
-- Controlled via relay
-- Never connect directly to ESP32 GPIO
-- Size depends on application needs
+### Security
 
-**Status:** Valid - standard components for irrigation systems
-
-### Required Libraries
-
-**1. Blynk Library**
-- Current version supports Blynk IoT (2.0)
-- Requires Template ID, Template Name, and Auth Token
-- Install via Library Manager: "Blynk"
-
-**2. DHT Sensor Library (by Adafruit)**
-- Handles DHT11/DHT22 communication
-- Requires Adafruit Unified Sensor as dependency
-
-**3. Adafruit Unified Sensor**
-- Dependency for DHT library
-- Common error if missing: "Adafruit_Sensor.h: No such file"
-
-**Status:** Valid - all libraries actively maintained
-
-### Blynk IoT Platform
-
-**Critical Requirements (Blynk 2.0):**
-```cpp
-#define BLYNK_TEMPLATE_ID "TMPLxxxxxx"
-#define BLYNK_TEMPLATE_NAME "Farm Automation"
-#define BLYNK_AUTH_TOKEN "YourAuthToken"
-
-#include <WiFi.h>
-#include <BlynkSimpleEsp32.h>
-```
-
-**Datastream Configuration:**
-- V0: Soil Moisture (Integer, 0-100%)
-- V1: Temperature (Double, -40 to 80°C)
-- V2: Humidity (Double, 0-100%)
-- V3: Water Level (Integer, 0-100%)
-- V4: Pump Control (Integer, 0-1)
-
-**Free Plan Limitations:**
-- 2 devices maximum
-- 10 datastreams per template
-- Basic widgets only
-- Limited automation rules
-
-**Status:** Valid with Blynk 2.0 structure
-
-### Soil Moisture Calibration
-
-**Critical for Accurate Readings:**
-
-1. **Calibration Process:**
-   - Record sensor value in dry air (typically ~3500 for capacitive)
-   - Record sensor value in water (typically ~1500)
-   - Map readings to 0-100% moisture scale
-
-2. **Calibration Code:**
-   ```cpp
-   const int AirValue = 3500;   // Sensor value in air
-   const int WaterValue = 1500; // Sensor value in water
-
-   int soilMoisturePercent = map(sensorValue, AirValue, WaterValue, 0, 100);
-   soilMoisturePercent = constrain(soilMoisturePercent, 0, 100);
-   ```
-
-3. **Environmental Factors:**
-   - Different soil types affect readings
-   - Temperature affects sensor accuracy
-   - Calibrate in actual deployment environment
-
-**Status:** Should be documented in tutorial
-
-### Relay and Pump Safety
-
-**Critical Safety Considerations:**
-
-1. **Electrical Isolation:**
-   - Use relay module with optocoupler isolation
-   - Never connect AC mains directly to ESP32 circuit
-   - Use separate power supply for relay coil if needed
-
-2. **Pump Power:**
-   - Small DC pumps (5V-12V): Can use relay directly
-   - AC pumps (110V-220V): Requires proper enclosure and safety precautions
-   - Never handle live wires
-
-3. **Best Practices:**
-   - Use NO (Normally Open) contact for pump
-   - Add flyback diode if controlling inductive loads
-   - Include emergency stop/manual override
-   - Weatherproof connections for outdoor use
-
-**Warning Required:**
-```
-⚠️ ELECTRICAL SAFETY WARNING ⚠️
-Working with relay-controlled pumps involves electrical hazards.
-For AC-powered pumps, consult a qualified electrician.
-Never work on live circuits. Always disconnect power first.
-```
-
-**Status:** Safety warnings should be added
-
-### Water Level Calculation
-
-**HC-SR04 Water Level Logic:**
-```cpp
-// Measure distance from sensor to water surface
-long duration = pulseIn(echoPin, HIGH);
-float distance_cm = duration * 0.034 / 2;
-
-// Calculate water level percentage
-// tankHeight = distance from sensor to tank bottom
-int waterLevel = map(distance_cm, tankHeight, 0, 0, 100);
-waterLevel = constrain(waterLevel, 0, 100);
-```
-
-**Considerations:**
-- Mount sensor at top of tank, facing down
-- Account for sensor dead zone (~2cm)
-- Temperature affects sound speed (minor impact)
-
-**Status:** Valid approach
-
----
-
-## Priority Issues
-
-| Priority | Tutorial Section | Problem | Severity | Recommended Change |
-| -------- | ---------------- | ------- | -------- | ------------------ |
-| P2 | Code | May use legacy Blynk auth-only approach | Medium | Update to Blynk 2.0 three-macro structure |
-| P2 | Sensor Setup | Soil moisture calibration not explained | Medium | Add calibration process |
-| P2 | Safety | Electrical hazards not addressed | Medium | Add relay/pump safety warnings |
-| P2 | Blynk Setup | Free plan limits not documented | Medium | Document device/datastream limits |
-| P3 | Hardware | Power considerations for multiple sensors | Low | Mention external power options |
+- A real Blynk token is in the public Gist. **Revoke it** in the Blynk console and use placeholders.
 
 ---
 
 ## KEEP
 
-- **Project Concept:** Farm automation is practical and increasingly relevant
-- **Multi-Sensor Integration:** Good demonstration of combining multiple sensors
-- **Blynk IoT:** Excellent platform for remote monitoring and control
-- **Robo ESP32:** Appropriate board with built-in WiFi
-- **Automatic + Manual Control:** Both automation and remote override
-- **Water Level Monitoring:** Prevents dry-running the pump
+- **Blynk IoT setup:** template, datastreams and the credential macros are current
+- **Soil sensor on GPIO36:** a Wi-Fi-safe ADC1 input
+- **Manual override logic (V1):** correct pattern
 
 ---
 
 ## UPDATE
 
-- **Blynk 2.0 Code Structure:**
-  ```cpp
-  // These three defines MUST be at the very top
-  #define BLYNK_TEMPLATE_ID "TMPLxxxxxx"
-  #define BLYNK_TEMPLATE_NAME "Farm Automation"
-  #define BLYNK_AUTH_TOKEN "YourAuthToken"
-
-  #include <WiFi.h>
-  #include <BlynkSimpleEsp32.h>
-  #include <DHT.h>
-  ```
-
-- **Soil Moisture Calibration Section (Add):**
-  - Explain dry air and water calibration values
-  - Provide mapping code for percentage conversion
-  - Note that calibration varies by soil type
-
-- **Electrical Safety Section (Add):**
-  - Warning about AC voltage hazards
-  - Recommendation for optocoupler-isolated relays
-  - Never connect pump directly to ESP32
-
-- **Blynk Free Plan Limitations (Add):**
-  - 2 devices maximum
-  - 10 datastreams per template
-  - Link to Blynk pricing for larger projects
-
-- **DHT Library Dependency (Clarify):**
-  - Install BOTH "DHT sensor library" AND "Adafruit Unified Sensor"
-  - Common compilation error if Unified Sensor missing
-
-- **Troubleshooting Section (Add):**
-  - Blynk won't connect: Check Template ID/Name/Token
-  - Soil readings wrong: Calibrate sensor
-  - Pump not working: Check relay wiring and power
-  - DHT returns NaN: Check wiring and pull-up resistor
+- **Code:** add ultrasonic read + V5 + low-water cutoff, or remove them from the page; DHT pin 17 to match the table (or fix the table); non-blocking pump timer
+- **Wiring table:** clarify the motor driver pins vs `RELAY_PIN` naming
+- **Soil %:** add dry/wet calibration values
+- **Datastreams:** add V5 if water level is kept
 
 ---
 
 ## REMOVE / REPLACE
 
-- **Legacy Blynk References:** Remove any auth-only code (without Template ID/Name)
-- **Old Blynk App Screenshots:** Update to current Blynk IoT interface
+- **Hard-coded Blynk Template ID / Auth Token:** replace with placeholders and revoke the published token
+- **"Low water level protection" claim:** remove unless implemented
 
 ---
 
@@ -313,83 +159,45 @@ waterLevel = constrain(waterLevel, 0, 100);
 
 | Claim | Current Tutorial | Finding | Official Source | Recommended Change |
 | ----- | ---------------- | ------- | --------------- | ------------------ |
-| Blynk authentication | May use legacy approach | Blynk 2.0 requires Template ID + Name + Token | [Blynk Docs](https://docs.blynk.io/) | Update to three-macro approach |
-| Soil moisture calibration | May not explain | Calibration required for accurate readings | [Makers Portal](https://makersportal.com/blog/2020/5/26/capacitive-soil-moisture-calibration-with-arduino) | Add calibration section |
-| DHT library | Uses DHT library | Requires Adafruit Unified Sensor dependency | [Adafruit Learn](https://learn.adafruit.com/dht) | Document both libraries |
-| Relay safety | May not address | Optocoupler isolation recommended for safety | [uPesy Tutorial](https://www.upesy.com/blogs/tutorials/esp32-relay-module-using-arduino-code) | Add safety warnings |
-| HC-SR04 water level | Uses ultrasonic | Standard approach for tank monitoring | [Random Nerd Tutorials](https://randomnerdtutorials.com/esp32-hc-sr04-ultrasonic-arduino/) | No change needed |
+| Water level feature | Ultrasonic wired; V5 gauge; low-water protection | No ultrasonic code, no V5, no protection | Gist `f65d1ba7…`; page snapshot | Implement or remove |
+| DHT pin | Table GPIO17 | Code GPIO16 | Gist `f65d1ba7…` | Make them match |
+| Blynk structure | Template ID/Name/Token | Current Blynk IoT structure ✓ | [Blynk docs](https://docs.blynk.io/) | Keep |
+| Blynk token | Hard-coded in Gist | Real-looking token published | Gist `f65d1ba7…`; [Blynk docs](https://docs.blynk.io/) | Revoke; placeholders |
+| Blocking delay | `delay(10000)` in timer callback | Blocks `Blynk.run()` for 10 s | Gist `f65d1ba7…`; [Blynk docs](https://docs.blynk.io/) | Non-blocking timer |
 
 ---
 
-## Recommended Tutorial Flow
+## Final Output Note (already published revamp)
 
-1. **Introduction** - Project overview and applications
-2. **Prerequisites** - Hardware list, software requirements
-3. **Safety Warnings (NEW)** - Electrical safety for relay circuits
-4. **Blynk Cloud Setup** - Account, Template, Datastreams
-5. **Blynk Free Plan Note (NEW)** - Document limitations
-6. **Hardware Setup** - Wiring diagram for all components
-7. **Library Installation** - Blynk, DHT, Unified Sensor
-8. **Sensor Calibration (NEW)** - Soil moisture calibration
-9. **Arduino Code** - With proper Blynk 2.0 structure
-10. **Mobile Dashboard** - Blynk app widget setup
-11. **Testing** - Verify all sensors and pump control
-12. **Troubleshooting (NEW)** - Common issues and solutions
-13. **Next Steps** - Multiple zones, weather integration, data logging
+The published Final Output already resolves the main code issues:
 
----
+- credential placeholders instead of the real token;
+- a non-blocking `BlynkTimer`;
+- the unimplemented water-level/ultrasonic feature removed;
+- consistent pins (GPIO27 pump, GPIO36 soil, GPIO17 DHT11).
 
-## Difficulty Assessment
-
-This project is appropriately labeled as **Intermediate** due to:
-
-| Component | Skill Required | Complexity |
-|-----------|----------------|------------|
-| Multiple sensors | Wiring + calibration | Intermediate |
-| Relay control | Electrical safety awareness | Intermediate |
-| Blynk IoT setup | Cloud configuration | Intermediate |
-| Multi-value dashboard | Datastream mapping | Intermediate |
-| Automation logic | Conditional programming | Intermediate |
+The token published in the original Gist should still be revoked in the Blynk console.
 
 ---
 
 ## FINAL RECOMMENDATION
 
-**Decision:** Minor Update
+**Decision:** Major Revamp
 
-**Overall Validity:** B - Mostly Valid
+**Overall Validity:** C - Partially Outdated (inconsistent and incomplete rather than outdated)
 
 **Top 5 Issues:**
 
-1. Blynk 2.0 code structure required (three macros)
-2. Soil moisture sensor calibration not explained
-3. Electrical safety warnings for relay/pump needed
-4. Blynk free plan limitations should be documented
-5. DHT library dependency (Unified Sensor) must be mentioned
+1. Ultrasonic/water-level feature advertised but not coded
+2. Real Blynk token exposed in the public Gist
+3. DHT pin mismatch (17 vs 16)
+4. 10 s blocking delay in the Blynk timer
+5. Pump drive and soil calibration undocumented
 
 **Estimated Revamp Scope:** Medium
-- Update to Blynk 2.0 structure
-- Add sensor calibration section
-- Add electrical safety warnings
-- Add troubleshooting section
-- Core concept and hardware are valid
 
-**Most Important Action:** Ensure the code uses the Blynk 2.0 authentication structure with BLYNK_TEMPLATE_ID, BLYNK_TEMPLATE_NAME, and BLYNK_AUTH_TOKEN. Without all three, the device will not connect to Blynk IoT. Also add electrical safety warnings for relay-controlled pump circuits.
+**Most Important Action:** Revoke the exposed Blynk token, then make the code match what the page promises (water level, pins).
 
 ---
 
-## Sources
-
-- [Cytron Farm Automation Tutorial](https://www.cytron.io/tutorial/farm-automation-system-using-roboesp32)
-- [Blynk 2.0 Setup Guide - IoT Circuit Hub](https://iotcircuithub.com/blynk-iot-platform-setup-esp8266-esp32/)
-- [Blynk 2.0 with ESP32 - Zbotic](https://zbotic.in/blynk-2-0-with-esp32-cloud-dashboard-for-iot-projects/)
-- [Capacitive Soil Moisture Calibration - Makers Portal](https://makersportal.com/blog/2020/5/26/capacitive-soil-moisture-calibration-with-arduino)
-- [ESP32 HC-SR04 - Random Nerd Tutorials](https://randomnerdtutorials.com/esp32-hc-sr04-ultrasonic-arduino/)
-- [ESP32 Relay Module - uPesy](https://www.upesy.com/blogs/tutorials/esp32-relay-module-using-arduino-code)
-- [IoT Water Level Monitoring - Microcontrollers Lab](https://microcontrollerslab.com/iot-contactless-water-level-monitoring-esp32-hc-sr04/)
-- [Smart Irrigation with ESP32 - Circuit Digest](https://circuitdigest.com/microcontroller-projects/smart-irrigation-system-using-esp32-and-blynk-app)
-- [ESP32 Controls Pump - ESP32io](https://esp32io.com/tutorials/esp32-controls-pump)
-
----
-
-*Audit completed by Claude Code on 2026-08-13.*
+*Re-audit completed by Claude on 2026-09-28 from the saved page snapshot and the tutorial Gist. Supersedes the earlier audit.*
